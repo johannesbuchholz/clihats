@@ -17,7 +17,7 @@ public class CliHats {
         try {
             AbstractCommanderProvider.initializeImplementation();
         } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("Could not prepare Clihats: Could not initialize class: " + e.getMessage(), e);
+            throw new ConfigurationException("Could not prepare CliHats: Could not initialize class: " + e.getMessage(), e);
         }
     }
 

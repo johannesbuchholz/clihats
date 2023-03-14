@@ -11,7 +11,7 @@ public abstract class AbstractCommanderProvider {
 
     public static final String IMPL_CLASS_NAME = "CommanderProvider";
     public static final String IMPL_ABSTRACT_METHOD_NAME = "supplyCommanderByCli";
-    public static final String IMPL_REGISTER_METHOD_NAME = "registerForClihats";
+    public static final String IMPL_REGISTER_METHOD_NAME = "registerForCliHats";
 
     /**
      * Load generated implementation in order to execute static initializers.
@@ -23,9 +23,9 @@ public abstract class AbstractCommanderProvider {
     }
 
     /**
-     * Makes this available to Clihats.
+     * Makes this available to CliHats.
      */
-    protected void registerForClihats() {
+    protected void registerForCliHats() {
         CliHats.registerCommanderProvider(this);
     }
 

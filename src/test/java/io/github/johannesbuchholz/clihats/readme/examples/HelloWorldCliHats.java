@@ -7,13 +7,13 @@ import io.github.johannesbuchholz.clihats.processor.annotations.OptionNecessity;
 import io.github.johannesbuchholz.clihats.processor.execution.CliHats;
 
 /**
- * A simple "Hello, World!" program to demonstrate the capabilities of Clihats.
+ * A simple "Hello, World!" program to demonstrate the capabilities of CliHats.
  */
 @CommandLineInterface
-public class HelloWorldClihats {
+public class HelloWorldCliHats {
 
     public static void main(String[] args) {
-        CliHats.get(HelloWorldClihats.class).execute(new String[]{"say-hello-to-person", "-p"});
+        CliHats.get(HelloWorldCliHats.class).execute(new String[]{"say-hello-to-person", "-p"});
     }
 
     /**
