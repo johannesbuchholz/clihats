@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Wraps a particular action alongside with associated options.
+ * Wraps a particular action together with a list of options.
  * <p>
  *     When executed via {@link #execute(String[])}, the received arguments are parsed and passed as arguments
- *     to the specified {@link Instruction} in order to perform the desired action.
+ *     to the specified {@link Instruction}.
  * </p>
  * @see Commander
  * @see AbstractOptionParser
@@ -206,7 +206,7 @@ public class Command implements Documented {
     }
 
     /**
-     * Returns a list of conflict messages of this command with any parsers of the other command.
+     * Returns a list of messages. One for each conflicting parser of this command with any parsers o of the specified command.
      * To prevent ambiguous command calls, a conflict arises whenever the other command possesses argument parsers with
      * names equals to any name part of this command.
      */

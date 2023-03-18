@@ -6,14 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates, that the annotated method is target of a command from a command line interface.
+ * Indicates, that the annotated method is target of a command from a command-line interface.
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Command {
 
     /**
-     * Name used for calling this command. Defaults to the "hyphenized" name of the annotated method.
+     * Name used for calling this command. Defaults to the hyphenated name of the annotated method.
      */
     String name() default "";
 

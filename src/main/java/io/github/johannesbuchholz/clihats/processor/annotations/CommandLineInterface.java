@@ -8,8 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Declares a command line interface upon the annotated class, representing a collection of referencing commands.
- * <p>To obtain this command line interface, call {@link CliHats#get(Class)}</p>
+ * Declares a command-line interface upon the annotated class, representing a collection of referencing commands.
+ * <p>To obtain this command-line interface, call {@link CliHats#get(Class)}</p>
  * <p>The actual annotated class only acts as an anchor for commands to be registered. It does not add meaning to
  * the annotated class beyond borrowing its qualified name.</p>
  */
@@ -17,10 +17,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface CommandLineInterface {
 
+    /**
+     * Name used for referencing this command-line interface. Defaults to the hyphenated name of the annotated class.
+     */
     String name() default "";
 
     /**
-     * Description of this command line interface displayed in generated help strings. This overrides javadoc parsing.
+     * Description of this command-line interface displayed in generated help strings. This overrides javadoc parsing.
      */
     String description() default "";
 

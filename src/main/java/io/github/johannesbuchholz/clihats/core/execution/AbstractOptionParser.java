@@ -56,7 +56,7 @@ public abstract class AbstractOptionParser<T> {
     }
 
     /**
-     * Returns a list of conflict messages, if registering this with another parser at the same command object.
+     * @return A list of messages. One for each conflicting specified parser with this.
      */
     protected final List<String> conflictsWith(AbstractOptionParser<?> other) {
         return Arrays.stream(getNames())

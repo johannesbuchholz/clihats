@@ -101,7 +101,7 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
 
     /**
      * Groups {@link Command} to their {@link CommandLineInterface} objects and creates one {@link CommanderDto} per
-     * such command line interface.
+     * such command-line interface.
      */
     private List<CommanderDto> collectProgramInfo(RoundEnvironment roundEnvironment, TypeElement cliAnnotation) {
         // init map with empty lists per declared cli
@@ -109,7 +109,7 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
                 .collect(Collectors.toMap(element -> (TypeElement) element, element -> new ArrayList<>()));
 
         if (log.isDebugEnabled())
-            commandDtosByAnnotatedCli.keySet().forEach(annotatedCli -> log.debug("Found command line interface: {}", annotatedCli));
+            commandDtosByAnnotatedCli.keySet().forEach(annotatedCli -> log.debug("Found command-line interface: {}", annotatedCli));
 
         // match annotated command-methods with declared cli or mark for auto-detection
         List<CommandDto> commandDtosForAutoDetection = new ArrayList<>();

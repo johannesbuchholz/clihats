@@ -10,9 +10,10 @@ package io.github.johannesbuchholz.clihats.core.execution;
  * An example implementation could look like this:
  * <pre>
  *      public class ContextService {
+ *
  *           // business logic
  *           public static void loadContext(String contextName) {
- *               contextLoader.load(contextName);
+ *               SomeStaticContextLoader.load(contextName);
  *           }
  *
  *           // instruction usable for clihats
@@ -24,7 +25,7 @@ package io.github.johannesbuchholz.clihats.core.execution;
  *       }
  * </pre>
  * <p>
- *     Implementing classes are allowed to throw {@link Exception}.
+ *     Instruction objects are used by {@link Command}. Implementations may throw {@link Exception}.
  * </p>
  * @see Command
  */

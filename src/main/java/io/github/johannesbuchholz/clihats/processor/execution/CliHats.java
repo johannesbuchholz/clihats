@@ -22,16 +22,16 @@ public class CliHats {
     }
 
     /**
-     * Provides a command line interface instance created from commands that were linked to the specified class.
+     * Provides a command-line interface instance created from commands that were linked to the specified class.
      *
      * @param commandLineInterface the class annotated with {@link CommandLineInterface}
-     * @return a command line interface instance containing all commands associated to the provided commandLineInterface.
+     * @return a command-line interface instance containing all commands associated to the provided commandLineInterface.
      */
     public static Cli get(Class<?> commandLineInterface) {
         return Optional.ofNullable(commanderProvider)
                 .orElseThrow(() -> new ConfigurationException("CliHats could not provide a command-line interface. Make sure to declare at least one CommandLineInterface."))
                 .getCli(commandLineInterface)
-                .orElseThrow(() -> new ConfigurationException("Unknown command line interface %s.", commandLineInterface.getCanonicalName()));
+                .orElseThrow(() -> new ConfigurationException("Unknown command-line interface %s.", commandLineInterface.getCanonicalName()));
     }
 
     /**
