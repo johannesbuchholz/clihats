@@ -8,6 +8,26 @@ CliHats offers
 - Option parsing
 - Automatically generated help pages and error messages
 
+# Get CliHats
+Clihats is available on Maven Central. Depending on your build tool, add one of the following dependency declarations to your project.
+## Maven
+```xml
+<dependency>
+    <groupId>io.github.johannesbuchholz</groupId>
+    <artifactId>clihats</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+
+## Gradle
+```groovy
+implementation 'io.github.johannesbuchholz:clihats:0.0.1'
+```
+If you want to use CliHats' annotation processor, you may add the following to your dependency section
+```groovy
+annotationProcessor 'io.github.johannesbuchholz:clihats:0.0.1'
+```
+
 # Quickstart
 
 In this example we will use CliHats to make multiple existing methods available through a command-line interface.
@@ -336,4 +356,13 @@ public static class ListMapper extends AbstractValueMapper<List<String>> {
 Then, declare an option using the above mapper.
 ```
 @Option(mapper = ListMapper.class) List<String> list
+```
+
+# Build configuration
+CliHats uses an annotation processor to automatically create Commander, Command and Option objects and conveniently make it available to your code through the clas `CliHats`. The process of generating the required source code may be configured.
+
+## Logging
+CliHats uses Slf4j with the Simple provider and one single logger instance named `CliHats`. You may configure the log level used during processing by adding the jvm argument
+```text
+-Dorg.slf4j.simpleLogger.log.CliHats=<YOUR DESIRED LOG LEVEL>
 ```
