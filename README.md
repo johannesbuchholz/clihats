@@ -1,3 +1,5 @@
+![Maven Central](https://img.shields.io/maven-central/v/io.github.johannesbuchholz/clihats?style=for-the-badge)
+
 # Welcome to CliHats
 
 CliHats is a java library to expose aspects of an existing program to the command line: Extend your program with a command-line interface like putting a hat on.
@@ -253,6 +255,7 @@ By default, option parsers provide their values as `java.lang.String`. If a comm
 - `LocalDate` 
 - `LocalDateTime`
 - `BigDecimal`
+
 Explicitly declaring a mapper overrides this behaviour.
 
 It is noteworthy that a missing non-required option skips value mapping and the respective parameter is directly set to `null`.
