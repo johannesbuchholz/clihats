@@ -8,7 +8,7 @@
 
     <groupId>io.github.johannesbuchholz</groupId>
     <artifactId>clihats</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <name>CliHats</name>
     <description>CliHats is a java library to easily extend your java program with a command-line interface in a functional, declarative style.</description>
@@ -165,6 +165,42 @@
                         </goals>
                         <configuration>
                             <keyname>${gpg.keyname}</keyname>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.15.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>2.2.3</version>
+                <executions>
+                    <execution>
+                        <id>convert-to-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}</sourceDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}</directory>
+                                    <includes>
+                                        <include>src/**</include>
+                                        <include>pom.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <sourceDocumentName>doc.adoc</sourceDocumentName>
+                            <attributes>
+                                <source-highlighter>coderay</source-highlighter>
+                                <toc>left</toc>
+                            </attributes>
                         </configuration>
                     </execution>
                 </executions>
