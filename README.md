@@ -8,15 +8,16 @@ CliHats offers
 - Declarative and functional API
 - Automatic selection of commands based on user inputs
 - Option parsing
-- Automatically generated help pages and error messages
+- Effortless help and error messages
 
 ## Why CliHats?
 
 In contrary to other parameter *parsers* like [JCommander](https://github.com/cbeust/jcommander), CliHats is a command-line interface *builder*. That means, CliHats is not about handing out an object containing command-line arguments but about creating the command-line interface program itself.
 
 ### Is CliHats the right tool for me?
-If you want to offer your users a toolset of methods behind one single access point, CliHats will come in handy. This is especially true, if the methods posses relatively simple signatures with few parameters and are easily deducible from String values.
-If you only want to invoke one method with more complex parameter types, you might be better off using a plain parameter parser like JCommander.
+If you want to offer your users a toolset of methods behind one single access point, CliHats will come in handy. This is especially true if the methods possess relatively simple signatures and a handful of parameters.
+
+If you only want to invoke one method with one complex parameter type, you might be better off using a parameter parser like JCommander.
 
 To make a long story short:
 - CliHats provides a functional view on building a command-line interface - because a cli is about providing functionality.
@@ -28,4 +29,4 @@ To make a long story short:
 CliHats is available on [Maven Central](https://mvnrepository.com/artifact/io.github.johannesbuchholz/clihats).
 
 ## Documentation
-The [documentation](https://johannesbuchholz.github.io/clihats/doc.html) contains a quickstart example and details on how to use and configure CliHats to your needs. 
+The [documentation](https://johannesbuchholz.github.io/clihats/doc.html) contains a quickstart example and details on how to use and configure CliHats to your needs.
