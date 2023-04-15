@@ -8,19 +8,18 @@
 
     <groupId>io.github.johannesbuchholz</groupId>
     <artifactId>clihats</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-6-1bc82b01-SNAPSHOT</version>
 
-    <name>${project.groupId}:${project.artifactId}</name>
+    <name>CliHats</name>
     <description>CliHats is a java library to easily extend your java program with a command-line interface in a functional, declarative style.</description>
     <url>https://github.com/johannesbuchholz/clihats</url>
-
+    <inceptionYear>2023</inceptionYear>
     <licenses>
         <license>
             <name>MIT License</name>
             <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
-
     <developers>
         <developer>
             <name>Johannes Buchholz</name>
@@ -28,10 +27,8 @@
             <url>https://github.com/johannesbuchholz</url>
         </developer>
     </developers>
-
     <scm>
         <connection>scm:git:git://github.com/johannesbuchholz/clihats.git</connection>
-        <developerConnection>scm:git:ssh://github.com/johannesbuchholz/clihats.git</developerConnection>
         <url>https://github.com/johannesbuchholz/clihats</url>
     </scm>
 
@@ -56,11 +53,6 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -173,6 +165,42 @@
                         </goals>
                         <configuration>
                             <keyname>${gpg.keyname}</keyname>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.15.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>2.2.3</version>
+                <executions>
+                    <execution>
+                        <id>convert-to-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}</sourceDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}</directory>
+                                    <includes>
+                                        <include>src/**</include>
+                                        <include>pom.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <sourceDocumentName>doc.adoc</sourceDocumentName>
+                            <attributes>
+                                <source-highlighter>coderay</source-highlighter>
+                                <toc>left</toc>
+                            </attributes>
                         </configuration>
                     </execution>
                 </executions>
