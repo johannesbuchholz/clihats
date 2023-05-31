@@ -38,6 +38,8 @@ import java.util.stream.Stream;
 public class CommandLineInterfaceProcessor extends AbstractProcessor {
 
     public static final String IMPLEMENTATION_VERSION = CommandLineInterfaceProcessor.class.getPackage().getImplementationVersion();
+    public static final String JAVA_VERSION = System.getProperty("java.version");
+    public static final String JAVA_VENDOR = System.getProperty("java.vendor");
 
     public static TypeElement cliAnnotationType;
     public static TypeElement commandAnnotationType;

@@ -118,11 +118,12 @@ public class CommanderProviderCodeGenerator {
     }
 
     private String generateClassAnnotationCode() {
-        return String.format("@Generated(value = \"%s\", date = \"%s\", comments = \"Processor version %s\")",
-                CommandLineInterfaceProcessor.class.getCanonicalName(),
-                DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
-                CommandLineInterfaceProcessor.IMPLEMENTATION_VERSION
-        );
+        return "@Generated(" + NEW_LINE_INDENT_DOUBLE +
+                "value = \"" + CommandLineInterfaceProcessor.class.getCanonicalName() + "\"," + NEW_LINE_INDENT_DOUBLE +
+                "date = \"" + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "\"," + NEW_LINE_INDENT_DOUBLE +
+                "comments = \"" + "Implementation version " + CommandLineInterfaceProcessor.IMPLEMENTATION_VERSION +
+                ", " + "Java " + CommandLineInterfaceProcessor.JAVA_VERSION + " (" + CommandLineInterfaceProcessor.JAVA_VENDOR + ")" + "\"\n" +
+                ")";
     }
 
     private String generateImportStringLines(Set<String> imports, String packageName) {
