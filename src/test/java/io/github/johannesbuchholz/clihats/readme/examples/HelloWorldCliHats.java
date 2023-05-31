@@ -45,10 +45,14 @@ public class HelloWorldCliHats {
     @Command
     // end::annotation-command-2[]
     public static void sayHelloToPerson(
-            // tag::annotation-options[]
-            @Option(necessity = OptionNecessity.REQUIRED) String name,
-            @Option(flagValue = "true", defaultValue = "false") Boolean polite
-            // end::annotation-options[]
+            // tag::annotation-options-name[]
+            @Option(necessity = OptionNecessity.REQUIRED)
+            // end::annotation-options-name[]
+            String name,
+            // tag::annotation-options-polite[]
+            @Option(flagValue = "true", defaultValue = "false")
+            // end::annotation-options-polite[]
+            Boolean polite
     ) {
         System.out.printf("Hello, %s!\n", name);
         if (polite)

@@ -4,7 +4,7 @@
 :hardbreaks-option:
 :prewrap!:
 :version: 0.0.1
-:tags-example-class-clean: example-class;!annotation-cli;!example-class-main;!annotation-command;!annotation-command-2;!annotation-options
+:tags-example-class-clean: example-class;!annotation-cli;!example-class-main;!annotation-command;!annotation-command-2;!annotation-options-name;!annotation-options-polite
 :tags-example-class-slim: example-class-slim;!example-class-content
 
 image:https://img.shields.io/maven-central/v/io.github.johannesbuchholz/clihats[Maven Central]
