@@ -42,7 +42,7 @@ get_version() {
   fi
 
   if [[ ${prerelease} ]]; then
-    echo "${major}.${minor}.$(( patch+1 ))-${version_suffix}"
+    echo "${major}.${minor}.${patch}-${version_suffix}"
   else
     echo "${major}.${minor}.${patch}"
   fi
