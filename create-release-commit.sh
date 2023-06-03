@@ -25,9 +25,9 @@ get_version() {
   patch=$(echo "${previous_version}" | cut -d "." -f3)
 
   log_since_offset=$(git log -n "${commit_offset}" --format=%s)
-  major_steps=$(echo "$log_since_offset" | grep -E "${major_regex}" | wc -l)
-  minor_steps=$(echo "$log_since_offset" | grep -E "${minor_regex}" | wc -l)
-  patch_steps=$(echo "$log_since_offset" | grep -E "${patch_regex}" | wc -l)
+  major_steps=$(echo "$log_since_offset" | grep -Ec "${major_regex}")
+  minor_steps=$(echo "$log_since_offset" | grep -Ec "${minor_regex}")
+  patch_steps=$(echo "$log_since_offset" | grep -Ec "${patch_regex}")
   version_suffix="${commit_offset}-$(git rev-parse --short=8 HEAD)-SNAPSHOT"
 
   if [[ ${major_steps} -gt 0 ]]; then
