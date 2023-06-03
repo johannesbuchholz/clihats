@@ -59,20 +59,20 @@ public class CommanderProviderCodeGenerator {
         Set<String> imports = MANDATORY_IMPORTS;
         imports.addAll(fieldCodeData.getImportPackages());
 
-        String packageName = AbstractCommanderProvider.class.getPackage().getName();
+        String packageName = AbstractCommanderProvider.getImplementationPackageName();
 
         String classFileContent = String.format(
                 CLASS_CODE_TEMPLATE,
                 packageName,
                 generateImportStringLines(imports, packageName),
                 generateClassAnnotationCode(),
-                AbstractCommanderProvider.IMPL_CLASS_NAME,
+                AbstractCommanderProvider.getImplementationSimpleName(),
                 AbstractCommanderProvider.class.getSimpleName(),
                 TextUtils.indentEveryLine(fieldCodeData.getCodeSnippet()),
                 TextUtils.indentEveryLine(generateGetterCode())
         );
 
-        return new ProgramCodeData(classFileContent, packageName + "." + AbstractCommanderProvider.IMPL_CLASS_NAME);
+        return new ProgramCodeData(classFileContent, AbstractCommanderProvider.getImplementationQualifiedName());
     }
 
     private SnippetCodeData generateFieldCode(Map<String, ExtendedSnippetCodeData> commanderCodeSnippets) {
@@ -103,7 +103,7 @@ public class CommanderProviderCodeGenerator {
 
     private String generateGetterCode() {
         return "@Override\n" +
-                "public " + MAP_TYPE_STRING + " " + AbstractCommanderProvider.IMPL_ABSTRACT_METHOD_NAME + "() {\n" +
+                "public " + MAP_TYPE_STRING + " " + AbstractCommanderProvider.getAbstractMethodName() + "() {\n" +
                 LINE_INDENT + "return " + GENERATED_FIELD_NAME + ";\n" +
                 "}";
     }

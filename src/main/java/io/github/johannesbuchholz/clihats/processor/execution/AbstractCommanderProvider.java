@@ -11,15 +11,20 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractCommanderProvider {
 
-    public static final String IMPL_CLASS_NAME = "CommanderProvider";
-    public static final String IMPL_ABSTRACT_METHOD_NAME = "supplyCommanderByCli";
+    public static String getAbstractMethodName() {
+        return "supplyCommanderByCli";
+    }
+
+    public static String getImplementationPackageName() {
+        return AbstractCommanderProvider.class.getPackage().getName();
+    }
 
     public static String getImplementationSimpleName() {
-        return IMPL_CLASS_NAME;
+        return "CommanderProvider";
     }
 
     public static String getImplementationQualifiedName() {
-        return AbstractCommanderProvider.class.getPackage().getName() + "." + getImplementationSimpleName();
+        return getImplementationPackageName() + "." + getImplementationSimpleName();
     }
 
     static AbstractCommanderProvider instantiateImplementation() throws ClassNotFoundException {
