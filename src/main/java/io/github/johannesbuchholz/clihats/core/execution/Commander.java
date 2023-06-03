@@ -9,6 +9,7 @@ import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
 import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,15 +29,8 @@ public class Commander implements Documented {
     private static final int COMMAND_DESCRIPTION_WIDTH = 76;
     private final List<String> helpArgs = List.of("--help");
     private final String cliName;
-    // FIXME: Make this a map form String[] to Command, to not use the concatenated name internally.
-    private final Map<String, Command> commands;
+    private final Map<Command.Name, Command> commands;
     private final String description;
-
-    private Commander(String cliName, Map<String, Command> commands, String description) {
-        this.cliName = cliName;
-        this.commands = commands;
-        this.description = description;
-    }
 
     /**
      * Creates a new Commander with the specified name.
@@ -48,20 +42,10 @@ public class Commander implements Documented {
         return new Commander(Objects.requireNonNull(name).trim(), Map.of(), "");
     }
 
-    private static Map<String, Command> generateCommandMap(Command[] commands) {
-        Map<String, Command> map = new HashMap<>(commands.length);
-        for (Command c : commands) {
-            if (c == null) {
-                throw new IllegalArgumentException("Encountered null");
-            }
-            String key = c.getNormalizedName();
-            if (map.containsKey(key)) {
-                throw new IllegalArgumentException("Encountered multiple commands with identical name identifier: " + Arrays.toString(c.getNameIdentifier()));
-            } else {
-                map.put(key, c);
-            }
-        }
-        return map;
+    private Commander(String cliName, Map<Command.Name, Command> commands, String description) {
+        this.cliName = cliName;
+        this.commands = commands;
+        this.description = description;
     }
 
     /**
@@ -73,7 +57,9 @@ public class Commander implements Documented {
      */
     public Commander withCommands(Command... commands) throws CommanderCreationException {
         checkForCommandConflicts(commands);
-        return new Commander(cliName, generateCommandMap(commands), description);
+        Map<Command.Name, Command> commandMap = Arrays.stream(commands)
+                .collect(Collectors.toUnmodifiableMap(Command::getName, Function.identity()));
+        return new Commander(cliName, commandMap, description);
     }
 
     /**
@@ -137,17 +123,10 @@ public class Commander implements Documented {
         Command foundCommand = null;
         int pointer = 0;
         while (foundCommand == null && pointer < inputArgs.length) {
-            String nameCandidate = trimAndConcat(Arrays.copyOfRange(inputArgs, 0, ++pointer));
-            foundCommand = commands.get(nameCandidate);
+            String[] nameCandidate = Arrays.copyOfRange(inputArgs, 0, ++pointer);
+            foundCommand = commands.get(Command.Name.from(nameCandidate));
         }
         return new CommandSearchResult(foundCommand, pointer);
-    }
-
-
-    private String trimAndConcat(String[] stringParts) {
-        return Arrays.stream(stringParts)
-                .map(String::trim)
-                .collect(Collectors.joining(" "));
     }
 
     private void throwHelpException(CommandSearchResult commandSearchResult) throws CliHelpCallException {
@@ -171,10 +150,10 @@ public class Commander implements Documented {
         TextMatrix matrixCommands = TextMatrix.empty();
         if (!commands.isEmpty()) {
             matrixHeader.row(TextCell.getNew("Commands:"));
-            commands.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(entry -> matrixCommands
-                            .row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, entry.getKey(), entry.getValue().getDescription())
+            commands.values().stream()
+                    .sorted(Comparator.comparing(Command::getDisplayName))
+                    .forEach(command ->
+                            matrixCommands.row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, command.getDisplayName(), command.getDescription())
                     );
         }
         return matrixHeader + "\n" +

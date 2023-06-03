@@ -27,7 +27,7 @@ public class Command implements Documented {
     private final List<AbstractOptionParser<?>> parsers;
     private final String description;
 
-    private final String[] nameIdentifier;
+    private final Name name;
     private final InputParser inputParser;
 
     /**
@@ -46,18 +46,11 @@ public class Command implements Documented {
      * @throws NullPointerException if the specified name is null.
      */
     public static Command forName(String name) throws CommandCreationException {
-        return new Command(nameIdentifierFrom(Objects.requireNonNull(name)), Instruction.empty(), List.of(), "");
+        return new Command(Name.from(Objects.requireNonNull(name)), Instruction.empty(), List.of(), "");
     }
 
-    /**
-     * "a bc d efg" becomes [a, bc, d, efg]
-     */
-    private static String[] nameIdentifierFrom(String rawName) {
-        return rawName.trim().split("\\s+");
-    }
-
-    private Command(String[] nameIdentifier, Instruction instruction, List<AbstractOptionParser<?>> parsers, String description) throws CommandCreationException {
-        this.nameIdentifier = nameIdentifier;
+    private Command(Name name, Instruction instruction, List<AbstractOptionParser<?>> parsers, String description) throws CommandCreationException {
+        this.name = name;
         this.instruction = instruction;
         this.parsers = parsers;
         this.description = description;
@@ -76,7 +69,7 @@ public class Command implements Documented {
      * @see AbstractOptionParser
      */
     public Command withParsers(AbstractOptionParser<?>... parsers) {
-        return new Command(nameIdentifier, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
+        return new Command(name, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
     }
 
     /**
@@ -86,7 +79,7 @@ public class Command implements Documented {
      * @throws NullPointerException if the specified description is null.
      */
     public Command withDescription(String description) {
-        return new Command(nameIdentifier, instruction, parsers, Objects.requireNonNullElse(description, "").trim());
+        return new Command(name, instruction, parsers, Objects.requireNonNullElse(description, "").trim());
     }
 
     /**
@@ -97,7 +90,7 @@ public class Command implements Documented {
      * @see Instruction
      */
     public Command withInstruction(Instruction instruction) {
-        return new Command(nameIdentifier, Objects.requireNonNull(instruction), parsers, description);
+        return new Command(name, Objects.requireNonNull(instruction), parsers, description);
     }
 
     // functionality
@@ -119,19 +112,22 @@ public class Command implements Documented {
         }
     }
 
-    public String[] getNameIdentifier() {
-        return nameIdentifier;
+    /**
+     * Returns the identifying name of this command.
+     */
+    public Name getName() {
+        return name;
     }
 
     /**
-     * Returns the normalized name identifier received from {@link #getNameIdentifier()} as a String by joining with one
+     * Returns the normalized name identifier received from {@link #getName()} as a String by joining with one
      * single whitespace.
      * <p>
      *     This method is used to provide a human readable representation of this command.
      * </p>
      */
-    public String getNormalizedName() {
-        return String.join(" ", nameIdentifier);
+    public String getDisplayName() {
+        return name.toString();
     }
 
     public String getDescription() {
@@ -141,7 +137,7 @@ public class Command implements Documented {
     protected List<String> conflictsWith(List<String> preservedIdentifiers) {
         return Stream.concat(
                 // check names of this
-                Arrays.stream(nameIdentifier)
+                Arrays.stream(name.nameParts)
                         .filter(preservedIdentifiers::contains)
                         .map(namePart -> String.format("Command %s contains name part %s conflicting with preserved identifiers", this, namePart)),
                 // check names of parsers
@@ -152,7 +148,7 @@ public class Command implements Documented {
     }
 
     protected List<String> conflictsWith(Command other) {
-        List<String> conflictMessages = new LinkedList<>();
+        List<String> conflictMessages = new ArrayList<>();
         if (this == other || this.equals(other)) {
             conflictMessages.add(String.format("Command %s is registered multiple times", this));
         }
@@ -161,7 +157,7 @@ public class Command implements Documented {
     }
 
     private String generateHelpString() {
-        String normalizedName = getNormalizedName();
+        String normalizedName = getDisplayName();
         TextMatrix matrixHeader = TextMatrix.empty()
                 .row(COMMAND_DESCRIPTION_WIDTH, "Help for " + normalizedName);
         if (!description.isEmpty()) {
@@ -184,7 +180,7 @@ public class Command implements Documented {
 
     private void checkForInternalParserConflicts(List<AbstractOptionParser<?>> parsers) throws CommandCreationException {
         List<AbstractOptionParser<?>> processedParsers = new ArrayList<>(parsers.size());
-        List<String> conflictsMessages = new LinkedList<>();
+        List<String> conflictsMessages = new ArrayList<>();
         for (AbstractOptionParser<?> parser : parsers) {
             processedParsers.stream()
                     .flatMap(coherent -> coherent.conflictsWith(parser).stream())
@@ -212,7 +208,7 @@ public class Command implements Documented {
     }
 
     private List<String> conflictsWith(AbstractOptionParser<?> parser) {
-        List<String> nameParts = Arrays.asList(nameIdentifier);
+        List<String> nameParts = Arrays.asList(name.nameParts);
         return Arrays.stream(parser.getNames())
                 .filter(nameParts::contains)
                 .map(name -> String.format("Name conflict with parser %s on name %s", parser, name))
@@ -226,7 +222,7 @@ public class Command implements Documented {
 
     @Override
     public String toString() {
-        return String.format("%s{name=%s}", this.getClass().getSimpleName(), getNormalizedName());
+        return String.format("%s{name=%s}", this.getClass().getSimpleName(), getDisplayName());
     }
 
     @Override
@@ -234,12 +230,47 @@ public class Command implements Documented {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Command command = (Command) o;
-        return Arrays.equals(nameIdentifier, command.nameIdentifier);
+        return Objects.equals(name, command.name);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(nameIdentifier);
+        return Objects.hash(name);
+    }
+
+    public static class Name {
+
+        private final String[] nameParts;
+
+        static Name from(String rawName) {
+            return new Name(rawName.trim().split("\\s+"));
+        }
+
+        static Name from(String[] nameParts) {
+            return new Name(nameParts);
+        }
+
+        private Name(String[] nameParts) {
+            this.nameParts = nameParts;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Name name = (Name) o;
+            return Arrays.equals(nameParts, name.nameParts);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(nameParts);
+        }
+
+        @Override
+        public String toString() {
+            return String.join(" ", nameParts);
+        }
     }
 
 }
