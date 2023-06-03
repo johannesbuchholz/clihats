@@ -36,8 +36,6 @@ public class CommanderProviderCodeGenerator {
             "\n" +
             "%s\n" +
             "\n" +
-            "%s\n" +
-            "\n" +
             "}";
     private static final String GENERATED_FIELD_NAME = "commanderByCliName";
     private static final String MAP_TYPE_STRING = "Map<String, Commander>";
@@ -70,18 +68,11 @@ public class CommanderProviderCodeGenerator {
                 generateClassAnnotationCode(),
                 AbstractCommanderProvider.IMPL_CLASS_NAME,
                 AbstractCommanderProvider.class.getSimpleName(),
-                TextUtils.indentEveryLine(generateStaticInitializer()),
                 TextUtils.indentEveryLine(fieldCodeData.getCodeSnippet()),
                 TextUtils.indentEveryLine(generateGetterCode())
         );
 
         return new ProgramCodeData(classFileContent, packageName + "." + AbstractCommanderProvider.IMPL_CLASS_NAME);
-    }
-
-    private String generateStaticInitializer() {
-        return String.format("static {\n%s\n}",
-                LINE_INDENT + String.format("new %s().%s();",
-                        AbstractCommanderProvider.IMPL_CLASS_NAME, AbstractCommanderProvider.IMPL_REGISTER_METHOD_NAME));
     }
 
     private SnippetCodeData generateFieldCode(Map<String, ExtendedSnippetCodeData> commanderCodeSnippets) {

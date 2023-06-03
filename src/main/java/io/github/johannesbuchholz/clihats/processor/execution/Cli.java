@@ -9,11 +9,7 @@ public class Cli {
     private final CliExceptionHandler cliExceptionHandler = new CliExceptionHandler();
     private final Commander commander;
 
-    public static Cli getNew(Commander commander) {
-        return new Cli(commander);
-    }
-
-    private Cli(Commander commander) {
+    Cli(Commander commander) {
         this.commander = commander;
     }
 
