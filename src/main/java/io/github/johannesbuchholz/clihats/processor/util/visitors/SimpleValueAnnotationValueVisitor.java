@@ -1,4 +1,4 @@
-    package io.github.johannesbuchholz.clihats.util.visitors;
+    package io.github.johannesbuchholz.clihats.processor.util.visitors;
 
     import javax.lang.model.util.SimpleAnnotationValueVisitor9;
     import java.util.Set;

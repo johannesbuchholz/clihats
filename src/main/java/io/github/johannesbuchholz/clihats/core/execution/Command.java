@@ -5,7 +5,6 @@ import io.github.johannesbuchholz.clihats.core.exceptions.execution.ClientCodeEx
 import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
 import io.github.johannesbuchholz.clihats.core.exceptions.execution.ParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -120,12 +119,6 @@ public class Command implements Documented {
         }
     }
 
-    /**
-     * The normalized name-words of this command:
-     * <p>
-     *      Example: " my     command-name  "  becomes ["my", "command-name"]
-     * </p>
-     */
     public String[] getNameIdentifier() {
         return nameIdentifier;
     }
@@ -138,7 +131,7 @@ public class Command implements Documented {
      * </p>
      */
     public String getNormalizedName() {
-        return TextUtils.trimAndConcat(nameIdentifier);
+        return String.join(" ", nameIdentifier);
     }
 
     public String getDescription() {

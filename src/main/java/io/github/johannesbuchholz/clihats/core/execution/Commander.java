@@ -7,7 +7,6 @@ import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommanderExe
 import io.github.johannesbuchholz.clihats.core.exceptions.execution.UnknownCommandException;
 import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
 import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,6 +28,7 @@ public class Commander implements Documented {
     private static final int COMMAND_DESCRIPTION_WIDTH = 76;
     private final List<String> helpArgs = List.of("--help");
     private final String cliName;
+    // FIXME: Make this a map form String[] to Command, to not use the concatenated name internally.
     private final Map<String, Command> commands;
     private final String description;
 
@@ -137,10 +137,17 @@ public class Commander implements Documented {
         Command foundCommand = null;
         int pointer = 0;
         while (foundCommand == null && pointer < inputArgs.length) {
-            String nameCandidate = TextUtils.trimAndConcat(Arrays.copyOfRange(inputArgs, 0, ++pointer));
+            String nameCandidate = trimAndConcat(Arrays.copyOfRange(inputArgs, 0, ++pointer));
             foundCommand = commands.get(nameCandidate);
         }
         return new CommandSearchResult(foundCommand, pointer);
+    }
+
+
+    private String trimAndConcat(String[] stringParts) {
+        return Arrays.stream(stringParts)
+                .map(String::trim)
+                .collect(Collectors.joining(" "));
     }
 
     private void throwHelpException(CommandSearchResult commandSearchResult) throws CliHelpCallException {

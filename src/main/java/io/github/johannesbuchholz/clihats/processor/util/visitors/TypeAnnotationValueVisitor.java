@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.util.visitors;
+package io.github.johannesbuchholz.clihats.processor.util.visitors;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;

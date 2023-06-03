@@ -1,5 +1,4 @@
-package io.github.johannesbuchholz.clihats.util;
-
+package io.github.johannesbuchholz.clihats.processor.util;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -116,7 +115,6 @@ public class ProcessingUtils {
             throw new IllegalStateException("Found more than one no-arg constructor for type " + typeElement);
     }
 
-
     public static <T extends Enum<T>> T getEnumFromTypeElement(EnumSet<T> enumTypes, VariableElement enumElement, ProcessingEnvironment processingEnvironment) {
         if (enumElement.getKind() != ElementKind.ENUM_CONSTANT)
             throw new IllegalArgumentException("Given type element does not belong to an enum constant");
@@ -128,4 +126,5 @@ public class ProcessingUtils {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Given type element %s does not belong to any value of %s", enumElement, enumTypes)));
     }
+
 }

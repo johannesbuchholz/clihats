@@ -2,7 +2,7 @@ package io.github.johannesbuchholz.clihats.core.exceptions.execution;
 
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.ParsingResult;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
+import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
 
 import java.util.LinkedList;
 import java.util.List;

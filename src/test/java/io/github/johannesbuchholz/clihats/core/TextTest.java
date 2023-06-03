@@ -3,7 +3,7 @@ package io.github.johannesbuchholz.clihats.core;
 import io.github.johannesbuchholz.clihats.core.execution.text.Alignment;
 import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
 import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
+import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
 import org.junit.Test;
 
 import java.util.List;

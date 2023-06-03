@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.util;
+package io.github.johannesbuchholz.clihats.processor.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

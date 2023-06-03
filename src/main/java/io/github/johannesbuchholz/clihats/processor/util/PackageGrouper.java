@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.util;
+package io.github.johannesbuchholz.clihats.processor.util;
 
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;

@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.util;
+package io.github.johannesbuchholz.clihats.processor.util;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -36,17 +36,6 @@ public class TextUtils {
                 .replaceAll("\\s{2,}", " ")
                 .replace("\"", "\\\"")
                 .trim();
-    }
-
-    /**
-     * Concatenates the given strings by trimming and joining with one single whitespace.
-     *
-     * @throws NullPointerException if any String from the array or the array itself is null.
-     */
-    public static String trimAndConcat(String[] stringParts) {
-        return Arrays.stream(stringParts)
-                .map(s -> Objects.requireNonNull(s).trim())
-                .collect(Collectors.joining(" "));
     }
 
     /**

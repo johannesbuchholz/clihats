@@ -11,10 +11,10 @@ import io.github.johannesbuchholz.clihats.processor.mapper.defaults.NoMapper;
 import io.github.johannesbuchholz.clihats.processor.model.CommandDto;
 import io.github.johannesbuchholz.clihats.processor.model.CommanderDto;
 import io.github.johannesbuchholz.clihats.processor.model.ProgramCodeData;
-import io.github.johannesbuchholz.clihats.util.CliAutoDetector;
-import io.github.johannesbuchholz.clihats.util.ProcessingUtils;
-import io.github.johannesbuchholz.clihats.util.visitors.ArrayOfTypeAnnotationValueVisitor;
-import io.github.johannesbuchholz.clihats.util.visitors.SimpleValueAnnotationValueVisitor;
+import io.github.johannesbuchholz.clihats.processor.util.CliAutoDetector;
+import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
+import io.github.johannesbuchholz.clihats.processor.util.visitors.ArrayOfTypeAnnotationValueVisitor;
+import io.github.johannesbuchholz.clihats.processor.util.visitors.SimpleValueAnnotationValueVisitor;
 import org.slf4j.Logger;
 
 import javax.annotation.processing.AbstractProcessor;

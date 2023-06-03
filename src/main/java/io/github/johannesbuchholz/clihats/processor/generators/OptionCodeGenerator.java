@@ -9,9 +9,9 @@ import io.github.johannesbuchholz.clihats.processor.logging.Logging;
 import io.github.johannesbuchholz.clihats.processor.mapper.DefaultMapperRegistry;
 import io.github.johannesbuchholz.clihats.processor.model.OptionAnnotationDto;
 import io.github.johannesbuchholz.clihats.processor.model.SnippetCodeData;
-import io.github.johannesbuchholz.clihats.util.ProcessingUtils;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
-import io.github.johannesbuchholz.clihats.util.UserInputPrompter;
+import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
+import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
+import io.github.johannesbuchholz.clihats.processor.util.UserInputPrompter;
 import org.slf4j.Logger;
 
 import javax.annotation.processing.ProcessingEnvironment;

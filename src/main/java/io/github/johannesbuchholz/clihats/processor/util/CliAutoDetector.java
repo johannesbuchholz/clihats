@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.util;
+package io.github.johannesbuchholz.clihats.processor.util;
 
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
 import io.github.johannesbuchholz.clihats.processor.logging.Logging;
