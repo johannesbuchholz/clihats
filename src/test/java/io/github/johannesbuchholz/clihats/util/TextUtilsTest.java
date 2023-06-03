@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TextUtilsTest {
 
@@ -20,10 +21,10 @@ public class TextUtilsTest {
     @Test
     public void hyphenStringTest() {
         List<String> originals = List.of(
-                "myHyphenString", "", "simple", "Big", "MyOtherString", "some-value", "HereWeAre-YeeHaa", "separated Words", "myLongerWordWith1Number"
+                "myHyphenString", "", "a b", "xY", "-", "---", "simple", "Big", "MyOtherString", "some-value", "HereWeAre-YeeHaa", "separated Words", "myLongerWordWith1Number"
         );
         List<String> expected = List.of(
-                "my-hyphen-string", "", "simple", "big", "my-other-string", "some-value", "here-we-are-yee-haa", "separated-words", "my-longer-word-with-1-number"
+                "my-hyphen-string", "", "ab", "x-y", "-", "---", "simple", "big", "my-other-string", "some-value", "here-we-are-yee-haa", "separated-words", "my-longer-word-with-1-number"
         );
 
         List<String> results = originals.stream()
@@ -31,6 +32,17 @@ public class TextUtilsTest {
                 .collect(Collectors.toList());
 
         assertEquals(expected, results);
+    }
+
+    @Test
+    public void hyphenStringTest_Null() {
+        Throwable npe = null;
+        try {
+            TextUtils.toHyphenString(null);
+        } catch (NullPointerException e) {
+            npe = e;
+        }
+        assertNotNull(npe);
     }
 
     @Test

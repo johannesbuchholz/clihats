@@ -56,18 +56,18 @@ public class TextUtils {
      * </p>
      */
     public static String toHyphenString(String original) {
-        if (original == null || original.isBlank())
-            return original;
+        Objects.requireNonNull(original);
         StringBuilder sb = new StringBuilder();
-        (original.substring(0, 1).toLowerCase() + original.substring(1)).chars()
+        original.chars()
                 .filter(c -> !Character.isSpaceChar(c))
                 .forEach(c -> {
-                    if (Character.isDigit(c) || (Character.isAlphabetic(c) && Character.isUpperCase(c)))
-                        sb.append("-").append(Character.toString(Character.toLowerCase(c)));
-                    else
-                        sb.append(Character.toString(c));
+                    if (Character.isDigit(c) || (Character.isAlphabetic(c) && Character.isUpperCase(c))) {
+                        if (sb.length() > 0 && sb.charAt(sb.length() - 1) != '-')
+                            sb.append("-");
+                    }
+                    sb.appendCodePoint(Character.toLowerCase(c));
                 });
-        return sb.toString().replaceAll("-{2,}", "-");
+        return sb.toString();
     }
 
     /**
