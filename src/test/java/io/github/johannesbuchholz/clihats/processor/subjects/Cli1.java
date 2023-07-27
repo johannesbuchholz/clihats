@@ -23,8 +23,8 @@ public class Cli1 {
     @Command(name = "command1", cli = Cli1.class)
     public static void myMethod1(
             @Option(position = 0) String arg1,
-            @Option(name = {"-a2", "-aa2"}) Integer arg2,
-            @Option(name = "-a3", defaultValue = "/my/default/path") Path arg3
+            @Option(name = {"--a2", "--aa2"}) Integer arg2,
+            @Option(name = "--a3", defaultValue = "/my/default/path") Path arg3
     ) {
         GlobalTestResult.setSuccess("command1", arg1, arg2, arg3);
     }
@@ -32,7 +32,7 @@ public class Cli1 {
     @Command(name = "command2", cli = Cli1.class)
     public static void myMethod2(
             @Option(name = "-r", necessity = OptionNecessity.REQUIRED) String r,
-            @Option(name = "-opt", flagValue = "Option-On", description = "This is a lengthy description for a string argument.") String arg1
+            @Option(name = "--opt", flagValue = "Option-On", description = "This is a lengthy description for a string argument.") String arg1
     ) {
         GlobalTestResult.setSuccess("command2", r, arg1);
     }

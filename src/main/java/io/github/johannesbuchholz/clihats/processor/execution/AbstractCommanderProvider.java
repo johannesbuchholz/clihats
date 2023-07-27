@@ -28,12 +28,12 @@ public abstract class AbstractCommanderProvider {
     }
 
     static AbstractCommanderProvider instantiateImplementation() throws ClassNotFoundException {
-        Class<? extends AbstractCommanderProvider> aClass = AbstractCommanderProvider.class.getClassLoader()
+        Class<? extends AbstractCommanderProvider> abstractCommanderProviderType = AbstractCommanderProvider.class.getClassLoader()
                 .loadClass(getImplementationQualifiedName())
                 .asSubclass(AbstractCommanderProvider.class);
         try {
             return (AbstractCommanderProvider) MethodHandles.publicLookup()
-                    .findConstructor(aClass, MethodType.methodType(void.class))
+                    .findConstructor(abstractCommanderProviderType, MethodType.methodType(void.class))
                     .invoke();
         } catch (Throwable e) {
             throw new IllegalStateException("Could not instantiate implementation: " + e.getMessage(), e);

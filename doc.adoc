@@ -1,21 +1,20 @@
-= Welcome to CliHats
 :toc: left
 :toclevels: 4
 :hardbreaks-option:
+:icons: font
 :prewrap!:
 :version: 0.0.1
-:tags-example-class-clean: example-class;!annotation-cli;!example-class-main;!annotation-command;!annotation-command-2;!annotation-options-name;!annotation-options-polite
-:tags-example-class-slim: example-class-slim;!example-class-content
 
-image:https://img.shields.io/maven-central/v/io.github.johannesbuchholz/clihats[Maven Central]
+= Welcome to CliHats
+johannesbuchholz@outlook.com
+Version {version}
 
-CliHats is a java library that lets you easily expose aspects of your java code to the command line. The command-line interface becomes a hat you simply put on your program.
+include::README.md[tags=readme-intro]
 
 .CliHats offers
-- Declarative and functional API
-- Automatic selection of commands based on user inputs
-- Option parsing
-- Automatically generated help pages and error messages
+--
+include::README.md[tags=readme-offers]
+--
 
 == Get CliHats
 Clihats is available on Maven Central. Depending on your build tool, add one of the following dependency declarations to your project.
@@ -41,69 +40,43 @@ If you want to use CliHats' annotation processor, you may add the following to y
 annotationProcessor 'io.github.johannesbuchholz:clihats:{version}'
 ----
 
-== Quickstart
-In this example we will use CliHats to make multiple existing methods available through a command-line interface.
+== Hello World CliHats
+In this example we use CliHats to expose multiple existing methods to the command line.
 
 Assume the below "Hello, World!" example.
-[source, java]
-----
-include::src/test/java/io/github/johannesbuchholz/clihats/readme/examples/HelloWorldCliHats.java[tags={tags-example-class-clean}]
-----
-
-We declare a command-line interface by annotating our class with `@CommandLineInterface`.
-[source, indent=0]
-----
-include::src/test/java/io/github/johannesbuchholz/clihats/readme/examples/HelloWorldCliHats.java[tags={tags-example-class-slim}]
-----
-
-Next, we add the first command to our command-line interface by annotating the method `sayHello` with `@Command`.
-[source, indent=0]
-----
-include::src/test/java/io/github/johannesbuchholz/clihats/readme/examples/HelloWorldCliHats.java[tags=example-class-say-hello]
-----
-
-By default, CliHats will automatically group commands to the first command-line interface it finds in the upwards package tree. In our case this is `HelloWorldCliHats`.
-
-We proceed in a similar fashion with the second method `sayHelloToPerson`. This time, we need CliHats to also set method parameters. We accomplish this by adding `@Option` to each parameter.
-[source, indent=0]
-----
-include::src/test/java/io/github/johannesbuchholz/clihats/readme/examples/HelloWorldCliHats.java[tags=example-class-say-hello-to-person]
-----
-
-Finally, it is left to add a java entrypoint to our program.
-
-In order to let CliHats choose commands and parse options, we need to pass the received String arguments to the command-line interface we want to invoke.
-For this, we load our previously declared command-line interface with `CliHats.get(HelloWorldCliHats.class)` and run it by calling `execute` passing the given arguments.
-[source, indent=0]
-----
-include::src/test/java/io/github/johannesbuchholz/clihats/readme/examples/HelloWorldCliHats.java[tags=example-class-main]
-----
-
-The complete class definition now looks like this:
 
 [source, java]
 ----
 include::src/test/java/io/github/johannesbuchholz/clihats/readme/examples/HelloWorldCliHats.java[tags=example-class]
 ----
+<1> The annotation `@CommandLineInterface` declares the class as a command-line interface.
+<2> The received entry point arguments are passed to the command-line interface we just declared.
+<3> The annotation `@Command` binds `sayHello` to the first command-line interface in the upwards package tree. In this case this is `HelloWorldCliHats`.
+<4> This parameter is required and must be supplied on each invocation of possessing command.
+<5> The second parameter is a flag-option. The required `Boolean` type is automatically mapped from the specified input values.
 
-Executing the above program without arguments results in a message similar to the following:
+Executing the above program without arguments results in a printed message similar to the following:
 ----
 Help for hello-world-cli-hats
-A simple "Hello, World!" program to demonstrate the capabilities of Clihats.
+A simple "Hello, World!" program to demonstrate the capabilities of CliHats.
 
 Commands:
-say-hello           Simply prints "Hello, World!".
+say-hello           Simply prints "Hello, World!"
 say-hello-to-person Prints a greeting to the specified name.
 ----
 
 If we run `{"say-hello-to-person", "--help"}` we receive a help message like this:
 ----
 Help for say-hello-to-person
+
+Synopsis:
+say-hello-to-person -n <value> [-p]
+
 Prints a greeting to the specified name.
 
-Options:
--n --name   (required) The name to greet.
--p --polite (flag)     If true, additionally prints "Nice to meet you!".
+Parameters:
+-n --name   (required) the name to greet.
+-p --polite (flag)     if true, additionally prints "Nice to meet you!".
 ----
 
 Running `{"say-hello-to-person", "-n", "John", "--polite"}` yields
@@ -114,19 +87,17 @@ Nice to meet you!
 
 But if we do not pass option `-n` and run `{"say-hello-to-person", "--polite"}`, we receive
 ----
-Error running hello-world-cli-hats: Exception during invocation of command say-hello-to-person: Invalid input arguments:
-> Missing required arguments:
-    -n
+Error running hello-world-cli-hats: Exception during invocation of command say-hello-to-person: Invalid input arguments: Missing required argument Option -n,--name
 ----
 
-The above program is an example mostly using default behaviour. CliHats leaves enough room for custom configuration such as parameter names and aliases, value mapping, default values and exception handling.
+The above program is an example mostly using default behaviour. CliHats leaves enough room for custom configuration like parameter names and aliases, value mapping, default values and exception handling.
 
 == Core concept
-The general concept follows a rather functional style in which a command-line interface is represented by a set of methods. Each method models one task like printing a program version, loading data from a file or sending a web-request. A task may require additional input like a filename, a web-address or credentials. These are provided by the user via options.
+CliHats implementation is divided into two packages: `core` and `processor`. The core-package contains the general domain specific classes for commands and options. The processor-package supplies an annotation processor which ultimately creates the command-line interface represented by annotations present in your "client code". For this, the processor creates code which instantiating objects from the core-package during runtime to resemble the desired command-line interface.
 
-Using CliHats, a command-line interface consists of one `Commander`. The commander possesses a collection of `Command` objects. Each command is responsible for one task represented by an `Instruction` and a list of `AbstractOptionParser` objects. Option parsers extract parameters from the command-line arguments and make them available to the command being executed.
+In general, CliHats represents a command-line interface by a set of methods. Each method models one task like printing a program version, loading data from a file or sending a web-request. A task may require additional input like a filename, a web-address or credentials. These inputs must be provided by the user via options.
 
-Although CliHats offers these structures as public classes which may be constructed and called "by hand", CliHats also comes with an annotation processor, automatically creating commanders, commands and option parsers based on annotations. One may fall back to manually defining a commander when more control over the configuration is required.
+Using CliHats, one command-line interface consists of one `Commander`. The commander possesses a collection of `Command` objects. Each command is responsible for one task represented by an `Instruction` and a list of `AbstractArgumentParser` objects. Argument parsers extract parameters from the command-line arguments and make them available to the command being executed.
 
 As an example, the generated Commander of the above "Hello, World!" setup looks like this:
 [source, indent=0]
@@ -136,13 +107,13 @@ Commander.forName("hello-world-cli-hats")
         .withCommands(
                 Command.forName("say-hello")
                         .withInstruction(args -> HelloWorldCliHats.sayHello())
-                        .withDescription("Simply prints \"Hello, World!\"."),
+                        .withDescription("Simply prints \"Hello, World!\""),
                 Command.forName("say-hello-to-person")
                         .withInstruction(args -> HelloWorldCliHats.sayHelloToPerson((String) args[0], (Boolean) args[1]))
                         .withDescription("Prints a greeting to the specified name.")
                         .withParsers(
-                                OptionParsers.valued("-n").withAliases("--name").isRequired(true).withDescription("the name to greet."),
-                                OptionParsers.flag("-p").withAliases("--polite").withFlagValue("true").withDefault("false").withMapper(new BooleanMapper()).withDescription("if true, additionally prints \"Nice to meet you!\"."))))
+                                ArgumentParsers.valuedOption("-n", "--name").withRequired(true).withDescription("the name to greet."),
+                                ArgumentParsers.flagOption("-p", "--polite").withFlagValue("true").withDefault("false").withMapper(new BooleanMapper()).withDescription("if true, additionally prints \"Nice to meet you!\".")))));
 ----
 
 === @CommandLineInterface
@@ -158,64 +129,71 @@ A command method must not define any primitive parameter.
 Per default, the command name is equal to the hyphenated name of the annotated method. It is also possible to explicitly set the name using parameter `name`.
 
 === @Option
-A method parameter annotated with `@Option` defines an option. Options only take effect on methods annotated with `@Command`. It is not required to declare annotate all method parameter. Non-option parameters are set to `null` whenever the respective command is invoked by CliHats.
+The annotation `@Option` instructs CliHats to pass arguments from the command line to the annotated method parameter. The Option-annotation only takes effect on methods annotated with `@Command`. It is not required to declare annotate all method parameter. Parameters without the Option-annotation are set to `null` whenever the respective command is invoked by CliHats.
 
-If a command is invoked by CliHats, each registered option parser scans the available input arguments and provides a value to its respective method parameter.
+Invoking a command through CliHats, each registered option parser scans the available command-line arguments and provides, potentially maps found values and passes them to its respective method parameter.
 
-Currently, there are three different option types available: valued options, flag options and positional options.
+CliHats'  parsing of command-line arguments follows to the https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html[POSIX Utility-Guidelines]. Hence, CliHats internally differentiates command-line arguments into "options", "operands" and potential "values" of options and operands. Each method parameter annotated with `@Option` lets CliHats create one argument parser. The respective parser type depends on the specified annotation parameters. CliHats offers three types of parsers:
 
-Positional option:: Positional options extract user defined values from a specific index. For example, the command `mkdir ./tmp` takes `./tmp` as a positional argument from index 0. These parsers are invoked last.
-A positional options is created if the parameter `position` is set to a non-negative zero-based index.
-Flag option:: Flag options are named switches providing one of two predefined values. Think of something like `--dry-run` or `--verbose`.
-A flag option is assumed if the parameter `flagValue` is set to a non-empty string.
-Valued option:: Valued options extract named user defined values like `--name "John"` or `--numbers=1,2,3,4`.
-A valued option is created if parameter `flagValue` and `position` is not set.
+Valued option parser:: Valued option parsers extract named user defined values like `--name "John"` or `--numbers=1,2,3,4`.
+This is the default type.
+Flag option parser:: Flag option are named switches providing one of two predefined values. Think of something like `--dry-run` or `--verbose`.
+A flag option parser is assumed if the parameter `flagValue` is set to a non-empty String.
+Operand parser:: Operand parsers extract values from a specific index. Operand values should be supplied last among the command-line arguments. For example, the command `mkdir ./tmp` takes `./tmp` as a positional argument from index 0.
+An operand is created if the parameter `position` is set to a non-negative zero-based index.
 
 ==== Option names and aliases
-Valued and flag options may be named individually via parameter `name`. This parameter takes an array of String values, where the first entry denotes the name. All following names are used as aliases.
+Valued and flag option parsers may be named configured to watch out individual names via parameter `name`. This parameter takes an array of String values and declares which values should be taken from the command-line arguments.
+Option names must conform to the following rules:
+* Names must start with `-`.
+* Names must not contain any space characters.
+* Names must be unique among all option names of a command.
 
-If `name` is not set, the option name is automatically set to `-` plus the first character of the parameter name. In that case, the alias name is also automatically set to the hyphenated parameter name prefixed with `--`.
+POSIX compliant option names consist of only one character and may be grouped behind one `-`.
 
-Positional options are not callable by their name and therefore only possess a name for internal identification and help pages.
+If `name` is not set, the option name is automatically set to `-` plus the first character of the method parameter name. In that case, an alias name is also automatically set to the hyphenated parameter name prefixed with `--`.
+
+For operand parsers, the `name` parameter must remain empty.
 
 ==== Option necessity
-Each option possesses a `necessity` determining CliHats behaviour if the respective option is missing.
+Each targeted method parameter possesses a `necessity` determining CliHats behaviour if the respective parser could not find a value.
 
-`OPTIONAL`:: The default for each Option. Results in the parameter value `null` if the option is not present.
-`REQUIRED`:: If set, missing the respective option aborts the execution with an error message.
-`PROMPT`:: A missing option with this necessity lets CliHats ask for manual user input over the command line.
-`MASKED_PROMPT`::  A missing option with this necessity lets CliHats ask for manual user input over the command line. Hides typed characters.
+`OPTIONAL`:: The default for each parser. Results in the parameter value `null` if the respective value has not been supplied.
+`REQUIRED`:: If set, a missing value aborts the execution with an error message.
+`PROMPT`:: Lets CliHats ask for manual user input over the command line in case of a missing value.
+`MASKED_PROMPT`::  Provides the same behaviour as `PROMPT` but hides typed characters.
 
-CliHats tries to obtain a console by calling `System.console()` when using `PROMT` or `MASKED_PROMT`, which may fail if there is no console available to the running JVM.
+Using `PROMT` or `MASKED_PROMT`, CliHats tries to obtain a console by calling `System.console()`, which may fail if there is no console available to the running JVM.
 
 ==== Value mapping
 By default, option parsers provide their values as `java.lang.String`. If a command method requires other parameter types, a mapper can be specified via the `mapper` parameter.
 
-CliHats is able to recognize a number of commonly used types and will automatically configure a suiting mapper. Currently, CliHats automatically configures mappers for these types:
+CliHats is able to recognize a number of commonly used types and will automatically configure a suiting mapper. Currently, CliHats automatically configures mappers for these parameter types:
 
-- `Path`
 - `Boolean`
 - `Integer`
 - `Double`
 - `Float`
-- `LocalDate`
-- `LocalDateTime`
-- `BigDecimal`
+- `java.math.BigDecimal`
+- `java.nio.file.Path`
+- `java.time.LocalDate`
+- `java.time.LocalDateTime`
 
 Explicitly declaring `mapper` overrides automatic mapper-deduction.
 
-It is noteworthy that a missing non-required option skips value mapping and the respective parameter is directly set to `null`.
+It is noteworthy that a missing non-required option skips value mapping and the respective method parameter is directly set to `null`.
 
 ==== Default values
-If an option is missing, their respective parameter is set to `null`. However, it is possible to declare a custom default value by setting parameter `defaultValue`. The provided default value is returned whenever the respective option is not set and behaves as if the user had provided that value. In particular, this means that value mapping applies.
+Default values are only relevant for parsers with optional necessity.
 
-For flag options, the parameter `flagValue` behaves as a primary default value that applies if the respective flag is present. The respective flag value always undergoes value mapping.
+If a value is missing from the provided command-line arguments, their respective method parameter is set to `null`. However, it is possible to declare a custom default value by setting the annotation parameter `defaultValue`. In case of a missing command-line value, the default value is supplied and behaves as if the user had provided that value. In particular, this means that value mapping also applies to default values.
 
-Default values are only relevant for non-required options.
+For flag options, the parameter `flagValue` behaves as a primary default value that applies if the respective flag is present. The specified flag value always undergoes value mapping.
 
 === Configuring help pages
-There are two ways to define the content of help pages: Either add javadoc comments to a command method or provide a description by setting parameter `description`. Using the parameter overrides description from javadoc.
-When generating help pages from javadoc, a command-annotated method may also contain `@param` tags to conveniently provide descriptions for the command's options.
+There are two ways to define the content of help pages: Either through javadoc comments or through parameter `description`. Using the description-parameter takes precedence over javadoc.
+
+Javadoc `@param` tags may be used to conveniently provide descriptions for options of a command.
 
 Analogously, use javadoc or the parameter `description` when defining help pages for a command-line interface declaration.
 
@@ -285,6 +263,8 @@ Then, declare an option using the above mapper.
 ----
 
 Make sure to close the opened InputStream when processing is done.
+
+Alternatively, pass a `java.nio.file.Path` object to the command method and handle the file processing in your code.
 
 === Receive a list of String
 Collecting multiple values into a list argument is possible by defining a suiting mapper.

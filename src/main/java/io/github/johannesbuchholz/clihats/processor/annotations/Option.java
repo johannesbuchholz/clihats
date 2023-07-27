@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.processor.annotations;
 
 import io.github.johannesbuchholz.clihats.core.execution.parser.FlagOptionParser;
-import io.github.johannesbuchholz.clihats.core.execution.parser.PositionalOptionParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.OperandParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ValuedOptionParser;
 import io.github.johannesbuchholz.clihats.processor.mapper.AbstractValueMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.NoMapper;
@@ -22,7 +22,7 @@ public @interface Option {
     /**
      * The position of the option in the arg array to be parsed starting at position 0.
      * <p>If set, a positional option declaration is assumed.</p>
-     * @see PositionalOptionParser
+     * @see OperandParser
      */
     int position() default -1;
 
@@ -45,13 +45,6 @@ public @interface Option {
      * <p>Ignored if {@link #flagValue()} is set.</p>
      */
     OptionNecessity necessity() default OptionNecessity.OPTIONAL;
-
-    /**
-     * One or no delimiter value allowed.
-     * <p>Ignored if {@code position} is greater that zero or {@link #flagValue} is set to {@code true}.</p>
-     * @see ValuedOptionParser
-     */
-    String delimiter() default "";
 
     /**
      * Returns the specified value whenever this option is missing.

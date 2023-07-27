@@ -20,7 +20,7 @@ public class ProcessorTest {
     @Test
     public void testCliInterfaceImpl_command1() {
         // given
-        String[] args = {"command1", "-a3", "some/path/blubb", "some-input", "-aa2", "789"};
+        String[] args = {"command1", "--a3", "some/path/blubb", "some-input", "--aa2", "789"};
 
         // when
         CliTestInvoker.testGeneratedCli(Cli1.class, args);
@@ -33,7 +33,7 @@ public class ProcessorTest {
     @Test
     public void testCliInterfaceImpl_command1_with_default() {
         // given
-        String[] args = {"command1", "some-input", "-aa2", "789"};
+        String[] args = {"command1", "some-input", "--aa2", "789"};
 
         // when
         CliTestInvoker.testGeneratedCli(Cli1.class, args);
@@ -46,7 +46,7 @@ public class ProcessorTest {
     @Test
     public void testCliInterfaceImpl_command2() {
         // given
-        String[] args = {"command2", "-opt", "-r", "required-input"};
+        String[] args = {"command2", "--opt", "-r", "required-input"};
 
         // when
         CliTestInvoker.testGeneratedCli(Cli1.class, args);
@@ -72,7 +72,7 @@ public class ProcessorTest {
     @Test
     public void testCliInterface2Impl_printall() {
         // given
-        String[] args = {"print-all", "vanilla", "input", "-f", "-t=2022-01-01", "--something", "optional-input"};
+        String[] args = {"print-all", "vanilla", "input", "-f", "-t", "2022-01-01", "--something", "optional-input"};
 
         // when
         CliTestInvoker.testGeneratedCli(Cli2.class, args);
@@ -102,7 +102,7 @@ public class ProcessorTest {
     @Test
     public void testCliInterface2_mapToListOfString() {
         // given
-        String[] args = {"list", "-l=one, two, three, and another"};
+        String[] args = {"list", "-l", "one, two, three, and another"};
 
         // when
         CliTestInvoker.testGeneratedCli(Cli2.class, args);
@@ -115,7 +115,7 @@ public class ProcessorTest {
     @Test
     public void testCliInterface2_mapToListOfX() {
         // given
-        String[] args = {"list-x", "-l=one, two, three, and another"};
+        String[] args = {"list-x", "-l", "one, two, three, and another"};
 
         // when
         CliTestInvoker.testGeneratedCli(Cli2.class, args);

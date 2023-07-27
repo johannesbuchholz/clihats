@@ -1,12 +1,13 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.TestResult;
-import io.github.johannesbuchholz.clihats.core.exceptions.MissingValueException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.ParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
-import io.github.johannesbuchholz.clihats.core.execution.ParsingResult;
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingValueException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.UnknownArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -44,6 +45,26 @@ public class NameTest {
     }
 
     @Test
+    public void shouldExecute_usingSecondPrimaryName() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name1 = "-a";
+        String name2 = "-b";
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(ValuedOptionParser.forName(name1, name2));
+        String stringArg = "a string argument";
+        String[] args = {name2, stringArg};
+
+        // when
+        c.execute(args);
+
+        // then
+        TestResult expected = TestResult.newExpected(stringArg);
+        assertEquals(expected, testResult);
+    }
+
+    @Test
     public void shouldExecute_returnInputArgUsingAlias() throws CommandExecutionException {
         // given
         TestResult testResult = TestResult.newEmpty();
@@ -52,8 +73,7 @@ public class NameTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withAliases(alias)
+                        .forName(name, alias)
                 );
         String stringArg = "a string argument";
         String[] args = {alias, stringArg};
@@ -129,29 +149,6 @@ public class NameTest {
     }
 
     @Test
-    public void shouldExecute_returnInputArgUsingDelimiter() throws CommandExecutionException {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withDelimiter("==")
-                );
-        String stringArg = "a string argument";
-        String compositeArg = "-a==" + stringArg;
-        String[] args = {compositeArg};
-
-        // when
-        c.execute(args);
-
-        // then
-        TestResult expected = TestResult.newExpected(stringArg);
-        assertEquals(expected, testResult);
-    }
-
-    @Test
     public void shouldExecute_returnMappedValue_BigDecimal() throws CommandExecutionException {
         // given
         TestResult testResult = TestResult.newEmpty();
@@ -199,132 +196,30 @@ public class NameTest {
         assertEquals(expected, testResult);
     }
 
+    @Test
+    public void shouldExecute_duplicateNames() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name = "-a";
+        String expectedValue = "expected value";
+        String[] args = {name, expectedValue};
+        // when
+        Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(ValuedOptionParser
+                        .forName(name, name))
+                .execute(args);
+
+        // then
+        TestResult expected = TestResult.newExpected(expectedValue);
+        assertEquals(expected, testResult);
+    }
+
     /*
 
     FAILURE TESTS
 
      */
-
-    @Test
-    public void shouldFail_wrongAliasNaming() {
-        // given
-        String name = "-a";
-        // when
-        IllegalArgumentException illegalArgumentException = null;
-        try {
-            Command.forName("run")
-                    .withInstruction(args -> {})
-                    .withParsers(ValuedOptionParser
-                            .forName(name)
-                            .withAliases(name)
-                    );
-        } catch (IllegalArgumentException e) {
-            illegalArgumentException = e;
-        }
-
-        // then
-        assertNotNull(illegalArgumentException);
-        assertTrue(illegalArgumentException.getMessage().contains(name));
-    }
-
-    @Test
-    public void shouldFail_wrongDelimiter_argumentWithoutValue() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withDelimiter(":")
-                );
-        String stringArg = "a string argument";
-        String compositeArg = "-a==" + stringArg;
-        String[] args = {compositeArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(compositeArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
-
-    @Test
-    public void shouldFail_noDelimiterSet_unknownArgument() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser.forName(name));
-        String stringArg = "a string argument";
-        String compositeArg = "-a==" + stringArg;
-        String[] args = {compositeArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(compositeArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
-
-    @Test
-    public void shouldFail_inputArgumentWithoutDelimiter_valueMissingAndUnknownArgument() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withDelimiter("==")
-                );
-        String stringArg = "a string argument";
-        String[] args = {name, stringArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putError(new MissingValueException(name));
-        parsingResultBuilder.putUnknown(stringArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
 
     @Test
     public void shouldFail_missingRequiredArgument() {
@@ -333,30 +228,19 @@ public class NameTest {
         String name = "-a";
         ValuedOptionParser<String> requiredParser = ValuedOptionParser
                 .forName(name)
-                .isRequired(true);
+                .withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser);
         String[] args = {};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putMissing(requiredParser);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(name));
     }
 
     @Test
@@ -371,53 +255,12 @@ public class NameTest {
         String[] args = {unknownArg};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(unknownArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
-
-    @Test
-    public void shouldFail_unknownArgumentAndRequiredArgumentMissing() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        ValuedOptionParser<String> requiredParser = ValuedOptionParser.forName("-a").isRequired(true);
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(requiredParser);
-        String unknownArg = "unknown";
-        String[] args = {unknownArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(unknownArg);
-        parsingResultBuilder.putMissing(requiredParser);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(UnknownArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(unknownArg));
     }
 
     @Test
@@ -437,22 +280,12 @@ public class NameTest {
         String[] args = {name, "anyways"};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putError(expectedThrow);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(ValueMappingException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(name));
     }
 
     @Test
@@ -460,28 +293,19 @@ public class NameTest {
         // given
         TestResult testResult = TestResult.newEmpty();
         String name = "-a";
+        ValuedOptionParser<String> stringValuedOptionParser = ValuedOptionParser.forName(name);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser.forName(name));
+                .withParsers(stringValuedOptionParser);
         String[] args = {name};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putError(new MissingValueException(name));
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingValueException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(name));
     }
 
 }

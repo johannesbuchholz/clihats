@@ -24,7 +24,7 @@ public class FlagTest {
     @Test
     public void testFlag_expectFlagStringOnFlagWithoutDeclaredDefaultValue() {
         // given
-        String[] args = {"flag-parser", "-fnd"};
+        String[] args = {"flag-parser", "--fnd"};
         // when
         CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
         // then
@@ -35,7 +35,7 @@ public class FlagTest {
     @Test
     public void testFlag_expectDeclaredFlagValue() {
         // given
-        String[] args = {"flag-parser", "-fd"};
+        String[] args = {"flag-parser", "--fd"};
         // when
         CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
         // then
@@ -46,7 +46,10 @@ public class FlagTest {
     @Test
     public void testFlag_expectMatchOnAliases() {
         // given
-        String[][] args = {{"flag-parser", "-fa"}, {"flag-parser", "-fa1"}, {"flag-parser", "-fa2"}, {"flag-parser", "-fa3"}};
+        String[][] args = {{"flag-parser", "--fa"},
+                {"flag-parser", "--fa1"},
+                {"flag-parser", "--fa2"},
+                {"flag-parser", "--fa3"}};
         for (String[] argArray : args) {
             // when
             CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, argArray);
@@ -59,7 +62,7 @@ public class FlagTest {
     @Test
     public void testFlag_expectMappedValue() {
         // given
-        String[] args = {"flag-parser", "-fm"};
+        String[] args = {"flag-parser", "--fm"};
         // when
         CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
         // then

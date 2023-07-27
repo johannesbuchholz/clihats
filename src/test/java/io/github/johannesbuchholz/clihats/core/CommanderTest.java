@@ -1,11 +1,11 @@
 package io.github.johannesbuchholz.clihats.core;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.CommanderCreationException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.*;
-import io.github.johannesbuchholz.clihats.core.execution.AbstractOptionParser;
+import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
+import io.github.johannesbuchholz.clihats.core.execution.CliException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
-import io.github.johannesbuchholz.clihats.core.execution.parser.OptionParsers;
+import io.github.johannesbuchholz.clihats.core.execution.exception.*;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.BooleanMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.LocalDateMapper;
 import org.junit.Before;
@@ -93,16 +93,15 @@ public class CommanderTest {
     public void setup() {
         result = null;
 
-        AbstractOptionParser<X> p1 = OptionParsers.positional(0)
+        AbstractArgumentParser<?> p1 = ArgumentParsers.operand(0)
                 .withMapper(X::new);
-        AbstractOptionParser<String> p2 = OptionParsers.valued("-d")
-                .withDelimiter("=")
+        AbstractArgumentParser<?> p2 = ArgumentParsers.valuedOption("-d")
                 .withDefault("999.99");
-        Command c1 = Command.forName("\texecute first    ")
+        Command c1 = Command.forName("execute-first")
                 .withInstruction(CommanderTest::dummyAdapter1)
                 .withParsers(p1, p2);
 
-        c2 = Command.forName("execute      second  ").withInstruction(CommanderTest::dummyAdapter2)
+        c2 = Command.forName("execute-second").withInstruction(CommanderTest::dummyAdapter2)
                 .withParsers(p1, p2);
 
         Command c3 = Command.forName("run-runner")
@@ -119,28 +118,27 @@ public class CommanderTest {
                         Command.forName("print-all").withInstruction(args -> dummyMethod3((String) args[0], (String) args[1], (Boolean) args[2], (LocalDate) args[3]))
                                 .withDescription("prints all input arguments to console")
                                 .withParsers(
-                                        OptionParsers.positional(0),
-                                        OptionParsers.positional(1),
-                                        OptionParsers.flag("-f").withAliases("--flag").withFlagValue("true").withMapper(new BooleanMapper()),
-                                        OptionParsers.valued("-t").withAliases("--time").withDelimiter("=").withMapper(new LocalDateMapper())
+                                        ArgumentParsers.operand(0),
+                                        ArgumentParsers.operand(1),
+                                        ArgumentParsers.flagOption("-f", "--flag").withFlagValue("true").withMapper(new BooleanMapper()),
+                                        ArgumentParsers.valuedOption("-t", "--time").withMapper(new LocalDateMapper())
                                 ));
     }
 
     @Test
     public void c1ShouldExecute() throws CommanderExecutionException, CliHelpCallException {
-        String[] args = {"execute", "first", "first arg", "-d=no-stupid-questions"};
+        String[] args = {"execute-first", "first arg", "-d", "no-stupid-questions"};
         dummyTestMethod1(new X("first arg"), "no-stupid-questions");
         R expected = result;
 
         commander1.execute(args);
 
-        System.out.println(result);
         assertEquals(expected, result);
     }
 
     @Test
     public void c2ShouldExecute() throws CommanderExecutionException, CliHelpCallException {
-        String[] args = {"execute", "second", "first arg", "-d=no-stupid-questions"};
+        String[] args = {"execute-second", "first arg", "-d", "no-stupid-questions"};
         dummyTestMethod2(new X("first arg"), "no-stupid-questions");
         R expected = result;
 
@@ -151,12 +149,11 @@ public class CommanderTest {
 
     @Test(expected = CommanderCreationException.class)
     public void commanderCreationShouldFail_sameCommandName() {
-        AbstractOptionParser<X> p1 = OptionParsers.positional(0)
+        AbstractArgumentParser<?> p1 = ArgumentParsers.operand(0)
                 .withMapper(X::new);
-        AbstractOptionParser<String> p2 = OptionParsers.valued("-dd")
-                .withDelimiter("=")
+        AbstractArgumentParser<?> p2 = ArgumentParsers.valuedOption("-d")
                 .withDefault("999.99");
-        Command c3 = Command.forName("execute second").withInstruction(CommanderTest::dummyAdapter2).withParsers(p1, p2);
+        Command c3 = Command.forName("execute-second").withInstruction(CommanderTest::dummyAdapter2).withParsers(p1, p2);
         Commander.forName("commander2")
                 .withCommands(c2, c3);
     }
@@ -176,7 +173,7 @@ public class CommanderTest {
 
     @Test
     public void commander_parsingException() {
-        String[] args = {"execute", "first", "fubbelmug-wojk", "-ddd=no-stupid-questions", "fourth-unknown-arg"};
+        String[] args = {"execute-first", "fubbelmug-wojk", "-ddd=no-stupid-questions", "fourth-unknown-arg"};
         Throwable t = null;
         try {
             commander1.execute(args);
@@ -184,7 +181,7 @@ public class CommanderTest {
             t = e;
         }
         assertNotNull(t);
-        assertEquals(ParsingException.class, t.getCause().getClass());
+        assertEquals(InvalidInputArgumentException.class, t.getCause().getClass());
     }
 
     @Test
@@ -196,7 +193,7 @@ public class CommanderTest {
 
     @Test
     public void runCommander2_shouldExecute() throws CommanderExecutionException, CliHelpCallException {
-        String[] args = {"print-all", "12323876567823dfgshfghsd", "jhsjhgsjhfg", "-f", "--time=2222-12-22"};
+        String[] args = {"print-all", "12323876567823dfgshfghsd", "jhsjhgsjhfg", "-f", "--time", "2222-12-22"};
         commander2.execute(args);
         assertEquals(
                 new R("3: " + String.join(", ", "12323876567823dfgshfghsd", "jhsjhgsjhfg", Boolean.TRUE.toString(), LocalDate.parse("2222-12-22").toString())),

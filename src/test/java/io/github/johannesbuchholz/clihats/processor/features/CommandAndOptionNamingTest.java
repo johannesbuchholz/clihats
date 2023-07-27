@@ -75,6 +75,4 @@ public class CommandAndOptionNamingTest {
         assertEquals(expected, GlobalTestResult.waitForResult());
     }
 
-
-
 }

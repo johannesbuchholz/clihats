@@ -100,7 +100,6 @@ public class CommandCodeGenerator {
                 valuesByFieldName.get(OptionAnnotationDto.POSITION_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(Integer.class), null),
                 valuesByFieldName.get(OptionAnnotationDto.NAME_FIELD_NAME).accept(new ArrayOfSimpleAnnotationValueVisitor<>(String.class), null),
                 valuesByFieldName.get(OptionAnnotationDto.FLAG_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null),
-                valuesByFieldName.get(OptionAnnotationDto.DELIMITER_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null),
                 valuesByFieldName.get(OptionAnnotationDto.DEFAULT_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null),
                 valuesByFieldName.get(OptionAnnotationDto.MAPPER_FIELD_NAME).accept(new TypeAnnotationValueVisitor(), processingEnvironment.getTypeUtils()),
                 valuesByFieldName.get(OptionAnnotationDto.NECESSITY_FIELD_NAME).accept(new EnumAnnotationValueVisitor(), null),

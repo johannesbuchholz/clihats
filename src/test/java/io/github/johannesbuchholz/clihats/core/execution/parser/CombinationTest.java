@@ -1,11 +1,13 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.TestResult;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.UnknownArgumentException;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class CombinationTest {
 
@@ -216,8 +218,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        PositionalOptionParser.at(0),
-                        PositionalOptionParser.at(1)
+                        OperandParser.at(0),
+                        OperandParser.at(1)
                 );
         String stringArgA = "a string arg A";
         String[] args = {stringArgA};
@@ -237,8 +239,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        PositionalOptionParser.at(0),
-                        PositionalOptionParser.at(1)
+                        OperandParser.at(0),
+                        OperandParser.at(1)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -259,8 +261,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        PositionalOptionParser.at(0),
-                        PositionalOptionParser.at(1)
+                        OperandParser.at(0),
+                        OperandParser.at(1)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -386,7 +388,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {nameA, stringArgA};
@@ -408,7 +410,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgB = "a string arg B";
         String[] args = {stringArgB};
@@ -430,7 +432,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -453,7 +455,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -483,7 +485,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String[] args = {nameA};
 
@@ -504,7 +506,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {stringArgA};
@@ -526,7 +528,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {nameA, stringArgA};
@@ -548,7 +550,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagOptionParser.forName(nameA),
-                        PositionalOptionParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {stringArgA, nameA};
@@ -560,5 +562,98 @@ public class CombinationTest {
         TestResult expected = TestResult.newExpected("", stringArgA);
         assertEquals(expected, testResult);
     }
-    
+
+    /*
+
+    MIXED
+
+     */
+
+    @Test
+    public void shouldExecute_giveFlagFlagPos_takePosAndFlagOnce_resultsIn_unknownArgument() {
+        // given
+        String nameA = "-a";
+        Command c = Command.forName("run")
+                .withInstruction(args -> {})
+                .withParsers(
+                        FlagOptionParser.forName(nameA),
+                        OperandParser.at(0)
+                );
+        String stringArgA = "a string arg A";
+        String[] args = {stringArgA, nameA, nameA};
+
+        // when
+        // then
+        InvalidInputArgumentException commandExecutionException = assertThrows(InvalidInputArgumentException.class, () -> c.execute(args));
+        Throwable cause = commandExecutionException.getCause();
+
+        assertNotNull(cause);
+        assertEquals(cause.getClass(), UnknownArgumentException.class);
+        assertTrue(cause.getMessage().contains(nameA));
+    }
+
+    @Test
+    public void shouldExecute_giveFlagFlagValue_takeValueAndFlagOnce_resultsIn_unknownArgument() {
+        // given
+        String nameA = "-a";
+        Command c = Command.forName("run")
+                .withInstruction(args -> {})
+                .withParsers(
+                        FlagOptionParser.forName(nameA),
+                        ValuedOptionParser.forName("-v")
+                );
+        String[] args = {"-aav", "some value"};
+
+        // when
+        // then
+        InvalidInputArgumentException commandExecutionException = assertThrows(InvalidInputArgumentException.class, () -> c.execute(args));
+        Throwable cause = commandExecutionException.getCause();
+
+        assertNotNull(cause);
+        assertEquals(cause.getClass(), UnknownArgumentException.class);
+        assertTrue(cause.getMessage().contains(nameA));
+    }
+
+    @Test
+    public void shouldExecute_giveFlagFlag_takeFlagOnce_resultsIn_secondFlagInputArgumentTakenAsOperandValue() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String nameA = "-a";
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(
+                        FlagOptionParser.forName(nameA),
+                        OperandParser.at(0)
+                );
+        String[] args = {"-aa"};
+
+        // when
+        c.execute(args);
+
+        // then
+        TestResult expectedResult = TestResult.newExpected("", "-a");
+        assertEquals(expectedResult, testResult);
+    }
+
+    @Test
+    public void shouldExecute_givenValueValue_takeValueOnce_resultsIn_secondValueInputArgumentTakenAsOperandValue() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name = "-v";
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(
+                        ValuedOptionParser.forName(name),
+                        OperandParser.at(0)
+                );
+        String[] args = {"-vv", "option-value"};
+
+        // when
+        c.execute(args);
+
+        // then
+        TestResult expectedResult = TestResult.newExpected("option-value", "-v");
+        assertEquals(expectedResult, testResult);
+    }
+
 }

@@ -1,11 +1,11 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.TestResult;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.ParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
-import io.github.johannesbuchholz.clihats.core.execution.ParsingResult;
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -29,7 +29,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0));
+                .withParsers(OperandParser.at(0));
         String stringArg = "a string argument";
         String[] args = {stringArg};
 
@@ -47,7 +47,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0));
+                .withParsers(OperandParser.at(0));
         String[] args = {};
 
         // when
@@ -65,7 +65,7 @@ public class PositionalTest {
         String defaultValue = "a string argument";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withDefault(defaultValue));
         String[] args = {};
 
@@ -84,7 +84,7 @@ public class PositionalTest {
         String defaultValue = "a string argument";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withDefault(() -> defaultValue));
         String[] args = {};
 
@@ -102,7 +102,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withMapper(s -> s == null ? null : BigDecimal.valueOf(Double.parseDouble(s))));
 
         String argValue = "1234.56789";
@@ -125,7 +125,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withMapper(mapper));
 
         String argValue = "one, two, three four, five, six";
@@ -149,18 +149,13 @@ public class PositionalTest {
     public void shouldFail_creatingArgumentWithNegativePosition() {
         // given
         // when
-        IllegalArgumentException actualException = null;
         int illegalPosition = -999;
-        try {
-            Command.forName("run")
-                    .withInstruction(args -> {})
-                    .withParsers(PositionalOptionParser.at(illegalPosition));
-        } catch (IllegalArgumentException e) {
-            actualException = e;
-        }
-
+        IllegalArgumentException actualException = assertThrows(IllegalArgumentException.class, () ->
+                Command.forName("run")
+                        .withInstruction(args -> {
+                        })
+                        .withParsers(OperandParser.at(illegalPosition)));
         // then
-        assertNotNull(actualException);
         assertTrue(actualException.getMessage().contains(String.valueOf(illegalPosition)));
     }
 
@@ -168,38 +163,28 @@ public class PositionalTest {
     public void shouldFail_missingRequiredArgument() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        PositionalOptionParser<String> requiredParser = PositionalOptionParser.at(0)
-                .isRequired(true);
+        OperandParser<String> requiredParser = OperandParser.at(0)
+                .withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser);
         String[] args = {};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putMissing(requiredParser);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains("0"));
     }
 
     @Test
     public void shouldFail_missingSecondPositionalParser() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        PositionalOptionParser<String> requiredParser1 = PositionalOptionParser.at(0).isRequired(true);
-        PositionalOptionParser<String> requiredParser2 = PositionalOptionParser.at(1).isRequired(true);
+        OperandParser<String> requiredParser1 = OperandParser.at(0).withRequired(true);
+        OperandParser<String> requiredParser2 = OperandParser.at(1).withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser1, requiredParser2);
@@ -207,22 +192,12 @@ public class PositionalTest {
         String[] args = {firstArg};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(2);
-        parsingResultBuilder.putMissing(requiredParser2);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains("1"));
     }
 
     @Test
@@ -235,58 +210,17 @@ public class PositionalTest {
         };
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withMapper(throwingMapper));
         String[] args = {"anyways"};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putError(expectedThrow);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
-
-    @Test
-    public void shouldFail_unknownArgAnd_outOfBoundsArgIsMissing_whileRequired() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        PositionalOptionParser<String> positionalOptionParser = PositionalOptionParser.at(1).isRequired(true);
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(positionalOptionParser);
-        String unknownArg = "abcd";
-        String[] args = {unknownArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(unknownArg);
-        parsingResultBuilder.putMissing(positionalOptionParser);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(ValueMappingException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains("0"));
     }
 
 }

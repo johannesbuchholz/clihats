@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.processor.mapper;
 
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ValueMapper;
 
 /**
  * Implementing classes are able to map a String value to some other type.

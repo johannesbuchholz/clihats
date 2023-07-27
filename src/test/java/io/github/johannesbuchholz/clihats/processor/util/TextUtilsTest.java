@@ -50,9 +50,6 @@ public class TextUtilsTest {
         String s = "some text with \"quotes\".";
         String actual = TextUtils.normalizeString(s);
         String expected = "some text with \\\"quotes\\\".";
-        System.out.println(s);
-        System.out.println(actual);
-        System.out.println(expected);
         assertEquals(expected, actual);
     }
 
