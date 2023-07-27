@@ -18,10 +18,10 @@ public class Cli3 {
 
     @Command(name = "flag-parser", cli = Cli3.class)
     public static void instructionFlagParser(
-            @Option(name = "-fnd", flagValue = "value") String flagNoDefault,
-            @Option(name = "-fd", flagValue = "my-value") String flagWithValue,
-            @Option(name = "-fdd", flagValue = "my-value", defaultValue = "my-default") String flagWithCustomDefaultValue,
-            @Option(name = {"-fa" , "-fa1", "-fa2", "-fa3"}, flagValue = "value") String flagWithAlias,
+            @Option(name = "-a", flagValue = "value") String flagNoDefault,
+            @Option(name = "-b", flagValue = "my-value") String flagWithValue,
+            @Option(name = "-c", flagValue = "my-value", defaultValue = "my-default") String flagWithCustomDefaultValue,
+            @Option(name = {"-a" , "--a1", "--a2", "-fa3"}, flagValue = "value") String flagWithAlias,
             @Option(name = "-fm", flagValue = "some-value", mapper = MyClassMapper.class) MyClass flagWithMapper
     ) {
         GlobalTestResult.setSuccess("flag-parser", flagNoDefault, flagWithCustomDefaultValue, flagWithValue, flagWithAlias, flagWithMapper);
@@ -30,14 +30,13 @@ public class Cli3 {
     @Command(name = "name-parser", cli = Cli3.class)
     public static void instructionNameParser(
            @Option(name = "-nnd") String nameNoDefault,
-           @Option(name = "-ndel", delimiter = "..##..") String nameWithDelimiter,
            @Option(name = "-nd", defaultValue = "my-default") String nameWithDefault,
            @Option(name = "-nr", necessity = OptionNecessity.REQUIRED) String nameRequired,
            @Option(name = {"-na", "-na1", "-na2", "-na3"}) String nameWithAliases,
            @Option(name = "-nm", mapper = MyClassMapper.class) MyClass nameWithMapper,
            @Option(name = "-nml", mapper = MyClassListMapper.class) List<MyClass> nameWithList
     ) {
-        GlobalTestResult.setSuccess("name-parser", nameNoDefault, nameWithDelimiter, nameWithDefault, nameRequired, nameWithAliases, nameWithMapper, nameWithList);
+        GlobalTestResult.setSuccess("name-parser", nameNoDefault, nameWithDefault, nameRequired, nameWithAliases, nameWithMapper, nameWithList);
     }
 
     @Command(name = "position-parser", cli = Cli3.class)

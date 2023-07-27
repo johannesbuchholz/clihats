@@ -1,9 +1,9 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.TestResult;
-import io.github.johannesbuchholz.clihats.core.exceptions.MissingValueException;
 import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
 import io.github.johannesbuchholz.clihats.core.exceptions.execution.ParsingException;
+import io.github.johannesbuchholz.clihats.core.exceptions.parsing.MissingValueException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.ParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
@@ -31,7 +31,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser.forName(name));
+                .withParsers(ValuedParser.forName(name));
         String stringArg = "a string argument";
         String[] args = {name, stringArg};
 
@@ -51,9 +51,8 @@ public class NameTest {
         String alias = "--abc";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withAliases(alias)
+                .withParsers(ValuedParser
+                        .forName(name, alias)
                 );
         String stringArg = "a string argument";
         String[] args = {alias, stringArg};
@@ -73,7 +72,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser.forName(name));
+                .withParsers(ValuedParser.forName(name));
         String[] args = {};
 
         // when
@@ -92,7 +91,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
+                .withParsers(ValuedParser
                         .forName(name)
                         .withDefault(defaultValue)
                 );
@@ -114,7 +113,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
+                .withParsers(ValuedParser
                         .forName(name)
                         .withDefault(() -> defaultValue)
                 );
@@ -129,36 +128,13 @@ public class NameTest {
     }
 
     @Test
-    public void shouldExecute_returnInputArgUsingDelimiter() throws CommandExecutionException {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withDelimiter("==")
-                );
-        String stringArg = "a string argument";
-        String compositeArg = "-a==" + stringArg;
-        String[] args = {compositeArg};
-
-        // when
-        c.execute(args);
-
-        // then
-        TestResult expected = TestResult.newExpected(stringArg);
-        assertEquals(expected, testResult);
-    }
-
-    @Test
     public void shouldExecute_returnMappedValue_BigDecimal() throws CommandExecutionException {
         // given
         TestResult testResult = TestResult.newEmpty();
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
+                .withParsers(ValuedParser
                         .forName(name)
                         .withMapper(s -> s == null ? null : BigDecimal.valueOf(Double.parseDouble(s)))
                 );
@@ -183,7 +159,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
+                .withParsers(ValuedParser
                         .forName(name)
                         .withMapper(mapper)
                 );
@@ -214,9 +190,8 @@ public class NameTest {
         try {
             Command.forName("run")
                     .withInstruction(args -> {})
-                    .withParsers(ValuedOptionParser
-                            .forName(name)
-                            .withAliases(name)
+                    .withParsers(ValuedParser
+                            .forName(name, name)
                     );
         } catch (IllegalArgumentException e) {
             illegalArgumentException = e;
@@ -228,112 +203,13 @@ public class NameTest {
     }
 
     @Test
-    public void shouldFail_wrongDelimiter_argumentWithoutValue() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withDelimiter(":")
-                );
-        String stringArg = "a string argument";
-        String compositeArg = "-a==" + stringArg;
-        String[] args = {compositeArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(compositeArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
-
-    @Test
-    public void shouldFail_noDelimiterSet_unknownArgument() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser.forName(name));
-        String stringArg = "a string argument";
-        String compositeArg = "-a==" + stringArg;
-        String[] args = {compositeArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(compositeArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
-
-    @Test
-    public void shouldFail_inputArgumentWithoutDelimiter_valueMissingAndUnknownArgument() {
-        // given
-        TestResult testResult = TestResult.newEmpty();
-        String name = "-a";
-        Command c = Command.forName("run")
-                .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
-                        .forName(name)
-                        .withDelimiter("==")
-                );
-        String stringArg = "a string argument";
-        String[] args = {name, stringArg};
-
-        // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putError(new MissingValueException(name));
-        parsingResultBuilder.putUnknown(stringArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
-        // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
-    }
-
-    @Test
     public void shouldFail_missingRequiredArgument() {
         // given
         TestResult testResult = TestResult.newEmpty();
         String name = "-a";
-        ValuedOptionParser<String> requiredParser = ValuedOptionParser
+        ValuedParser<String> requiredParser = ValuedParser
                 .forName(name)
-                .isRequired(true);
+                .withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser);
@@ -366,7 +242,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser.forName(name));
+                .withParsers(ValuedParser.forName(name));
         String unknownArg = "unknown";
         String[] args = {unknownArg};
 
@@ -393,7 +269,7 @@ public class NameTest {
     public void shouldFail_unknownArgumentAndRequiredArgumentMissing() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        ValuedOptionParser<String> requiredParser = ValuedOptionParser.forName("-a").isRequired(true);
+        ValuedParser<String> requiredParser = ValuedParser.forName("-a").withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser);
@@ -431,7 +307,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser
+                .withParsers(ValuedParser
                         .forName(name)
                         .withMapper(throwingMapper));
         String[] args = {name, "anyways"};
@@ -462,7 +338,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedOptionParser.forName(name));
+                .withParsers(ValuedParser.forName(name));
         String[] args = {name};
 
         // when

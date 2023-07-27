@@ -29,7 +29,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0));
+                .withParsers(PositionalParser.at(0));
         String stringArg = "a string argument";
         String[] args = {stringArg};
 
@@ -47,7 +47,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0));
+                .withParsers(PositionalParser.at(0));
         String[] args = {};
 
         // when
@@ -65,7 +65,7 @@ public class PositionalTest {
         String defaultValue = "a string argument";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(PositionalParser.at(0)
                         .withDefault(defaultValue));
         String[] args = {};
 
@@ -84,7 +84,7 @@ public class PositionalTest {
         String defaultValue = "a string argument";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(PositionalParser.at(0)
                         .withDefault(() -> defaultValue));
         String[] args = {};
 
@@ -102,7 +102,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(PositionalParser.at(0)
                         .withMapper(s -> s == null ? null : BigDecimal.valueOf(Double.parseDouble(s))));
 
         String argValue = "1234.56789";
@@ -125,7 +125,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(PositionalParser.at(0)
                         .withMapper(mapper));
 
         String argValue = "one, two, three four, five, six";
@@ -154,7 +154,7 @@ public class PositionalTest {
         try {
             Command.forName("run")
                     .withInstruction(args -> {})
-                    .withParsers(PositionalOptionParser.at(illegalPosition));
+                    .withParsers(PositionalParser.at(illegalPosition));
         } catch (IllegalArgumentException e) {
             actualException = e;
         }
@@ -168,8 +168,8 @@ public class PositionalTest {
     public void shouldFail_missingRequiredArgument() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        PositionalOptionParser<String> requiredParser = PositionalOptionParser.at(0)
-                .isRequired(true);
+        PositionalParser<String> requiredParser = PositionalParser.at(0)
+                .withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser);
@@ -198,8 +198,8 @@ public class PositionalTest {
     public void shouldFail_missingSecondPositionalParser() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        PositionalOptionParser<String> requiredParser1 = PositionalOptionParser.at(0).isRequired(true);
-        PositionalOptionParser<String> requiredParser2 = PositionalOptionParser.at(1).isRequired(true);
+        PositionalParser<String> requiredParser1 = PositionalParser.at(0).withRequired(true);
+        PositionalParser<String> requiredParser2 = PositionalParser.at(1).withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser1, requiredParser2);
@@ -235,7 +235,7 @@ public class PositionalTest {
         };
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalOptionParser.at(0)
+                .withParsers(PositionalParser.at(0)
                         .withMapper(throwingMapper));
         String[] args = {"anyways"};
 
@@ -262,7 +262,7 @@ public class PositionalTest {
     public void shouldFail_unknownArgAnd_outOfBoundsArgIsMissing_whileRequired() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        PositionalOptionParser<String> positionalOptionParser = PositionalOptionParser.at(1).isRequired(true);
+        PositionalParser<String> positionalOptionParser = PositionalParser.at(1).withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(positionalOptionParser);

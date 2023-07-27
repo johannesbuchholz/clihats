@@ -4,7 +4,7 @@ import io.github.johannesbuchholz.clihats.core.exceptions.CommandCreationExcepti
 import io.github.johannesbuchholz.clihats.core.exceptions.CommanderCreationException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
-import io.github.johannesbuchholz.clihats.core.execution.parser.OptionParsers;
+import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
 import org.junit.Test;
 
 import java.util.List;
@@ -43,10 +43,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            OptionParsers.valued(repeatedArgName),
-                                            OptionParsers.positional(0),
-                                            OptionParsers.flag("-f"),
-                                            OptionParsers.valued(repeatedArgName)
+                                            Parsers.valued(repeatedArgName),
+                                            Parsers.positional(0),
+                                            Parsers.flag("-f"),
+                                            Parsers.valued(repeatedArgName)
                                     )
                     );
         } catch (CommandCreationException e) {
@@ -69,10 +69,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            OptionParsers.flag(repeatedArgName),
-                                            OptionParsers.positional(0),
-                                            OptionParsers.flag("-f"),
-                                            OptionParsers.flag(repeatedArgName)
+                                            Parsers.flag(repeatedArgName),
+                                            Parsers.positional(0),
+                                            Parsers.flag("-f"),
+                                            Parsers.flag(repeatedArgName)
                                     )
                     );
         } catch (CommandCreationException e) {
@@ -95,10 +95,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            OptionParsers.valued("-n"),
-                                            OptionParsers.positional(repeatedPos),
-                                            OptionParsers.flag("-f"),
-                                            OptionParsers.positional(repeatedPos)
+                                            Parsers.valued("-n"),
+                                            Parsers.positional(repeatedPos),
+                                            Parsers.flag("-f"),
+                                            Parsers.positional(repeatedPos)
                                     )
                     );
         } catch (CommandCreationException e) {
@@ -121,10 +121,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            OptionParsers.valued(repeatedArgName),
-                                            OptionParsers.positional(0),
-                                            OptionParsers.flag("-f"),
-                                            OptionParsers.flag(repeatedArgName)
+                                            Parsers.valued(repeatedArgName),
+                                            Parsers.positional(0),
+                                            Parsers.flag("-f"),
+                                            Parsers.flag(repeatedArgName)
                                     )
                     );
         } catch (CommandCreationException e) {
@@ -147,7 +147,7 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            OptionParsers.valued(conflictingArgName)
+                                            Parsers.valued(conflictingArgName)
                                     )
                     );
         } catch (CommandCreationException e) {
@@ -169,14 +169,12 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(ambiguousCommandNameLong)
                                     .withParsers(
-                                            OptionParsers.positional(0)
+                                            Parsers.positional(0)
                                     ),
                             Command.forName(ambiguousCommandNameShort)
                                     .withParsers(
-                                            OptionParsers.valued("-o")
-                                                    .withAliases(conflictingArgName1, "two", "three"),
-                                            OptionParsers.flag("-f")
-                                                    .withAliases("any", conflictingArgName2)
+                                            Parsers.valued("-o", conflictingArgName1, "two", "three"),
+                                            Parsers.flag("-f", "any", conflictingArgName2)
                                     )
                     );
         } catch (CommanderCreationException e) {

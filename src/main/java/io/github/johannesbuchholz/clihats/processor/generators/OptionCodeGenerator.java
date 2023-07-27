@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.processor.generators;
 
 import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
-import io.github.johannesbuchholz.clihats.core.execution.parser.OptionParsers;
+import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
 import io.github.johannesbuchholz.clihats.processor.CommandLineInterfaceProcessor;
 import io.github.johannesbuchholz.clihats.processor.annotations.OptionNecessity;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
@@ -21,7 +21,6 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class OptionCodeGenerator {
 
@@ -56,7 +55,6 @@ public class OptionCodeGenerator {
                 optionInputs.getFlagValue(),
                 optionInputs.getDefaultValue(),
                 ProcessingUtils.getEnumFromTypeElement(EnumSet.allOf(OptionNecessity.class), optionInputs.getNecessity(), processingEnvironment),
-                optionInputs.getDelimiter(),
                 parameterOrigin
         );
     }
@@ -92,7 +90,7 @@ public class OptionCodeGenerator {
         return mapperType;
     }
 
-    private static ParserType verifyAndDetermineType(Integer positionInput, List<String> nameInput, String flagInput, String defaultValueInput, OptionNecessity necessity, String delimiterInput, String originIdentifier) throws ConfigurationException {
+    private static ParserType verifyAndDetermineType(Integer positionInput, List<String> nameInput, String flagInput, String defaultValueInput, OptionNecessity necessity, String originIdentifier) throws ConfigurationException {
         if (positionInput > -1 && !flagInput.isEmpty())
             throw new ConfigurationException("Can not process option: %s: position and flag can not be set simultaneously", originIdentifier);
         if (positionInput > -1 && nameInput.size() > 0)
@@ -100,12 +98,8 @@ public class OptionCodeGenerator {
         if (!defaultValueInput.isEmpty() && necessity != OptionNecessity.OPTIONAL)
             throw new ConfigurationException("Can not process option: %s: Non-empty default value while necessity is not OPTIONAL", originIdentifier);
         if (positionInput > -1) {
-            if (!delimiterInput.isEmpty())
-                log.warn("Ignoring delimiter for positional: {}", originIdentifier);
             return ParserType.POSITIONAL;
         } else if (!flagInput.isEmpty()) {
-            if (!delimiterInput.isEmpty())
-                log.warn("Ignoring delimiter for flag option: {}", originIdentifier);
             if (necessity != OptionNecessity.OPTIONAL)
                 log.warn("Ignoring necessity {} for flag option: {}", necessity, originIdentifier);
             return ParserType.FLAG;
@@ -133,13 +127,13 @@ public class OptionCodeGenerator {
     private SnippetCodeData generatePositionalParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
         SnippetCodeData promptSnippetCodeData = generatePromptCode();
-        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(OptionParsers.class));
+        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(Parsers.class));
         imports.addAll(promptSnippetCodeData.getImportPackages());
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
                         "%s.positional(%s)%s%s%s%s%s",
-                        OptionParsers.class.getSimpleName(),
+                        Parsers.class.getSimpleName(),
                         optionInputs.getPosition(),
                         generateRequiredCode(),
                         generateDefaultValueCode(),
@@ -160,14 +154,13 @@ public class OptionCodeGenerator {
      */
     private SnippetCodeData generateFlagParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
-        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(OptionParsers.class));
+        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(Parsers.class));
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
                         "%s.flag(%s)%s%s%s%s%s",
-                        OptionParsers.class.getSimpleName(),
-                        TextUtils.quote(generateOptionName()),
-                        generateAliasCode(),
+                        Parsers.class.getSimpleName(),
+                        TextUtils.quote(generateNames()),
                         generateFlagValueCode(),
                         generateDefaultValueCode(),
                         mapperSnippetCodeData.getCodeSnippet(),
@@ -187,16 +180,14 @@ public class OptionCodeGenerator {
     private SnippetCodeData generateValuedParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
         SnippetCodeData promptSnippetCodeData = generatePromptCode();
-        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(OptionParsers.class));
+        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(Parsers.class));
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         imports.addAll(promptSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
-                        "%s.valued(%s)%s%s%s%s%s%s%s",
-                        OptionParsers.class.getSimpleName(),
-                        TextUtils.quote(generateOptionName()),
-                        generateAliasCode(),
-                        generateDelimiterCode(),
+                        "%s.valued(%s)%s%s%s%s%s%s",
+                        Parsers.class.getSimpleName(),
+                        TextUtils.quote(generateNames()),
                         generateRequiredCode(),
                         generateDefaultValueCode(),
                         generateDescriptionCode(),
@@ -207,9 +198,9 @@ public class OptionCodeGenerator {
         );
     }
 
-    private String generateOptionName() {
+    private String generateNames() {
         if (!optionInputs.getName().isEmpty())
-            return optionInputs.getName().get(0);
+            return String.join(", ", optionInputs.getName());
         return "-" + targetVariableElement.getSimpleName().toString().charAt(0);
     }
 
@@ -243,29 +234,10 @@ public class OptionCodeGenerator {
         return SnippetCodeData.from(String.format(".withMapper(new %s())", mapperType.getSimpleName()), imports);
     }
 
-    private String generateAliasCode() {
-        List<String> nameInput = optionInputs.getName();
-        if (nameInput.size() == 1)
-            return "";
-        List<String> aliases;
-        if (parserType != ParserType.POSITIONAL && nameInput.isEmpty())
-            aliases = List.of("--" + TextUtils.toHyphenString(targetVariableElement.getSimpleName().toString()));
-        else
-            aliases = nameInput.subList(1, nameInput.size());
-        return ".withAliases(" + aliases.stream().map(TextUtils::quote).collect(Collectors.joining(", ")) + ")";
-    }
-
-    private String generateDelimiterCode() {
-        String delimiterInput = optionInputs.getDelimiter();
-        if (delimiterInput.isEmpty())
-            return "";
-        return ".withDelimiter(" + TextUtils.quote(delimiterInput) + ")";
-    }
-
     private String generateRequiredCode() {
         OptionNecessity optionNecessity = ProcessingUtils.getEnumFromTypeElement(EnumSet.allOf(OptionNecessity.class), optionInputs.getNecessity(), processingEnvironment);
         if (optionNecessity == OptionNecessity.REQUIRED)
-            return ".isRequired(true)";
+            return ".withRequired(true)";
         return "";
     }
 
@@ -293,6 +265,5 @@ public class OptionCodeGenerator {
         OptionNecessity optionNecessity = ProcessingUtils.getEnumFromTypeElement(EnumSet.allOf(OptionNecessity.class), optionInputs.getNecessity(), processingEnvironment);
         return optionNecessity != OptionNecessity.OPTIONAL || optionInputs.getDefaultValue().isEmpty();
     }
-
 
 }

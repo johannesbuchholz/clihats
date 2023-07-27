@@ -19,7 +19,7 @@ public class Cli2 {
             @Option(position = 0) String s1,
             @Option(position = 1) String s2, 
             @Option(name = {"-f", "--flag"}, flagValue = "True") Boolean b1,
-            @Option(name = {"-t", "--time"}, delimiter = "=", defaultValue = "1970-01-01") LocalDate ld, 
+            @Option(name = {"-t", "--time"}, defaultValue = "1970-01-01") LocalDate ld,
             @Option(name = {"-s", "--something", "--smthng", "--whatever-one-wants"}) String s
     ) {
         GlobalTestResult.setSuccess("print-all", s1, s2, b1, ld, s);
@@ -41,12 +41,12 @@ public class Cli2 {
     }
 
     @Command(name = "list", cli = Cli2.class, description = "parses into list separated by ','")
-    public static void list(@Option(name = "-l", delimiter = "=", mapper = MyListMapper.class) List<String> l) {
+    public static void list(@Option(name = "-l", mapper = MyListMapper.class) List<String> l) {
         GlobalTestResult.setSuccess("list", l);
     }
 
     @Command(name = "list-x", cli = Cli2.class, description = "parses into list separated by ','")
-    public static void listOfX(@Option(name = "-l", delimiter = "=", mapper = MyClassListMapper.class) List<MyClass> lst) {
+    public static void listOfX(@Option(name = "-l", mapper = MyClassListMapper.class) List<MyClass> lst) {
         GlobalTestResult.setSuccess("list-x", lst);
     }
 

@@ -7,14 +7,14 @@ public class ParsingResult {
 
     private final Object[] values;
     private final List<Throwable> errors;
-    private final List<AbstractOptionParser<?>> missing;
+    private final List<AbstractParser> missing;
     private final List<String> unknown;
 
     public static ParsingResult.Builder builder(int capacity) {
         return new Builder(capacity);
     }
 
-    public ParsingResult(Object[] values, List<Throwable> errors, List<AbstractOptionParser<?>> missing, List<String> unknown) {
+    public ParsingResult(Object[] values, List<Throwable> errors, List<AbstractParser> missing, List<String> unknown) {
         this.values = values;
         this.errors = errors;
         this.missing = missing;
@@ -32,7 +32,8 @@ public class ParsingResult {
     public List<Throwable> getErrors() {
         return errors;
     }
-    public List<AbstractOptionParser<?>> getMissing() {
+
+    public List<AbstractParser> getMissing() {
         return missing;
     }
 
@@ -44,7 +45,7 @@ public class ParsingResult {
 
         private final Object[] values;
         private final List<Throwable> errors;
-        private final List<AbstractOptionParser<?>> missing;
+        private final List<AbstractParser> missing;
         private final List<String> unknown;
 
         private Builder(int capacity) {
@@ -58,7 +59,7 @@ public class ParsingResult {
             values[pos] = arg;
         }
 
-        public void putMissing(AbstractOptionParser<?> missing) {
+        public void putMissing(AbstractParser missing) {
             this.missing.add(missing);
         }
 

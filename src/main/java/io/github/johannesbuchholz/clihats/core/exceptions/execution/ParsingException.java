@@ -26,7 +26,7 @@ public class ParsingException extends CommandExecutionException {
         if (!parsingResult.getMissing().isEmpty()) {
             messageLines.add("> Missing required arguments:");
             parsingResult.getMissing()
-                    .forEach(missingParser -> messageLines.add(TextUtils.indentEveryLine(missingParser.getPrimaryName())));
+                    .forEach(missingParser -> messageLines.add(TextUtils.indentEveryLine(missingParser.toString())));
         }
         if (!parsingResult.getUnknown().isEmpty()) {
             messageLines.add("> Unknown arguments:");

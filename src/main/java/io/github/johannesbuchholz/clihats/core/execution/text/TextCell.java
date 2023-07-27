@@ -1,9 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.text;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +31,10 @@ public class TextCell {
         for (TextCell c : cells)
              if (c != null)
                  c.width = maxActualWidth;
+    }
+
+    public static TextCell getNew(Collection<String> lines) {
+        return getNew(lines.toArray(String[]::new));
     }
 
     /**

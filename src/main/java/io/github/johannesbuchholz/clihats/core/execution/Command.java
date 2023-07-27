@@ -17,14 +17,14 @@ import java.util.stream.Stream;
  *     to the specified {@link Instruction}.
  * </p>
  * @see Commander
- * @see AbstractOptionParser
+ * @see AbstractParser
  */
 public class Command implements Documented {
 
     public static final int COMMAND_DESCRIPTION_WIDTH = 80;
 
     private final Instruction instruction;
-    private final List<AbstractOptionParser<?>> parsers;
+    private final List<AbstractParser> parsers;
     private final String description;
 
     private final Name name;
@@ -49,7 +49,7 @@ public class Command implements Documented {
         return new Command(Name.from(Objects.requireNonNull(name)), Instruction.empty(), List.of(), "");
     }
 
-    private Command(Name name, Instruction instruction, List<AbstractOptionParser<?>> parsers, String description) throws CommandCreationException {
+    private Command(Name name, Instruction instruction, List<AbstractParser> parsers, String description) throws CommandCreationException {
         this.name = name;
         this.instruction = instruction;
         this.parsers = parsers;
@@ -66,9 +66,9 @@ public class Command implements Documented {
      * @param parsers the parsers to set.
      * @return a new Command with the specified parsers.
      * @throws NullPointerException if the specified array is null.
-     * @see AbstractOptionParser
+     * @see AbstractParser
      */
-    public Command withParsers(AbstractOptionParser<?>... parsers) {
+    public Command withParsers(AbstractParser... parsers) {
         return new Command(name, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
     }
 
@@ -134,19 +134,6 @@ public class Command implements Documented {
         return description;
     }
 
-    protected List<String> conflictsWith(List<String> preservedIdentifiers) {
-        return Stream.concat(
-                // check names of this
-                Arrays.stream(name.nameParts)
-                        .filter(preservedIdentifiers::contains)
-                        .map(namePart -> String.format("Command %s contains name part %s conflicting with preserved identifiers", this, namePart)),
-                // check names of parsers
-                parsers.stream()
-                        .filter(p -> Arrays.stream(p.getNames()).anyMatch(preservedIdentifiers::contains))
-                        .map(p -> String.format("Parser %s in command %s conflicts with preserved identifiers", p, this))
-        ).collect(Collectors.toList());
-    }
-
     protected List<String> conflictsWith(Command other) {
         List<String> conflictMessages = new ArrayList<>();
         if (this == other || this.equals(other)) {
@@ -171,19 +158,20 @@ public class Command implements Documented {
                     .row()
                     .row(COMMAND_DESCRIPTION_WIDTH, "Options:");
             parsers.stream()
-                    .sorted(Comparator.comparing(AbstractOptionParser::getPrimaryName))
+                    .sorted(Comparator.comparing(AbstractParser::toString))
                     .map(p -> p.getHelpContent().asTextCells())
                     .forEach(matrixParsers::row);
         }
         return matrixHeader + "\n" + matrixParsers.removeEmptyCols().resizeColumnWidths();
     }
 
-    private void checkForInternalParserConflicts(List<AbstractOptionParser<?>> parsers) throws CommandCreationException {
-        List<AbstractOptionParser<?>> processedParsers = new ArrayList<>(parsers.size());
+    private void checkForInternalParserConflicts(List<AbstractParser> parsers) throws CommandCreationException {
+        List<AbstractParser> processedParsers = new ArrayList<>(parsers.size());
         List<String> conflictsMessages = new ArrayList<>();
-        for (AbstractOptionParser<?> parser : parsers) {
+        for (AbstractParser parser : parsers) {
             processedParsers.stream()
-                    .flatMap(coherent -> coherent.conflictsWith(parser).stream())
+                    // TODO: Re-implement this method
+                    .flatMap(coherent -> Stream.<String>of())
                     .forEach(conflictsMessages::add);
             processedParsers.add(parser);
         }
@@ -207,12 +195,9 @@ public class Command implements Documented {
                 .collect(Collectors.toList());
     }
 
-    private List<String> conflictsWith(AbstractOptionParser<?> parser) {
-        List<String> nameParts = Arrays.asList(name.nameParts);
-        return Arrays.stream(parser.getNames())
-                .filter(nameParts::contains)
-                .map(name -> String.format("Name conflict with parser %s on name %s", parser, name))
-                .collect(Collectors.toList());
+    private List<String> conflictsWith(AbstractParser parser) {
+        // TODO: implement properly;
+        return List.of();
     }
 
     @Override

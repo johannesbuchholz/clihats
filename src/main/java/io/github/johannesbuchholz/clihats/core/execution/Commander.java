@@ -11,7 +11,6 @@ import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A collection of commands. This class is responsible for invoking and passing arguments to particular commands.
@@ -106,10 +105,9 @@ public class Commander implements Documented {
         List<Command> processedCommands = new ArrayList<>(commands.length);
         List<String> conflictMessages = new LinkedList<>();
         for (Command command : commands) {
-            Stream.concat(
-                    processedCommands.stream().flatMap(coherent -> coherent.conflictsWith(command).stream()),
-                    command.conflictsWith(helpArgs).stream()
-            ).forEach(conflictMessages::add);
+            processedCommands.stream()
+                    .flatMap(coherent -> coherent.conflictsWith(command).stream())
+                    .forEach(conflictMessages::add);
             processedCommands.add(command);
         }
         if (!conflictMessages.isEmpty()) {

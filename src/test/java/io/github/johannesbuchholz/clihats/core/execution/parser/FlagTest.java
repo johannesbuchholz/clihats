@@ -28,7 +28,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser.forName(name));
+                .withParsers(FlagParser.forName(name));
         String[] args = {name};
 
         // when
@@ -47,9 +47,8 @@ public class FlagTest {
         String alias = "--abc";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser
-                        .forName(name)
-                        .withAliases(alias)
+                .withParsers(FlagParser
+                        .forName(name, alias)
                 );
         String[] args = {alias};
 
@@ -68,7 +67,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser.forName(name));
+                .withParsers(FlagParser.forName(name));
         String[] args = {};
 
         // when
@@ -87,7 +86,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser
+                .withParsers(FlagParser
                         .forName(name)
                         .withDefault(defaultValue)
                 );
@@ -108,7 +107,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser
+                .withParsers(FlagParser
                         .forName(name)
                 );
         String[] args = {name};
@@ -129,7 +128,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser
+                .withParsers(FlagParser
                         .forName(name)
                         .withFlagValue(flagValue)
                 );
@@ -150,7 +149,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser
+                .withParsers(FlagParser
                         .forName(name)
                         .withMapper(Objects::nonNull)
                 );
@@ -174,7 +173,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser
+                .withParsers(FlagParser
                         .forName(name)
                         .withMapper(mapper)
                 );
@@ -204,9 +203,8 @@ public class FlagTest {
         try {
             Command.forName("run")
                     .withInstruction(args -> {})
-                    .withParsers(FlagOptionParser
-                            .forName(name)
-                            .withAliases(name)
+                    .withParsers(FlagParser
+                            .forName(name, name)
                     );
         } catch (IllegalArgumentException e) {
             illegalArgumentException = e;
@@ -224,8 +222,8 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser.forName(name));
-        String unknownArg = "unknown";
+                .withParsers(FlagParser.forName(name));
+        String unknownArg = "-unknown";
         String[] args = {unknownArg};
 
         // when
@@ -258,7 +256,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagOptionParser
+                .withParsers(FlagParser
                         .forName(name)
                         .withMapper(throwingMapper));
         String[] args = {name};
