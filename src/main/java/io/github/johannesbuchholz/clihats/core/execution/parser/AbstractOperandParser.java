@@ -12,6 +12,11 @@ abstract class AbstractOperandParser extends AbstractParser {
     }
 
     @Override
+    public String getDisplayName() {
+        return "<" + getPosition() + ">";
+    }
+
+    @Override
     public String toString() {
         return "Operand " + getPosition();
     }

@@ -21,6 +21,8 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OptionCodeGenerator {
 
@@ -93,7 +95,7 @@ public class OptionCodeGenerator {
     private static ParserType verifyAndDetermineType(Integer positionInput, List<String> nameInput, String flagInput, String defaultValueInput, OptionNecessity necessity, String originIdentifier) throws ConfigurationException {
         if (positionInput > -1 && !flagInput.isEmpty())
             throw new ConfigurationException("Can not process option: %s: position and flag can not be set simultaneously", originIdentifier);
-        if (positionInput > -1 && nameInput.size() > 0)
+        if (positionInput > -1 && !nameInput.isEmpty())
             throw new ConfigurationException("Can not process option: %s: position and name can not be set simultaneously", originIdentifier);
         if (!defaultValueInput.isEmpty() && necessity != OptionNecessity.OPTIONAL)
             throw new ConfigurationException("Can not process option: %s: Non-empty default value while necessity is not OPTIONAL", originIdentifier);
@@ -158,9 +160,9 @@ public class OptionCodeGenerator {
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
-                        "%s.flag(%s)%s%s%s%s%s",
+                        "%s.flag(%s)%s%s%s%s",
                         Parsers.class.getSimpleName(),
-                        TextUtils.quote(generateNames()),
+                        generateNames(),
                         generateFlagValueCode(),
                         generateDefaultValueCode(),
                         mapperSnippetCodeData.getCodeSnippet(),
@@ -185,9 +187,9 @@ public class OptionCodeGenerator {
         imports.addAll(promptSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
-                        "%s.valued(%s)%s%s%s%s%s%s",
+                        "%s.valued(%s)%s%s%s%s%s",
                         Parsers.class.getSimpleName(),
-                        TextUtils.quote(generateNames()),
+                        generateNames(),
                         generateRequiredCode(),
                         generateDefaultValueCode(),
                         generateDescriptionCode(),
@@ -199,9 +201,14 @@ public class OptionCodeGenerator {
     }
 
     private String generateNames() {
-        if (!optionInputs.getName().isEmpty())
-            return String.join(", ", optionInputs.getName());
-        return "-" + targetVariableElement.getSimpleName().toString().charAt(0);
+        Stream<String> nameStream;
+        if (!optionInputs.getName().isEmpty()) {
+            nameStream = optionInputs.getName().stream();
+        } else {
+            String variableName = targetVariableElement.getSimpleName().toString();
+            nameStream = Stream.of("-" + variableName.charAt(0), "--" + TextUtils.toHyphenString(variableName));
+        }
+        return nameStream.map(TextUtils::quote).collect(Collectors.joining(", "));
     }
 
     private SnippetCodeData generatePromptCode() {

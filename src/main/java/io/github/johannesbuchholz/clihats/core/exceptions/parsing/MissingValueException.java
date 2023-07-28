@@ -6,7 +6,7 @@ package io.github.johannesbuchholz.clihats.core.exceptions.parsing;
 public class MissingValueException extends ValueExtractionException {
 
     public MissingValueException(String argumentName) {
-        super("Missing value for argument " + argumentName);
+        super("Missing value for " + argumentName);
     }
 
 }

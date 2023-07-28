@@ -14,11 +14,11 @@ public class PositionalTest {
     public void testPosition_positionsAreParsedIndependentlyFromOthers() {
         // given
         String[][] args = {
-                {"position-parser", "positional0", "positional1", "-sr1", "my-value1", "-sr2", "my-value2"},
-                {"position-parser", "positional0", "-sr1", "my-value1", "positional1", "-sr2", "my-value2"},
-                {"position-parser", "positional0", "-sr1", "my-value1", "-sr2", "my-value2", "positional1"},
-                {"position-parser", "-sr1", "my-value1", "positional0", "-sr2", "my-value2", "positional1"},
-                {"position-parser", "-sr1", "my-value1", "-sr2", "my-value2", "positional0", "positional1"},
+                {"position-parser", "positional0", "positional1", "--sr1", "my-value1", "--sr2", "my-value2"},
+                {"position-parser", "positional0", "--sr1", "my-value1", "positional1", "--sr2", "my-value2"},
+                {"position-parser", "positional0", "--sr1", "my-value1", "--sr2", "my-value2", "positional1"},
+                {"position-parser", "--sr1", "my-value1", "positional0", "--sr2", "my-value2", "positional1"},
+                {"position-parser", "--sr1", "my-value1", "--sr2", "my-value2", "positional0", "positional1"},
         };
 
         for (String[] argArray : args) {
@@ -34,7 +34,7 @@ public class PositionalTest {
     public void testPosition_positionsAreParsedAccordingToNecessity() {
         // given
         String[][] args = {
-                {"position-parser-with-default", "positional0", "positional1", "-sr1", "my-value1", "-sr2", "my-value2"},
+                {"position-parser-with-default", "positional0", "positional1", "--sr1", "my-value1", "--sr2", "my-value2"},
         };
 
         for (String[] argArray : args) {

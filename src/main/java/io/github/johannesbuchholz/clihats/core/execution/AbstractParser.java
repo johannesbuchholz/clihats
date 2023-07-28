@@ -11,10 +11,9 @@ import java.util.Optional;
 public abstract class AbstractParser {
 
     /**
-     * @return The name of this parser.
+     * @return The displayable name of this parser.
      */
-    @Override
-    public abstract String toString();
+    public abstract String getDisplayName();
 
     abstract protected ParserHelpContent getHelpContent();
 

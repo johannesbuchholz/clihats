@@ -20,6 +20,11 @@ abstract class AbstractOptionParser extends AbstractParser {
     }
 
     @Override
+    public String getDisplayName() {
+        return getNames().stream().map(OptionName::getValue).sorted().findFirst().orElseThrow();
+    }
+
+    @Override
     public String toString() {
         return "Option " + getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(", "));
     }
@@ -46,16 +51,16 @@ abstract class AbstractOptionParser extends AbstractParser {
         private final boolean isPOSIXConformOptionName;
 
         public static OptionName of(String value) {
-            return new OptionName(value);
-        }
-
-        private OptionName(String value) {
             if (value == null
                     || value.length() < 2
                     || value.charAt(0) != InputArgument.OPTION_PREFIX
                     || value.equals(InputArgument.BREAK_SEQUENCE)
                     || value.chars().skip(1).anyMatch(Character::isSpaceChar))
                 throw new IllegalArgumentException("Value is not a valid option name: " + value);
+            return new OptionName(value);
+        }
+
+        private OptionName(String value) {
             this.value = value;
             isPOSIXConformOptionName = value.length() == 2
                     && Character.isLetterOrDigit(value.charAt(1));

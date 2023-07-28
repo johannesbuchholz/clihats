@@ -25,7 +25,7 @@ public class ValuedParser<T> extends AbstractOptionParser {
     private final Supplier<String> defaultSupplier;
 
     protected static ValuedParser<String> forName(String name, String... names) {
-        return new ValuedParser<>(asOptionNames(name, names), false, null, s -> s, null);
+        return new ValuedParser<>(asOptionNames(name, names), false, () -> null, s -> s, null);
     }
 
     private ValuedParser(Set<OptionName> names, boolean required, Supplier<String> defaultSupplier, ValueMapper<T> valueMapper, String description) {
@@ -96,7 +96,7 @@ public class ValuedParser<T> extends AbstractOptionParser {
             inputArgs[index + 1] = null;
             result = ArgumentParsingResult.of(valueMapper.mapWithThrows(extractedStringValue));
         } else {
-            throw new MissingValueException(toString());
+            throw new MissingValueException(getDisplayName());
         }
         return result;
     }
