@@ -11,7 +11,8 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class FlagTest {
 
@@ -188,32 +189,29 @@ public class FlagTest {
         assertEquals(expected, testResult);
     }
 
+    @Test
+    public void shouldExecute_duplicateNames() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name = "-a";
+        String[] args = {name};
+        // when
+        Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(FlagParser
+                        .forName(name, name))
+                        .execute(args);
+
+        // then
+        TestResult expected = TestResult.newExpected("");
+        assertEquals(expected, testResult);
+    }
+
     /*
 
     FAILURE TESTS
 
      */
-
-    @Test
-    public void shouldFail_wrongAliasNaming() {
-        // given
-        String name = "-a";
-        // when
-        IllegalArgumentException illegalArgumentException = null;
-        try {
-            Command.forName("run")
-                    .withInstruction(args -> {})
-                    .withParsers(FlagParser
-                            .forName(name, name)
-                    );
-        } catch (IllegalArgumentException e) {
-            illegalArgumentException = e;
-        }
-
-        // then
-        assertNotNull(illegalArgumentException);
-        assertTrue(illegalArgumentException.getMessage().contains(name));
-    }
 
     @Test
     public void shouldFail_unknownArgument() {

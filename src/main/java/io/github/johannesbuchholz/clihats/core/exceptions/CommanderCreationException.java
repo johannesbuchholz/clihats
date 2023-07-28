@@ -7,8 +7,8 @@ import io.github.johannesbuchholz.clihats.core.execution.Commander;
  */
 public class CommanderCreationException extends RuntimeException {
 
-    public CommanderCreationException(String messageTemplate, Object... args) {
-        super(String.format(messageTemplate, args));
+    public CommanderCreationException(String message) {
+        super(message);
     }
 
 }

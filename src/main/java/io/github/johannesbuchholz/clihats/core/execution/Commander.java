@@ -28,7 +28,7 @@ public class Commander implements Documented {
     private static final int COMMAND_DESCRIPTION_WIDTH = 76;
     private final List<String> helpArgs = List.of("--help");
     private final String cliName;
-    private final Map<Command.Name, Command> commands;
+    private final Map<String, Command> commandsByName;
     private final String description;
 
     /**
@@ -41,9 +41,9 @@ public class Commander implements Documented {
         return new Commander(Objects.requireNonNull(name).trim(), Map.of(), "");
     }
 
-    private Commander(String cliName, Map<Command.Name, Command> commands, String description) {
+    private Commander(String cliName, Map<String, Command> commandsByName, String description) {
         this.cliName = cliName;
-        this.commands = commands;
+        this.commandsByName = commandsByName;
         this.description = description;
     }
 
@@ -56,7 +56,7 @@ public class Commander implements Documented {
      */
     public Commander withCommands(Command... commands) throws CommanderCreationException {
         checkForCommandConflicts(commands);
-        Map<Command.Name, Command> commandMap = Arrays.stream(commands)
+        Map<String, Command> commandMap = Arrays.stream(commands)
                 .collect(Collectors.toUnmodifiableMap(Command::getName, Function.identity()));
         return new Commander(cliName, commandMap, description);
     }
@@ -69,7 +69,7 @@ public class Commander implements Documented {
      * @throws CommanderCreationException if the commander could not be created.
      */
     public Commander withDescription(String description) {
-        return new Commander(cliName, commands, Objects.requireNonNull(description).trim());
+        return new Commander(cliName, commandsByName, Objects.requireNonNull(description).trim());
     }
 
     /**
@@ -80,15 +80,25 @@ public class Commander implements Documented {
      * @throws CliHelpCallException        if the user input requests help.
      */
     public void execute(String[] inputArgs) throws CommanderExecutionException, CliHelpCallException {
-        CommandSearchResult commandSearchResult = findCommand(inputArgs);
-        if (isHelpCall(inputArgs)) {
-            throwHelpException(commandSearchResult);
-        } else if (commandSearchResult.isEmpty()) {
-            throw new UnknownCommandException(this, inputArgs);
+        Optional<Command> commandSearchResult;
+        if (inputArgs.length > 0) {
+            commandSearchResult = getCommand(inputArgs[0]);
+        } else {
+            commandSearchResult = Optional.empty();
         }
+        if (isHelpCall(inputArgs)) {
+            String actualHelpString;
+            if (commandSearchResult.isEmpty())
+                actualHelpString = getDoc();
+            else
+                actualHelpString = commandSearchResult.get().getDoc();
+            throw new CliHelpCallException(actualHelpString);
+        }
+        if (commandSearchResult.isEmpty())
+            throw new UnknownCommandException(this, inputArgs[0]);
 
         try {
-            commandSearchResult.foundCommand.execute(Arrays.copyOfRange(inputArgs, commandSearchResult.offset, inputArgs.length));
+            commandSearchResult.get().execute(Arrays.copyOfRange(inputArgs, 1, inputArgs.length));
         } catch (CommandExecutionException e) {
             throw new CommanderExecutionException(this, e);
         }
@@ -98,42 +108,25 @@ public class Commander implements Documented {
      * true, iff the last input argument is among {@link #helpArgs}
      */
     private boolean isHelpCall(String[] inputArgs) {
-        return inputArgs.length == 0 || helpArgs.contains(inputArgs[inputArgs.length - 1]);
+        return inputArgs.length == 0 || Arrays.stream(inputArgs).anyMatch(helpArgs::contains);
     }
 
     private void checkForCommandConflicts(Command... commands) throws CommanderCreationException {
         List<Command> processedCommands = new ArrayList<>(commands.length);
         List<String> conflictMessages = new LinkedList<>();
         for (Command command : commands) {
-            processedCommands.stream()
-                    .flatMap(coherent -> coherent.conflictsWith(command).stream())
-                    .forEach(conflictMessages::add);
+            processedCommands.forEach(coherent -> coherent.conflictsWith(command).ifPresent(conflictMessages::add));
             processedCommands.add(command);
         }
         if (!conflictMessages.isEmpty()) {
-            throw new CommanderCreationException("Detected conflicts among commands:\n%s",
-                    conflictMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n"))
+            throw new CommanderCreationException(String.format("Detected conflicts among commands:\n%s",
+                    conflictMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n")))
             );
         }
     }
 
-    private CommandSearchResult findCommand(String[] inputArgs) {
-        Command foundCommand = null;
-        int pointer = 0;
-        while (foundCommand == null && pointer < inputArgs.length) {
-            String[] nameCandidate = Arrays.copyOfRange(inputArgs, 0, ++pointer);
-            foundCommand = commands.get(Command.Name.from(nameCandidate));
-        }
-        return new CommandSearchResult(foundCommand, pointer);
-    }
-
-    private void throwHelpException(CommandSearchResult commandSearchResult) throws CliHelpCallException {
-        String actualHelpString;
-        if (commandSearchResult.isEmpty())
-            actualHelpString = getDoc();
-        else
-            actualHelpString = commandSearchResult.foundCommand.getDoc();
-        throw new CliHelpCallException(actualHelpString);
+    private Optional<Command> getCommand(String commandName) {
+       return Optional.ofNullable(commandsByName.get(commandName));
     }
 
     private String generateHelpString() {
@@ -146,12 +139,12 @@ public class Commander implements Documented {
         matrixHeader.row();
         // add commands
         TextMatrix matrixCommands = TextMatrix.empty();
-        if (!commands.isEmpty()) {
+        if (!commandsByName.isEmpty()) {
             matrixHeader.row(TextCell.getNew("Commands:"));
-            commands.values().stream()
-                    .sorted(Comparator.comparing(Command::getDisplayName))
+            commandsByName.values().stream()
+                    .sorted(Comparator.comparing(Command::getName))
                     .forEach(command ->
-                            matrixCommands.row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, command.getDisplayName(), command.getDescription())
+                            matrixCommands.row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, command.getName(), command.getDescription())
                     );
         }
         return matrixHeader + "\n" +
@@ -176,22 +169,7 @@ public class Commander implements Documented {
     @Override
     public String toString() {
         return String.format("%s={name=%s, commands=%s}",
-                this.getClass().getSimpleName(), cliName, commands.keySet().stream().sorted().collect(Collectors.toList()));
+                this.getClass().getSimpleName(), cliName, commandsByName.keySet().stream().sorted().collect(Collectors.toList()));
     }
 
-    private static class CommandSearchResult {
-
-        private final Command foundCommand;
-        private final int offset;
-
-        public CommandSearchResult(Command foundCommand, int offset) {
-            this.foundCommand = foundCommand;
-            this.offset = offset;
-        }
-
-        public boolean isEmpty() {
-            return foundCommand == null;
-        }
-
-    }
 }

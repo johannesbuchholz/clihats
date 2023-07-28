@@ -3,10 +3,7 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
 import io.github.johannesbuchholz.clihats.core.execution.AbstractParser;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,6 +24,17 @@ abstract class AbstractOptionParser extends AbstractParser {
     @Override
     public String toString() {
         return "Option " + getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(", "));
+    }
+
+    @Override
+    protected Optional<String> getConflictMessage(AbstractParser other) {
+       if (!(other instanceof AbstractOptionParser))
+           return Optional.empty();
+        HashSet<OptionName> duplicateNames = new HashSet<>(getNames());
+        duplicateNames.retainAll(((AbstractOptionParser) other).getNames());
+        if (!duplicateNames.isEmpty())
+            return Optional.of(String.format("Parser %s conflicts with parser %s on names %s", this, other, duplicateNames));
+        return Optional.empty();
     }
 
     static Set<OptionName> asOptionNames(String name, String... names) {
@@ -87,6 +95,14 @@ abstract class AbstractOptionParser extends AbstractParser {
         @Override
         public int hashCode() {
             return Objects.hash(value);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OptionName that = (OptionName) o;
+            return Objects.equals(value, that.value);
         }
 
         @Override

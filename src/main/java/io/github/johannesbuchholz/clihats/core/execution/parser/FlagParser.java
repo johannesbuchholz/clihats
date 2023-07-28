@@ -1,7 +1,10 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.exceptions.parsing.ValueExtractionException;
-import io.github.johannesbuchholz.clihats.core.execution.*;
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
+import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.ParserHelpContent;
+import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
 
 import java.util.*;
 
@@ -82,11 +85,6 @@ public class FlagParser<T> extends AbstractOptionParser {
     @Override
     protected ArgumentParsingResult defaultValue() throws ValueExtractionException {
         return ArgumentParsingResult.of(valueMapper.mapWithThrows(defaultValue));
-    }
-
-    @Override
-    protected Optional<String> getConflictMessage(AbstractParser other) {
-        return Optional.empty();
     }
 
     @Override

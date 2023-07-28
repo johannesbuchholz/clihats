@@ -97,11 +97,11 @@ public class CommanderTest {
                 .withMapper(X::new);
         AbstractParser p2 = Parsers.valued("-d")
                 .withDefault("999.99");
-        Command c1 = Command.forName("\texecute first    ")
+        Command c1 = Command.forName("execute-first")
                 .withInstruction(CommanderTest::dummyAdapter1)
                 .withParsers(p1, p2);
 
-        c2 = Command.forName("execute      second  ").withInstruction(CommanderTest::dummyAdapter2)
+        c2 = Command.forName("execute-second").withInstruction(CommanderTest::dummyAdapter2)
                 .withParsers(p1, p2);
 
         Command c3 = Command.forName("run-runner")
@@ -127,7 +127,7 @@ public class CommanderTest {
 
     @Test
     public void c1ShouldExecute() throws CommanderExecutionException, CliHelpCallException {
-        String[] args = {"execute", "first", "first arg", "-d", "no-stupid-questions"};
+        String[] args = {"execute-first", "first arg", "-d", "no-stupid-questions"};
         dummyTestMethod1(new X("first arg"), "no-stupid-questions");
         R expected = result;
 
@@ -139,7 +139,7 @@ public class CommanderTest {
 
     @Test
     public void c2ShouldExecute() throws CommanderExecutionException, CliHelpCallException {
-        String[] args = {"execute", "second", "first arg", "-d", "no-stupid-questions"};
+        String[] args = {"execute-second", "first arg", "-d", "no-stupid-questions"};
         dummyTestMethod2(new X("first arg"), "no-stupid-questions");
         R expected = result;
 
@@ -154,7 +154,7 @@ public class CommanderTest {
                 .withMapper(X::new);
         AbstractParser p2 = Parsers.valued("-d")
                 .withDefault("999.99");
-        Command c3 = Command.forName("execute second").withInstruction(CommanderTest::dummyAdapter2).withParsers(p1, p2);
+        Command c3 = Command.forName("execute-second").withInstruction(CommanderTest::dummyAdapter2).withParsers(p1, p2);
         Commander.forName("commander2")
                 .withCommands(c2, c3);
     }
@@ -174,7 +174,7 @@ public class CommanderTest {
 
     @Test
     public void commander_parsingException() {
-        String[] args = {"execute", "first", "fubbelmug-wojk", "-ddd=no-stupid-questions", "fourth-unknown-arg"};
+        String[] args = {"execute-first", "fubbelmug-wojk", "-ddd=no-stupid-questions", "fourth-unknown-arg"};
         Throwable t = null;
         try {
             commander1.execute(args);

@@ -9,11 +9,11 @@ public abstract class CommandExecutionException extends CliException {
     }
 
     protected CommandExecutionException(Command failingCommand, String message) {
-        super(generateMessagePrefix(failingCommand.getDisplayName()) + message);
+        super(generateMessagePrefix(failingCommand.getName()) + message);
     }
 
     protected CommandExecutionException(Command failingCommand, Throwable cause) {
-        super(generateMessagePrefix(failingCommand.getDisplayName()) + cause.getMessage(), cause);
+        super(generateMessagePrefix(failingCommand.getName()) + cause.getMessage(), cause);
     }
 
 }

@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class NameTest {
 
@@ -175,32 +176,30 @@ public class NameTest {
         assertEquals(expected, testResult);
     }
 
+    @Test
+    public void shouldExecute_duplicateNames() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name = "-a";
+        String expectedValue = "expected value";
+        String[] args = {name, expectedValue};
+        // when
+        Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(ValuedParser
+                        .forName(name, name))
+                .execute(args);
+
+        // then
+        TestResult expected = TestResult.newExpected(expectedValue);
+        assertEquals(expected, testResult);
+    }
+
     /*
 
     FAILURE TESTS
 
      */
-
-    @Test
-    public void shouldFail_wrongAliasNaming() {
-        // given
-        String name = "-a";
-        // when
-        IllegalArgumentException illegalArgumentException = null;
-        try {
-            Command.forName("run")
-                    .withInstruction(args -> {})
-                    .withParsers(ValuedParser
-                            .forName(name, name)
-                    );
-        } catch (IllegalArgumentException e) {
-            illegalArgumentException = e;
-        }
-
-        // then
-        assertNotNull(illegalArgumentException);
-        assertTrue(illegalArgumentException.getMessage().contains(name));
-    }
 
     @Test
     public void shouldFail_missingRequiredArgument() {

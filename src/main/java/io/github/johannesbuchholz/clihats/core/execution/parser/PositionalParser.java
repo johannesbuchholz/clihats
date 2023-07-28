@@ -1,12 +1,14 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.exceptions.parsing.ValueExtractionException;
-import io.github.johannesbuchholz.clihats.core.execution.*;
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
+import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.ParserHelpContent;
+import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -89,11 +91,6 @@ public class PositionalParser<T> extends AbstractOperandParser {
             throw new ValueExtractionException(e);
         }
         return ArgumentParsingResult.of(valueMapper.mapWithThrows(defaultStringValue));
-    }
-
-    @Override
-    protected Optional<String> getConflictMessage(AbstractParser other) {
-        return Optional.empty();
     }
 
     @Override
