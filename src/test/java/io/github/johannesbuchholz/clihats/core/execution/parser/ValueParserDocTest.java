@@ -24,7 +24,7 @@ public class ValueParserDocTest {
         String expectedDoc = "Help for run\n" +
                 "\n" +
                 "Options:\n" +
-                "-a";
+                "-a <No description>";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
 
@@ -45,7 +45,7 @@ public class ValueParserDocTest {
                 "this works out fine: A new line for this command. Yeah!\n" +
                 "\n" +
                 "Options:\n" +
-                "-a";
+                "-a <No description>";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
 
@@ -162,9 +162,9 @@ public class ValueParserDocTest {
                 "\n" +
                 "Options:\n" +
                 "-a --abc         (required) Some meaningful argument. Defaults to 'null' if missing.\n" +
-                "-p --poop                   Poopdipoop. Another Description. Not too long.\n" +
-                "   --why-so-much\n" +
-                "   --POOP";
+                "-p --POOP                   Poopdipoop. Another Description. Not too long.\n" +
+                "   --poop\n" +
+                "   --why-so-much";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
 

@@ -157,7 +157,7 @@ public class Command implements Documented {
                     .row()
                     .row(COMMAND_DESCRIPTION_WIDTH, "Options:");
             parsers.stream()
-                    .sorted(Comparator.comparing(AbstractParser::toString))
+                    .sorted(Comparator.comparing(AbstractParser::getDisplayName))
                     .map(p -> p.getHelpContent().asTextCells())
                     .forEach(matrixParsers::row);
         }

@@ -5,6 +5,7 @@ import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ParserHelpContent {
@@ -35,7 +36,9 @@ public class ParserHelpContent {
                 MIN_DESCRIPTION_COL_WIDTH,
                 Command.COMMAND_DESCRIPTION_WIDTH - (nameCol.getWidth() + aliasesCell.getWidth() + valueDescCell.getWidth())
         );
-        TextCell paragraphCell = TextCell.getNew(descriptionColWidth).paragraph(description);
+        TextCell paragraphCell = Optional.ofNullable(description)
+                .map(desc -> TextCell.getNew(descriptionColWidth).paragraph(desc))
+                .orElse(TextCell.getNew("<No description>"));
         return new TextCell[] {nameCol, aliasesCell, valueDescCell, paragraphCell};
     }
 

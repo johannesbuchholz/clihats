@@ -127,6 +127,8 @@ public class ValuedParser<T> extends AbstractOptionParser {
             else
                 secondaryNames.add(name.getValue());
         });
+        Collections.sort(primaryNames);
+        Collections.sort(secondaryNames);
         List<String> indicators = new ArrayList<>();
         if (required)
             indicators.add("required");

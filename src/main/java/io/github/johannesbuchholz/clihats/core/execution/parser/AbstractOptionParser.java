@@ -18,12 +18,12 @@ abstract class AbstractOptionParser extends AbstractParser {
 
     @Override
     public String getDisplayName() {
-        return getNames().stream().map(OptionName::getValue).sorted().findFirst().orElseThrow();
+        return getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(","));
     }
 
     @Override
     public String toString() {
-        return "Option " + getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(", "));
+        return "Option " + getDisplayName();
     }
 
     @Override
@@ -53,7 +53,7 @@ abstract class AbstractOptionParser extends AbstractParser {
         return optionOptionNames;
     }
 
-    static class OptionName {
+    static class OptionName implements Comparable<OptionName> {
 
         private final String value;
         private final boolean isPOSIXConformOptionName;
@@ -110,5 +110,15 @@ abstract class AbstractOptionParser extends AbstractParser {
             return value;
         }
 
+        @Override
+        public int compareTo(OptionName o) {
+            if (o == null)
+                return -1;
+            if (isPOSIXConformOptionName && !o.isPOSIXConformOptionName)
+                return -1;
+            else if (!isPOSIXConformOptionName && o.isPOSIXConformOptionName)
+                return 1;
+            return value.compareTo(o.value);
+        }
     }
 }

@@ -97,6 +97,8 @@ public class FlagParser<T> extends AbstractOptionParser {
             else
                 secondaryNames.add(name.getValue());
         });
+        Collections.sort(primaryNames);
+        Collections.sort(secondaryNames);
         return new ParserHelpContent(primaryNames, secondaryNames, List.of("flag"), description);
     }
 

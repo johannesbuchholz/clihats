@@ -166,4 +166,39 @@ public class OptionNameTest {
         assertTrue(args.stream().noneMatch(name::matches));
     }
 
+    @Test
+    public void testSorting_POSIXCompliantNamesFirst() {
+        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("-z");
+        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("--a");
+        assertTrue(name1.compareTo(name2) < 0);
+    }
+
+    @Test
+    public void testSorting_POSIXCompliantNamesByValue() {
+        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("-z");
+        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("-a");
+        assertTrue(name1.compareTo(name2) > 0);
+    }
+
+    @Test
+    public void testSorting_NonPOSIXCompliantNamesByValue() {
+        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("--z");
+        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("--a");
+        assertTrue(name1.compareTo(name2) > 0);
+    }
+
+    @Test
+    public void testSorting_POSIXCompliantNamesEqual() {
+        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("-a");
+        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("-a");
+        assertEquals(0, name1.compareTo(name2));
+    }
+
+    @Test
+    public void testSorting_NonPOSIXCompliantNamesEqual() {
+        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("--a");
+        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("--a");
+        assertEquals(0, name1.compareTo(name2));
+    }
+
 }

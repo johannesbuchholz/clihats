@@ -76,7 +76,7 @@ public class DocStringTest {
                         "Help for command2                                                               \n" +
                         "\n" +
                         "Options:                                                                        \n" +
-                        "-opt (flag)     This is a lengthy description for a string argument.";
+                        "   --opt (flag)     This is a lengthy description for a string argument.";
         assertNotNull(actualException);
         assertEquals(CliHelpCallException.class, actualException.getClass());
 
