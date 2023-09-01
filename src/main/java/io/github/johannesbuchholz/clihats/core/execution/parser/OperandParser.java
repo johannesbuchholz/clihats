@@ -11,8 +11,7 @@ import java.util.function.Supplier;
  * These parsers are always parsed during the last parsing round and parse the remaining argument directly
  * from their respective position.
  */
-// TODO: Consider renaming to OperandParser
-public class PositionalParser<T> extends AbstractOperandParser<T> {
+public class OperandParser<T> extends AbstractOperandParser<T> {
 
     private final int position;
     private final ValueMapper<T> valueMapper;
@@ -20,14 +19,14 @@ public class PositionalParser<T> extends AbstractOperandParser<T> {
     private final boolean required;
     private final Supplier<String> defaultSupplier;
 
-    protected static PositionalParser<String> at(int position) {
+    protected static OperandParser<String> at(int position) {
         if (position < 0) {
             throw new IllegalArgumentException("position needs to be non-negative but was " + position);
         }
-        return new PositionalParser<>(position, () -> null, false, stringValue -> stringValue, "");
+        return new OperandParser<>(position, () -> null, false, stringValue -> stringValue, "");
     }
 
-    private PositionalParser(int position, Supplier<String> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description) {
+    private OperandParser(int position, Supplier<String> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description) {
         this.position = position;
         this.valueMapper = valueMapper;
         this.description =description;
@@ -38,24 +37,24 @@ public class PositionalParser<T> extends AbstractOperandParser<T> {
     /**
      * Returns a new PositionalArgument with this objects position and the given mapper.
      */
-    public <X> PositionalParser<X> withMapper(ValueMapper<X> mapper) {
-        return new PositionalParser<>(position, defaultSupplier, required, Objects.requireNonNull(mapper), description);
+    public <X> OperandParser<X> withMapper(ValueMapper<X> mapper) {
+        return new OperandParser<>(position, defaultSupplier, required, Objects.requireNonNull(mapper), description);
     }
 
-    public PositionalParser<T> withDescription(String description) {
-        return new PositionalParser<>(position, defaultSupplier, required, valueMapper,  Objects.requireNonNullElse(description, "").trim());
+    public OperandParser<T> withDescription(String description) {
+        return new OperandParser<>(position, defaultSupplier, required, valueMapper,  Objects.requireNonNullElse(description, "").trim());
     }
 
-    public PositionalParser<T> withRequired(boolean required) {
-        return new PositionalParser<>(position, defaultSupplier, required, valueMapper, description);
+    public OperandParser<T> withRequired(boolean required) {
+        return new OperandParser<>(position, defaultSupplier, required, valueMapper, description);
     }
 
-    public PositionalParser<T> withDefault(String defaultValue) {
-        return new PositionalParser<>(position, () -> defaultValue, required, valueMapper, description);
+    public OperandParser<T> withDefault(String defaultValue) {
+        return new OperandParser<>(position, () -> defaultValue, required, valueMapper, description);
     }
 
-    public PositionalParser<T> withDefault(Supplier<String> defaultSupplier) {
-        return new PositionalParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description);
+    public OperandParser<T> withDefault(Supplier<String> defaultSupplier) {
+        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description);
     }
 
     @Override

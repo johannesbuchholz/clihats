@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.processor.annotations;
 
 import io.github.johannesbuchholz.clihats.core.execution.parser.FlagParser;
-import io.github.johannesbuchholz.clihats.core.execution.parser.PositionalParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.OperandParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ValuedParser;
 import io.github.johannesbuchholz.clihats.processor.mapper.AbstractValueMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.NoMapper;
@@ -22,7 +22,7 @@ public @interface Option {
     /**
      * The position of the option in the arg array to be parsed starting at position 0.
      * <p>If set, a positional option declaration is assumed.</p>
-     * @see PositionalParser
+     * @see OperandParser
      */
     int position() default -1;
 

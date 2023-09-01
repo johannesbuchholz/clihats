@@ -216,8 +216,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        PositionalParser.at(0),
-                        PositionalParser.at(1)
+                        OperandParser.at(0),
+                        OperandParser.at(1)
                 );
         String stringArgA = "a string arg A";
         String[] args = {stringArgA};
@@ -237,8 +237,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        PositionalParser.at(0),
-                        PositionalParser.at(1)
+                        OperandParser.at(0),
+                        OperandParser.at(1)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -259,8 +259,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        PositionalParser.at(0),
-                        PositionalParser.at(1)
+                        OperandParser.at(0),
+                        OperandParser.at(1)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -386,7 +386,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {nameA, stringArgA};
@@ -408,7 +408,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgB = "a string arg B";
         String[] args = {stringArgB};
@@ -430,7 +430,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -453,7 +453,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         ValuedParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String stringArgB = "a string arg B";
@@ -483,7 +483,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String[] args = {nameA};
 
@@ -504,7 +504,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {stringArgA};
@@ -526,7 +526,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {nameA, stringArgA};
@@ -548,7 +548,7 @@ public class CombinationTest {
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
                         FlagParser.forName(nameA),
-                        PositionalParser.at(0)
+                        OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
         String[] args = {stringArgA, nameA};

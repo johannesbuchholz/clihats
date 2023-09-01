@@ -27,7 +27,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalParser.at(0));
+                .withParsers(OperandParser.at(0));
         String stringArg = "a string argument";
         String[] args = {stringArg};
 
@@ -45,7 +45,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalParser.at(0));
+                .withParsers(OperandParser.at(0));
         String[] args = {};
 
         // when
@@ -63,7 +63,7 @@ public class PositionalTest {
         String defaultValue = "a string argument";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withDefault(defaultValue));
         String[] args = {};
 
@@ -82,7 +82,7 @@ public class PositionalTest {
         String defaultValue = "a string argument";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withDefault(() -> defaultValue));
         String[] args = {};
 
@@ -100,7 +100,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withMapper(s -> s == null ? null : BigDecimal.valueOf(Double.parseDouble(s))));
 
         String argValue = "1234.56789";
@@ -123,7 +123,7 @@ public class PositionalTest {
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withMapper(mapper));
 
         String argValue = "one, two, three four, five, six";
@@ -152,7 +152,7 @@ public class PositionalTest {
         try {
             Command.forName("run")
                     .withInstruction(args -> {})
-                    .withParsers(PositionalParser.at(illegalPosition));
+                    .withParsers(OperandParser.at(illegalPosition));
         } catch (IllegalArgumentException e) {
             actualException = e;
         }
@@ -166,7 +166,7 @@ public class PositionalTest {
     public void shouldFail_missingRequiredArgument() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        PositionalParser<String> requiredParser = PositionalParser.at(0)
+        OperandParser<String> requiredParser = OperandParser.at(0)
                 .withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
@@ -193,8 +193,8 @@ public class PositionalTest {
     public void shouldFail_missingSecondPositionalParser() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        PositionalParser<String> requiredParser1 = PositionalParser.at(0).withRequired(true);
-        PositionalParser<String> requiredParser2 = PositionalParser.at(1).withRequired(true);
+        OperandParser<String> requiredParser1 = OperandParser.at(0).withRequired(true);
+        OperandParser<String> requiredParser2 = OperandParser.at(1).withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(requiredParser1, requiredParser2);
@@ -227,7 +227,7 @@ public class PositionalTest {
         };
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(PositionalParser.at(0)
+                .withParsers(OperandParser.at(0)
                         .withMapper(throwingMapper));
         String[] args = {"anyways"};
 

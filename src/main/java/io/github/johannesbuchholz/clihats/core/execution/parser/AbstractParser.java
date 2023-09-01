@@ -35,7 +35,6 @@ public abstract class AbstractParser<T> {
      * @return The default value of this parser if any.
      * @throws MissingArgumentException If an unexpected exception occurred during parsing. Callers may discard this parser for future parsing attempts.
      */
-    // TODO: make this throw ParsingException.
     public abstract ArgumentParsingResult<T> defaultValue() throws ArgumentParsingException;
 
     /**

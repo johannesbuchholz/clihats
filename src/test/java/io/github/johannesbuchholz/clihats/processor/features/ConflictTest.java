@@ -40,10 +40,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.valued(repeatedArgName),
-                                            Parsers.positional(0),
-                                            Parsers.flag("-f"),
-                                            Parsers.valued(repeatedArgName)
+                                            Parsers.valuedOption(repeatedArgName),
+                                            Parsers.operand(0),
+                                            Parsers.flagOption("-f"),
+                                            Parsers.valuedOption(repeatedArgName)
                                     )
                     );
         } catch (IllegalArgumentException e) {
@@ -64,10 +64,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.flag(repeatedArgName),
-                                            Parsers.positional(0),
-                                            Parsers.flag("-f"),
-                                            Parsers.flag(repeatedArgName)
+                                            Parsers.flagOption(repeatedArgName),
+                                            Parsers.operand(0),
+                                            Parsers.flagOption("-f"),
+                                            Parsers.flagOption(repeatedArgName)
                                     )
                     );
         } catch (IllegalArgumentException e) {
@@ -88,17 +88,16 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.valued("-n"),
-                                            Parsers.positional(repeatedPos),
-                                            Parsers.flag("-f"),
-                                            Parsers.positional(repeatedPos)
+                                            Parsers.valuedOption("-n"),
+                                            Parsers.operand(repeatedPos),
+                                            Parsers.flagOption("-f"),
+                                            Parsers.operand(repeatedPos)
                                     )
                     );
         } catch (IllegalArgumentException e) {
             expectedException = e;
         }
 
-        System.out.println("Received Exception: " + expectedException);
         assertNotNull(expectedException);
         assertTrue(expectedException.getMessage().contains(String.valueOf(repeatedPos)));
     }
@@ -113,10 +112,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.valued(repeatedArgName),
-                                            Parsers.positional(0),
-                                            Parsers.flag("-f"),
-                                            Parsers.flag(repeatedArgName)
+                                            Parsers.valuedOption(repeatedArgName),
+                                            Parsers.operand(0),
+                                            Parsers.flagOption("-f"),
+                                            Parsers.flagOption(repeatedArgName)
                                     )
                     );
         } catch (IllegalArgumentException e) {

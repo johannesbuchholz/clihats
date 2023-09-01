@@ -115,14 +115,14 @@ public class Command implements Documented {
      * @throws CommandExecutionException if parsing of arguments or execution fails.
      */
     public void execute(String[] inputArgs) throws CommandExecutionException {
-        ParsingResult parsingResult;
+        Object[] parsedValues;
         try {
-            parsingResult = inputParser.parse(inputArgs);
+            parsedValues = inputParser.parse(inputArgs);
         } catch (ArgumentParsingException e) {
             throw new InvalidInputArgumentException(this, e);
         }
         try {
-            instruction.execute(parsingResult.getValues());
+            instruction.execute(parsedValues);
         } catch (Exception e) {
             throw new ClientCodeExecutionException(this, e);
         }

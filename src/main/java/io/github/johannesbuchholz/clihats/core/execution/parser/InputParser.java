@@ -1,7 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.ParsingResult;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,8 +16,8 @@ public class InputParser {
         this.abstractParsers = abstractParsers;
     }
 
-    public ParsingResult parse(String[] inputArgs) throws ArgumentParsingException {
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(parserCount);
+    public Object[] parse(String[] inputArgs) throws ArgumentParsingException {
+        Object[] parsedValues = new Object[parserCount];
 
         // collect tokens
         Map<Integer, List<ParserToken>> tokensByPriority = IntStream.range(0, abstractParsers.size())
@@ -28,7 +27,7 @@ public class InputParser {
         InputArgument[] args = Arrays.stream(inputArgs).map(InputArgument::of).toArray(InputArgument[]::new);
         List<Integer> ascendingPriorities = tokensByPriority.keySet().stream().sorted().collect(Collectors.toList());
         for (int priority : ascendingPriorities) {
-            parseNextRound(tokensByPriority.get(priority), args, parsingResultBuilder);
+            parseNextRound(tokensByPriority.get(priority), args, parsedValues);
             args = Arrays.stream(args).filter(Objects::nonNull).toArray(InputArgument[]::new);
         }
         // mark remaining args as unknown
@@ -38,15 +37,15 @@ public class InputParser {
         if (!unknownInputArguments.isEmpty())
             throw new UnknownArgumentException(unknownInputArguments);
 
-        return parsingResultBuilder.build();
+        return parsedValues;
     }
     
     /**
      * @param tokens Parser tokens for this round.
      * @param args Array of input arguments. May contain null entries indicating that the respective element has already been parsed.
-     * @param parsingResultBuilder The current parsing result builder to put values into.
+     * @param parsedValues The current parsing result builder to put values into.
      */
-    private void parseNextRound(Collection<ParserToken> tokens, InputArgument[] args, ParsingResult.Builder parsingResultBuilder) throws ArgumentParsingException {
+    private void parseNextRound(Collection<ParserToken> tokens, InputArgument[] args, Object[] parsedValues) throws ArgumentParsingException {
         Set<ParserToken> remainingTokens = new HashSet<>(tokens);
         List<ParserToken> usedParsers = new ArrayList<>(tokens.size());
 
@@ -64,7 +63,7 @@ public class InputParser {
                 if (result.isPresent()) {
                     // parser could extract a value from the current arg
                     noneFound = false;
-                    parsingResultBuilder.putArg(token.targetPosition, result.getValue());
+                    parsedValues[token.targetPosition] = result.getValue();
                     usedParsers.add(token);
                 }
             }
@@ -80,18 +79,18 @@ public class InputParser {
                 break;
             }
         }
-        putDefaultValues(remainingTokens, parsingResultBuilder);
+        putDefaultValues(remainingTokens, parsedValues);
     }
 
     /**
      * Apply default values for specified parsers.
      */
-    private void putDefaultValues(Collection<ParserToken> tokens, ParsingResult.Builder parsingResultBuilder) throws ArgumentParsingException {
+    private void putDefaultValues(Collection<ParserToken> tokens, Object[] parsingResultBuilder) throws ArgumentParsingException {
         for (ParserToken token : tokens) {
             ArgumentParsingResult<?> defaultResult;
             defaultResult = token.abstractParser.defaultValue();
             if (defaultResult.isPresent()) {
-                parsingResultBuilder.putArg(token.targetPosition, defaultResult.getValue());
+                parsingResultBuilder[token.targetPosition] = defaultResult.getValue();
             } else {
                 // parser does not have a default value
                 throw new MissingArgumentException(token.abstractParser);
