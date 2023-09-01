@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.processor.mapper;
 
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ValueMapper;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.*;
 

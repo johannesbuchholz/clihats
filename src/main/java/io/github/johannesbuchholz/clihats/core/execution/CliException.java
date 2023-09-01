@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.exceptions.execution;
+package io.github.johannesbuchholz.clihats.core.execution;
 
 /**
  * Base class for checked cli exceptions.

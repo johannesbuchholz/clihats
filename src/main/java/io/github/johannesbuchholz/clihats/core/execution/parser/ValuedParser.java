@@ -1,11 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.parsing.MissingValueException;
-import io.github.johannesbuchholz.clihats.core.exceptions.parsing.ValueExtractionException;
-import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.ParserHelpContent;
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -16,7 +11,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type this parser returns.
  */
-public class ValuedParser<T> extends AbstractOptionParser {
+public class ValuedParser<T> extends AbstractOptionParser<T> {
 
     private final Set<OptionName> names;
     /*
@@ -67,7 +62,7 @@ public class ValuedParser<T> extends AbstractOptionParser {
     }
 
     @Override
-    protected ArgumentParsingResult parse(InputArgument[] inputArgs, int index) throws ValueExtractionException {
+    public ArgumentParsingResult<T> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException {
         if (inputArgs.length < index)
             throw new IllegalArgumentException("Index " + index + " is out of bounds for argument array of length " + inputArgs.length);
         InputArgument argToParse = Objects.requireNonNull(inputArgs[index], "Argument at index " + index + " is null");
@@ -93,14 +88,14 @@ public class ValuedParser<T> extends AbstractOptionParser {
         }
 
         // extract value
-        ArgumentParsingResult result;
+        ArgumentParsingResult<T> result;
         if (index + 1 < inputArgs.length) {
             InputArgument optionValue = inputArgs[index + 1];
             if (optionValue == null)
                 throw new MissingValueException(this);
             String extractedStringValue = optionValue.getValue();
             inputArgs[index + 1] = null;
-            result = ArgumentParsingResult.of(valueMapper.mapWithThrows(extractedStringValue));
+            result = ArgumentParsingResult.of(mapWithThrows(valueMapper, extractedStringValue));
         } else {
             throw new MissingValueException(this);
         }
@@ -108,20 +103,20 @@ public class ValuedParser<T> extends AbstractOptionParser {
     }
 
     @Override
-    protected ArgumentParsingResult defaultValue() throws ValueExtractionException {
+    public ArgumentParsingResult<T> defaultValue() throws ArgumentParsingException {
         if (required)
             return ArgumentParsingResult.empty();
         String defaultStringValue;
         try {
             defaultStringValue = defaultSupplier.get();
         } catch (Exception e) {
-            throw new ValueExtractionException(e);
+            throw new ArgumentParsingException(e);
         }
-        return ArgumentParsingResult.of(valueMapper.mapWithThrows(defaultStringValue));
+        return ArgumentParsingResult.of(mapWithThrows(valueMapper, defaultStringValue));
     }
 
     @Override
-    protected ParserHelpContent getHelpContent() {
+    public ParserHelpContent getHelpContent() {
         List<String> primaryNames = new ArrayList<>();
         List<String> secondaryNames = new ArrayList<>();
         names.forEach(name -> {

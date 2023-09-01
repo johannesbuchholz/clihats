@@ -1,9 +1,9 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.ClientCodeExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.ParsingException;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
+import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.InputParser;
+import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ public class Command implements Documented {
     public static final int COMMAND_DESCRIPTION_WIDTH = 80;
 
     private final Instruction instruction;
-    private final List<AbstractParser> parsers;
+    private final List<AbstractParser<?>> parsers;
     private final String description;
 
     private final String name;
@@ -49,10 +49,10 @@ public class Command implements Documented {
         return new Command(name, Instruction.empty(), List.of(), "");
     }
 
-    private static List<AbstractParser> validate(List<AbstractParser> parsers) {
-        List<AbstractParser> processedParsers = new ArrayList<>(parsers.size());
+    private static List<AbstractParser<?>> validate(List<AbstractParser<?>> parsers) {
+        List<AbstractParser<?>> processedParsers = new ArrayList<>(parsers.size());
         List<String> conflictsMessages = new ArrayList<>();
-        for (AbstractParser parser : parsers) {
+        for (AbstractParser<?> parser : parsers) {
             processedParsers.forEach(coherent -> coherent.getConflictMessage(parser).ifPresent(conflictsMessages::add));
             processedParsers.add(parser);
         }
@@ -64,7 +64,7 @@ public class Command implements Documented {
         return parsers;
     }
 
-    private Command(String name, Instruction instruction, List<AbstractParser> parsers, String description) {
+    private Command(String name, Instruction instruction, List<AbstractParser<?>> parsers, String description) {
         this.name = name;
         this.instruction = instruction;
         this.parsers = parsers;
@@ -82,7 +82,7 @@ public class Command implements Documented {
      * @throws NullPointerException if the specified array is null.
      * @see AbstractParser
      */
-    public Command withParsers(AbstractParser... parsers) {
+    public Command withParsers(AbstractParser<?>... parsers) {
         return new Command(name, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
     }
 
@@ -115,9 +115,11 @@ public class Command implements Documented {
      * @throws CommandExecutionException if parsing of arguments or execution fails.
      */
     public void execute(String[] inputArgs) throws CommandExecutionException {
-        ParsingResult parsingResult = inputParser.parse(inputArgs);
-        if (!parsingResult.isValid()) {
-            throw new ParsingException(this, parsingResult);
+        ParsingResult parsingResult;
+        try {
+            parsingResult = inputParser.parse(inputArgs);
+        } catch (ArgumentParsingException e) {
+            throw new InvalidInputArgumentException(this, e);
         }
         try {
             instruction.execute(parsingResult.getValues());

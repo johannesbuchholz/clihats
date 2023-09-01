@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.processor.generators;
 
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
 import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ValueMapper;
 import io.github.johannesbuchholz.clihats.processor.CommandLineInterfaceProcessor;
 import io.github.johannesbuchholz.clihats.processor.annotations.OptionNecessity;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;

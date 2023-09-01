@@ -1,6 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.exceptions.execution;
-
-import io.github.johannesbuchholz.clihats.core.execution.Commander;
+package io.github.johannesbuchholz.clihats.core.execution;
 
 public class CommanderExecutionException extends CliException {
 

@@ -1,6 +1,5 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractOperandParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractOptionParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
@@ -32,10 +31,10 @@ public class POSIXUtilityGuidelineTest {
                 "-Ä", "-Ö", "-Ü");
 
         // when
-        List<? extends AbstractOptionParser> valued = validNames.stream()
+        List<? extends AbstractOptionParser<?>> valued = validNames.stream()
                 .map(Parsers::valued)
                 .collect(Collectors.toList());
-        List<? extends AbstractOptionParser> flag = validNames.stream()
+        List<? extends AbstractOptionParser<?>> flag = validNames.stream()
                 .map(Parsers::flag)
                 .collect(Collectors.toList());
 
@@ -52,10 +51,10 @@ public class POSIXUtilityGuidelineTest {
                 "-(", "-)", "-{", "-}", "-=", "-§", "-%", "-&", "-#", "-^", "-°");
 
         // when
-        List<? extends AbstractOptionParser> valued = invalidNames.stream()
+        List<? extends AbstractOptionParser<?>> valued = invalidNames.stream()
                 .map(Parsers::valued)
                 .collect(Collectors.toList());
-        List<? extends AbstractOptionParser> flag = invalidNames.stream()
+        List<? extends AbstractOptionParser<?>> flag = invalidNames.stream()
                 .map(Parsers::flag)
                 .collect(Collectors.toList());
 
@@ -95,9 +94,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_5_multiplePOSIXConformOptionFollowedByValue_onlyOneValuedOption_expectSuccess() throws CommandExecutionException {
         // given
-        AbstractOptionParser flagA = Parsers.flag("-a");
-        AbstractOptionParser flagB = Parsers.flag("-b");
-        AbstractOptionParser value = Parsers.valued("-v");
+        AbstractOptionParser<?> flagA = Parsers.flag("-a");
+        AbstractOptionParser<?> flagB = Parsers.flag("-b");
+        AbstractOptionParser<?> value = Parsers.valued("-v");
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(flagA, flagB, value)
@@ -119,9 +118,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_5_multiplePOSIXConformOptionFollowedByValue_multipleValuedOption_expectFailure() {
         // given
-        AbstractOptionParser flag = Parsers.flag("-a");
-        AbstractOptionParser valueA = Parsers.valued("-v");
-        AbstractOptionParser valueB = Parsers.valued("-w");
+        AbstractOptionParser<?> flag = Parsers.flag("-a");
+        AbstractOptionParser<?> valueA = Parsers.valued("-v");
+        AbstractOptionParser<?> valueB = Parsers.valued("-w");
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(flag, valueA, valueB)
@@ -148,7 +147,7 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_6_valuedOptionsArgumentsAreSeparateArguments_positive() throws CommandExecutionException {
         // given
-        AbstractOptionParser valued = Parsers.valued("-v");
+        AbstractOptionParser<?> valued = Parsers.valued("-v");
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valued)
@@ -167,7 +166,7 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_6_valuedOptionsArgumentsAreSeparateArguments_negative() {
         // given
-        AbstractOptionParser valued = Parsers.valued("-v");
+        AbstractOptionParser<?> valued = Parsers.valued("-v");
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valued)
@@ -191,7 +190,7 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_7_valuedOptionsArgumentsAreMandatory() {
         // given
-        AbstractOptionParser valued = Parsers.valued("-v");
+        AbstractOptionParser<?> valued = Parsers.valued("-v");
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valued)
@@ -215,9 +214,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_10_operandDelimiter_expectDelimiterParsedAsValueOfOption() throws CommandExecutionException {
         // given
-        AbstractOptionParser valuedV = Parsers.valued("-v");
-        AbstractOptionParser valuedW = Parsers.valued("-w");
-        AbstractOperandParser operand0 = Parsers.positional(0);
+        AbstractOptionParser<?> valuedV = Parsers.valued("-v");
+        AbstractOptionParser<?> valuedW = Parsers.valued("-w");
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valuedV, valuedW, operand0)
@@ -236,9 +235,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_10_operandDelimiter_expectOptionAfterDelimiterParsedByOperand() throws CommandExecutionException {
         // given
-        AbstractOptionParser valuedV = Parsers.valued("-v");
-        AbstractOptionParser valuedW = Parsers.valued("-w");
-        AbstractOperandParser operand0 = Parsers.positional(0);
+        AbstractOptionParser<?> valuedV = Parsers.valued("-v");
+        AbstractOptionParser<?> valuedW = Parsers.valued("-w");
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valuedV, valuedW, operand0)
@@ -257,9 +256,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_10_operandDelimiter_expectEmptyOperands() throws CommandExecutionException {
         // given
-        AbstractOptionParser valuedV = Parsers.valued("-v");
-        AbstractOptionParser valuedW = Parsers.valued("-w");
-        AbstractOperandParser operand0 = Parsers.positional(0);
+        AbstractOptionParser<?> valuedV = Parsers.valued("-v");
+        AbstractOptionParser<?> valuedW = Parsers.valued("-w");
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valuedV, valuedW, operand0)
@@ -278,9 +277,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_10_operandDelimiter_expectNoParsedValues() throws CommandExecutionException {
         // given
-        AbstractOptionParser valuedV = Parsers.valued("-v");
-        AbstractOptionParser valuedW = Parsers.valued("-w");
-        AbstractOperandParser operand0 = Parsers.positional(0);
+        AbstractOptionParser<?> valuedV = Parsers.valued("-v");
+        AbstractOptionParser<?> valuedW = Parsers.valued("-w");
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valuedV, valuedW, operand0)
@@ -299,9 +298,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_10_operandDelimiter_expectTooManyOperands() {
         // given
-        AbstractOptionParser valuedV = Parsers.valued("-v");
-        AbstractOptionParser valuedW = Parsers.valued("-w");
-        AbstractOperandParser operand0 = Parsers.positional(0);
+        AbstractOptionParser<?> valuedV = Parsers.valued("-v");
+        AbstractOptionParser<?> valuedW = Parsers.valued("-w");
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valuedV, valuedW, operand0)
@@ -325,9 +324,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_10_operandDelimiter_expectSecondDelimiterParsedAsValue() throws CommandExecutionException {
         // given
-        AbstractOptionParser valuedV = Parsers.valued("-v");
-        AbstractOptionParser valuedW = Parsers.valued("-w");
-        AbstractOperandParser operand0 = Parsers.positional(0);
+        AbstractOptionParser<?> valuedV = Parsers.valued("-v");
+        AbstractOptionParser<?> valuedW = Parsers.valued("-w");
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valuedV, valuedW, operand0)
@@ -346,9 +345,9 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_10_operandDelimiter_expectFirstDelimiterParsedAsValue() throws CommandExecutionException {
         // given
-        AbstractOptionParser valuedV = Parsers.valued("-v");
-        AbstractOptionParser valuedW = Parsers.valued("-w");
-        AbstractOperandParser operand0 = Parsers.positional(0);
+        AbstractOptionParser<?> valuedV = Parsers.valued("-v");
+        AbstractOptionParser<?> valuedW = Parsers.valued("-w");
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valuedV, valuedW, operand0)
@@ -367,8 +366,8 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_11_optionOrderDoesNotMatter() throws CommandExecutionException {
         // given
-        AbstractOptionParser valued = Parsers.valued("-v");
-        AbstractOptionParser flag = Parsers.flag("-f");
+        AbstractOptionParser<?> valued = Parsers.valued("-v");
+        AbstractOptionParser<?> flag = Parsers.flag("-f");
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(valued, flag)
@@ -389,8 +388,8 @@ public class POSIXUtilityGuidelineTest {
     @Test
     public void guideline_12_operandOrderMatters_forCliHats() throws CommandExecutionException {
         // given
-        AbstractOperandParser operand0 = Parsers.positional(0);
-        AbstractOperandParser operand1 = Parsers.positional(1);
+        AbstractOperandParser<?> operand0 = Parsers.positional(0);
+        AbstractOperandParser<?> operand1 = Parsers.positional(1);
         TestInstruction instruction = new TestInstruction();
         Command command = Command.forName("do-it")
                 .withParsers(operand0, operand1)

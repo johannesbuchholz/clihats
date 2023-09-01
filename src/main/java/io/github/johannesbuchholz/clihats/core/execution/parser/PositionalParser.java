@@ -1,10 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.parsing.ValueExtractionException;
-import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.ParserHelpContent;
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +12,7 @@ import java.util.function.Supplier;
  * from their respective position.
  */
 // TODO: Consider renaming to OperandParser
-public class PositionalParser<T> extends AbstractOperandParser {
+public class PositionalParser<T> extends AbstractOperandParser<T> {
 
     private final int position;
     private final ValueMapper<T> valueMapper;
@@ -68,20 +64,20 @@ public class PositionalParser<T> extends AbstractOperandParser {
     }
 
     @Override
-    protected ArgumentParsingResult parse(InputArgument[] inputArgs, int index) throws ValueExtractionException {
+    public ArgumentParsingResult<T> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException {
         if (inputArgs.length < index)
             throw new IllegalArgumentException("Index " + index + " is out of bounds for argument array of length " + inputArgs.length);
         if (position == index) {
             InputArgument inputArgument = Objects.requireNonNull(inputArgs[index], "Argument at index " + index + " is null");
             inputArgs[index] = null;
-            return ArgumentParsingResult.of(valueMapper.mapWithThrows(inputArgument.getValue()));
+            return ArgumentParsingResult.of(mapWithThrows(valueMapper, inputArgument.getValue()));
         }
         // here if not found
         return ArgumentParsingResult.empty();
     }
 
     @Override
-    protected ArgumentParsingResult defaultValue() throws ValueExtractionException {
+    public ArgumentParsingResult<T> defaultValue() throws ArgumentParsingException {
         if (required)
             return ArgumentParsingResult.empty();
 
@@ -89,13 +85,13 @@ public class PositionalParser<T> extends AbstractOperandParser {
         try {
              defaultStringValue = defaultSupplier.get();
         } catch (Exception e) {
-            throw new ValueExtractionException(e);
+            throw new ArgumentParsingException(e);
         }
-        return ArgumentParsingResult.of(valueMapper.mapWithThrows(defaultStringValue));
+        return ArgumentParsingResult.of(mapWithThrows(valueMapper, defaultStringValue));
     }
 
     @Override
-    protected ParserHelpContent getHelpContent() {
+    public ParserHelpContent getHelpContent() {
         List<String> indicators = new ArrayList<>();
         if (required)
             indicators.add("required");

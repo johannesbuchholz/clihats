@@ -1,10 +1,7 @@
 package io.github.johannesbuchholz.clihats.core;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.CommanderCreationException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.*;
-import io.github.johannesbuchholz.clihats.core.execution.AbstractParser;
-import io.github.johannesbuchholz.clihats.core.execution.Command;
-import io.github.johannesbuchholz.clihats.core.execution.Commander;
+import io.github.johannesbuchholz.clihats.core.execution.*;
+import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.BooleanMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.LocalDateMapper;
@@ -93,9 +90,9 @@ public class CommanderTest {
     public void setup() {
         result = null;
 
-        AbstractParser p1 = Parsers.positional(0)
+        AbstractParser<?> p1 = Parsers.positional(0)
                 .withMapper(X::new);
-        AbstractParser p2 = Parsers.valued("-d")
+        AbstractParser<?> p2 = Parsers.valued("-d")
                 .withDefault("999.99");
         Command c1 = Command.forName("execute-first")
                 .withInstruction(CommanderTest::dummyAdapter1)
@@ -149,9 +146,9 @@ public class CommanderTest {
 
     @Test(expected = CommanderCreationException.class)
     public void commanderCreationShouldFail_sameCommandName() {
-        AbstractParser p1 = Parsers.positional(0)
+        AbstractParser<?> p1 = Parsers.positional(0)
                 .withMapper(X::new);
-        AbstractParser p2 = Parsers.valued("-d")
+        AbstractParser<?> p2 = Parsers.valued("-d")
                 .withDefault("999.99");
         Command c3 = Command.forName("execute-second").withInstruction(CommanderTest::dummyAdapter2).withParsers(p1, p2);
         Commander.forName("commander2")
@@ -181,7 +178,7 @@ public class CommanderTest {
             t = e;
         }
         assertNotNull(t);
-        assertEquals(ParsingException.class, t.getCause().getClass());
+        assertEquals(InvalidInputArgumentException.class, t.getCause().getClass());
     }
 
     @Test

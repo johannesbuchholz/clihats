@@ -1,8 +1,8 @@
 package io.github.johannesbuchholz.clihats.core;
 
-import io.github.johannesbuchholz.clihats.core.execution.text.Alignment;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
+import io.github.johannesbuchholz.clihats.core.text.Alignment;
+import io.github.johannesbuchholz.clihats.core.text.TextCell;
+import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
 import org.junit.Test;
 

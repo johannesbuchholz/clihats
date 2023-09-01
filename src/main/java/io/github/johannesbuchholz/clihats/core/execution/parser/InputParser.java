@@ -1,22 +1,23 @@
-package io.github.johannesbuchholz.clihats.core.execution;
+package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.parsing.ValueExtractionException;
+import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.ParsingResult;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class InputParser {
+public class InputParser {
 
     private final int parserCount;
-    private final List<AbstractParser> abstractParsers;
+    private final List<AbstractParser<?>> abstractParsers;
 
-    InputParser(List<AbstractParser> abstractParsers) {
+    public InputParser(List<AbstractParser<?>> abstractParsers) {
         parserCount = abstractParsers.size();
         this.abstractParsers = abstractParsers;
     }
 
-    ParsingResult parse(String[] inputArgs) {
+    public ParsingResult parse(String[] inputArgs) throws ArgumentParsingException {
         ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(parserCount);
 
         // collect tokens
@@ -31,10 +32,11 @@ class InputParser {
             args = Arrays.stream(args).filter(Objects::nonNull).toArray(InputArgument[]::new);
         }
         // mark remaining args as unknown
-        Arrays.stream(args)
+        List<InputArgument> unknownInputArguments = Arrays.stream(args)
                 .filter(Objects::nonNull)
-                .map(InputArgument::getValue)
-                .forEach(parsingResultBuilder::putUnknown);
+                .collect(Collectors.toList());
+        if (!unknownInputArguments.isEmpty())
+            throw new UnknownArgumentException(unknownInputArguments);
 
         return parsingResultBuilder.build();
     }
@@ -44,7 +46,7 @@ class InputParser {
      * @param args Array of input arguments. May contain null entries indicating that the respective element has already been parsed.
      * @param parsingResultBuilder The current parsing result builder to put values into.
      */
-    private void parseNextRound(Collection<ParserToken> tokens, InputArgument[] args, ParsingResult.Builder parsingResultBuilder) {
+    private void parseNextRound(Collection<ParserToken> tokens, InputArgument[] args, ParsingResult.Builder parsingResultBuilder) throws ArgumentParsingException {
         Set<ParserToken> remainingTokens = new HashSet<>(tokens);
         List<ParserToken> usedParsers = new ArrayList<>(tokens.size());
 
@@ -58,14 +60,8 @@ class InputParser {
                 if (args[i] == null)
                     // argument position has already been parsed by previous parsers
                     break;
-                ArgumentParsingResult result = null;
-                try {
-                    result = token.abstractParser.parse(args, i);
-                } catch (ValueExtractionException e) {
-                    parsingResultBuilder.putError(e);
-                    usedParsers.add(token);
-                }
-                if (result != null && result.isPresent()) {
+                ArgumentParsingResult<?> result = token.abstractParser.parse(args, i);
+                if (result.isPresent()) {
                     // parser could extract a value from the current arg
                     noneFound = false;
                     parsingResultBuilder.putArg(token.targetPosition, result.getValue());
@@ -75,14 +71,10 @@ class InputParser {
             usedParsers.forEach(remainingTokens::remove);
             if (noneFound && currentArg.isBreakSequence()) {
                 // current arg is unknown to the parsers of this round.
-                // Treat not yet parsed arguments prior to the break-sequence as unknown and remove them from following parsing rounds
-                for (int j = 0; j < i; j++) {
-                    InputArgument arg = args[j];
-                    if (arg != null) {
-                        parsingResultBuilder.putUnknown(arg.getValue());
-                        args[j] = null;
-                    }
-                }
+                // Treat not yet parsed arguments prior to the break-sequence as unknown
+                List<InputArgument> unknownInputArguments = Arrays.stream(args).limit(i).filter(Objects::nonNull).collect(Collectors.toList());
+                if (!unknownInputArguments.isEmpty())
+                    throw new UnknownArgumentException(unknownInputArguments);
                 // remove break-sequence arg
                 args[i] = null;
                 break;
@@ -94,22 +86,17 @@ class InputParser {
     /**
      * Apply default values for specified parsers.
      */
-    private void putDefaultValues(Collection<ParserToken> tokens, ParsingResult.Builder parsingResultBuilder) {
+    private void putDefaultValues(Collection<ParserToken> tokens, ParsingResult.Builder parsingResultBuilder) throws ArgumentParsingException {
         for (ParserToken token : tokens) {
-            ArgumentParsingResult defaultResult;
-            try {
-                defaultResult = token.abstractParser.defaultValue();
-            } catch (ValueExtractionException e) {
-                parsingResultBuilder.putError(e);
-                continue;
-            }
-            if (defaultResult.isPresent())
+            ArgumentParsingResult<?> defaultResult;
+            defaultResult = token.abstractParser.defaultValue();
+            if (defaultResult.isPresent()) {
                 parsingResultBuilder.putArg(token.targetPosition, defaultResult.getValue());
-            else
+            } else {
                 // parser does not have a default value
-                parsingResultBuilder.putMissing(token.abstractParser);
+                throw new MissingArgumentException(token.abstractParser);
+            }
         }
-
     }
 
     /**
@@ -117,9 +104,9 @@ class InputParser {
      */
     private static class ParserToken {
         private final int targetPosition;
-        private final AbstractParser abstractParser;
+        private final AbstractParser<?> abstractParser;
 
-        private ParserToken(int targetPosition, AbstractParser abstractParser) {
+        private ParserToken(int targetPosition, AbstractParser<?> abstractParser) {
             this.targetPosition = targetPosition;
             this.abstractParser = abstractParser;
         }

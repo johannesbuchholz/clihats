@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.exceptions.execution;
+package io.github.johannesbuchholz.clihats.core.execution;
 
 /**
  * Thrown when user input requests help.

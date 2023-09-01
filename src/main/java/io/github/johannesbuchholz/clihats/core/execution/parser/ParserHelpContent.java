@@ -1,6 +1,7 @@
-package io.github.johannesbuchholz.clihats.core.execution;
+package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
+import io.github.johannesbuchholz.clihats.core.execution.Command;
+import io.github.johannesbuchholz.clihats.core.text.TextCell;
 
 import java.util.Collection;
 import java.util.List;

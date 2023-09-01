@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.execution.text;
+package io.github.johannesbuchholz.clihats.core.text;
 
 import java.util.function.BiFunction;
 

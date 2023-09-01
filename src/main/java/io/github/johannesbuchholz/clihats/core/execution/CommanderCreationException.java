@@ -1,6 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.exceptions;
-
-import io.github.johannesbuchholz.clihats.core.execution.Commander;
+package io.github.johannesbuchholz.clihats.core.execution;
 
 /**
  * Thrown when creating  {@link Commander} fails due to invalid configuration.

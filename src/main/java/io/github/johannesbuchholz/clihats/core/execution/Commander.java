@@ -1,12 +1,7 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.CommanderCreationException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CliHelpCallException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommanderExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.UnknownCommandException;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
+import io.github.johannesbuchholz.clihats.core.text.TextCell;
+import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 
 import java.util.*;
 import java.util.function.Function;

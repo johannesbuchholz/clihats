@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.processor.features;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CliException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CliHelpCallException;
+import io.github.johannesbuchholz.clihats.core.execution.CliException;
+import io.github.johannesbuchholz.clihats.core.execution.CliHelpCallException;
 import io.github.johannesbuchholz.clihats.processor.execution.CliHats;
 import io.github.johannesbuchholz.clihats.processor.subjects.Cli1;
 import junit.framework.AssertionFailedError;

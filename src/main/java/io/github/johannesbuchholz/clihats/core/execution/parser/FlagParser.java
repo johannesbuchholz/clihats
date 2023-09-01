@@ -1,10 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.parsing.ValueExtractionException;
-import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.ParserHelpContent;
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
 
 import java.util.*;
 
@@ -14,7 +10,7 @@ import java.util.*;
  * Otherwise, returns the stored flag value. The default flag value is the empty string.</p>
  * @param <T> the type this parser returns.
  */
-public class FlagParser<T> extends AbstractOptionParser {
+public class FlagParser<T> extends AbstractOptionParser<T> {
 
     private final Set<OptionName> names;
     private final String flagValue;
@@ -56,7 +52,7 @@ public class FlagParser<T> extends AbstractOptionParser {
     }
 
     @Override
-    protected ArgumentParsingResult parse(InputArgument[] inputArgs, int index) throws ValueExtractionException {
+    public ArgumentParsingResult<T> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException {
         if (inputArgs.length < index)
             throw new IllegalArgumentException("Index " + index + " is out of bounds for argument array of length " + inputArgs.length);
         InputArgument inputArgument = Objects.requireNonNull(inputArgs[index], "Argument at index " + index + " is null");
@@ -79,16 +75,16 @@ public class FlagParser<T> extends AbstractOptionParser {
         } else {
             inputArgs[index] = null;
         }
-        return ArgumentParsingResult.of(valueMapper.mapWithThrows(flagValue));
+        return ArgumentParsingResult.of(mapWithThrows(valueMapper, flagValue));
     }
 
     @Override
-    protected ArgumentParsingResult defaultValue() throws ValueExtractionException {
-        return ArgumentParsingResult.of(valueMapper.mapWithThrows(defaultValue));
+    public ArgumentParsingResult<T> defaultValue() throws ArgumentParsingException {
+        return ArgumentParsingResult.of(mapWithThrows(valueMapper, defaultValue));
     }
 
     @Override
-    protected ParserHelpContent getHelpContent() {
+    public ParserHelpContent getHelpContent() {
         List<String> primaryNames = new ArrayList<>();
         List<String> secondaryNames = new ArrayList<>();
         names.forEach(name -> {

@@ -1,13 +1,12 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.execution.AbstractParser;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractOptionParser extends AbstractParser {
+public abstract class AbstractOptionParser<T> extends AbstractParser<T> {
 
     protected static Set<OptionName> collectAsOptionNamesFrom(String name, String... names) {
         Set<OptionName> optionOptionNames = new HashSet<>();
@@ -38,16 +37,16 @@ public abstract class AbstractOptionParser extends AbstractParser {
     }
 
     @Override
-    protected int getParsingPriority() {
+    public int getParsingPriority() {
         return 0;
     }
 
     @Override
-    protected Optional<String> getConflictMessage(AbstractParser other) {
+    public Optional<String> getConflictMessage(AbstractParser<?> other) {
        if (!(other instanceof AbstractOptionParser))
            return Optional.empty();
         HashSet<OptionName> duplicateNames = new HashSet<>(getNames());
-        duplicateNames.retainAll(((AbstractOptionParser) other).getNames());
+        duplicateNames.retainAll(((AbstractOptionParser<?>) other).getNames());
         if (!duplicateNames.isEmpty())
             return Optional.of(String.format("Parser %s conflicts with parser %s on names %s", this, other, duplicateNames));
         return Optional.empty();

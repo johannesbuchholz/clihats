@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.processor.execution;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CliException;
+import io.github.johannesbuchholz.clihats.core.execution.CliException;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
 import io.github.johannesbuchholz.clihats.processor.exceptions.CliExceptionHandler;
 

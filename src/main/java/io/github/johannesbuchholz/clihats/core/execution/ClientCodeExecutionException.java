@@ -1,8 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.exceptions.execution;
-
-
-import io.github.johannesbuchholz.clihats.core.execution.Command;
-import io.github.johannesbuchholz.clihats.core.execution.Instruction;
+package io.github.johannesbuchholz.clihats.core.execution;
 
 /**
  * Wrapper for an exception caused by invoking {@link Instruction}.
