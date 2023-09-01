@@ -4,14 +4,9 @@ import io.github.johannesbuchholz.clihats.core.execution.AbstractParser;
 
 import java.util.Optional;
 
-abstract class AbstractOperandParser extends AbstractParser {
+public abstract class AbstractOperandParser extends AbstractParser {
 
-    abstract int getPosition();
-
-    @Override
-    protected int getParsingPriority() {
-        return Integer.MAX_VALUE;
-    }
+    public abstract int getPosition();
 
     @Override
     public String getDisplayName() {
@@ -21,6 +16,11 @@ abstract class AbstractOperandParser extends AbstractParser {
     @Override
     public String toString() {
         return "Operand " + getPosition();
+    }
+
+    @Override
+    protected int getParsingPriority() {
+        return Integer.MAX_VALUE;
     }
 
     @Override

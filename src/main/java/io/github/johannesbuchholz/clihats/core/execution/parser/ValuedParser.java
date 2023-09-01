@@ -28,7 +28,7 @@ public class ValuedParser<T> extends AbstractOptionParser {
     private final Supplier<String> defaultSupplier;
 
     protected static ValuedParser<String> forName(String name, String... names) {
-        return new ValuedParser<>(asOptionNames(name, names), false, () -> null, s -> s, null);
+        return new ValuedParser<>(collectAsOptionNamesFrom(name, names), false, () -> null, s -> s, null);
     }
 
     private ValuedParser(Set<OptionName> names, boolean required, Supplier<String> defaultSupplier, ValueMapper<T> valueMapper, String description) {
@@ -62,7 +62,7 @@ public class ValuedParser<T> extends AbstractOptionParser {
     }
 
     @Override
-    Set<OptionName> getNames() {
+    public Set<OptionName> getNames() {
         return names;
     }
 
@@ -95,11 +95,14 @@ public class ValuedParser<T> extends AbstractOptionParser {
         // extract value
         ArgumentParsingResult result;
         if (index + 1 < inputArgs.length) {
-            String extractedStringValue = inputArgs[index + 1].getValue();
+            InputArgument optionValue = inputArgs[index + 1];
+            if (optionValue == null)
+                throw new MissingValueException(this);
+            String extractedStringValue = optionValue.getValue();
             inputArgs[index + 1] = null;
             result = ArgumentParsingResult.of(valueMapper.mapWithThrows(extractedStringValue));
         } else {
-            throw new MissingValueException(getDisplayName());
+            throw new MissingValueException(this);
         }
         return result;
     }

@@ -15,6 +15,7 @@ import java.util.function.Supplier;
  * These parsers are always parsed during the last parsing round and parse the remaining argument directly
  * from their respective position.
  */
+// TODO: Consider renaming to OperandParser
 public class PositionalParser<T> extends AbstractOperandParser {
 
     private final int position;
@@ -62,7 +63,7 @@ public class PositionalParser<T> extends AbstractOperandParser {
     }
 
     @Override
-    protected int getPosition() {
+    public int getPosition() {
         return position;
     }
 

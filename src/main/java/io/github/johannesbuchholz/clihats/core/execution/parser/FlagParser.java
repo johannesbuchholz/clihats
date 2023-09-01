@@ -23,7 +23,7 @@ public class FlagParser<T> extends AbstractOptionParser {
     private final String description;
 
     protected static FlagParser<String> forName(String name, String... names) {
-        return new FlagParser<>(asOptionNames(name, names), "", null, s -> s, null);
+        return new FlagParser<>(collectAsOptionNamesFrom(name, names), "", null, s -> s, null);
     }
 
     private FlagParser(Set<OptionName> names, String flagValue, String defaultValue, ValueMapper<T> valueMapper, String description) {
@@ -51,7 +51,7 @@ public class FlagParser<T> extends AbstractOptionParser {
     }
 
     @Override
-    Set<OptionName> getNames() {
+    public Set<OptionName> getNames() {
         return names;
     }
 

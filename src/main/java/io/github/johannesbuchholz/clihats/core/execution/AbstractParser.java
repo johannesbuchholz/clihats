@@ -29,12 +29,14 @@ public abstract class AbstractParser {
      * @throws ValueExtractionException If an unexpected exception occurred during parsing. Callers may discard this parser for future parsing attempts.
      * @apiNote The parser is expected to remove potentially used arguments from the specified array, even when throwing.
      */
+    // TODO: make this throw ParsingException. Abort parsing after the first thrown exception, do not continue.
     abstract protected ArgumentParsingResult parse(InputArgument[] inputArgs, int index) throws ValueExtractionException;
 
     /**
      * @return The default value of this parser if any.
      * @throws ValueExtractionException If an unexpected exception occurred during parsing. Callers may discard this parser for future parsing attempts.
      */
+    // TODO: make this throw ParsingException.
     abstract protected ArgumentParsingResult defaultValue() throws ValueExtractionException;
 
     /**
@@ -46,6 +48,7 @@ public abstract class AbstractParser {
     /**
      * @return the desired priority to be called with. Lower values indicate earlier parsing.
      */
+    // TODO: Consider removing this field and let Command have one field for option parsers and one for operand parsers.
     abstract protected int getParsingPriority();
 
     @Override

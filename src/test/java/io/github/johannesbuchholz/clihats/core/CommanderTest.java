@@ -133,7 +133,6 @@ public class CommanderTest {
 
         commander1.execute(args);
 
-        System.out.println(result);
         assertEquals(expected, result);
     }
 

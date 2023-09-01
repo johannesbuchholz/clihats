@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class InputArgument {
 
     public static final char OPTION_PREFIX = '-';
-    public static final String BREAK_SEQUENCE =  String.valueOf(new char[] {OPTION_PREFIX, OPTION_PREFIX});
+    public static final String OPERAND_DELIMITER =  String.valueOf(new char[] {OPTION_PREFIX, OPTION_PREFIX});
 
     private final String value;
     private final Set<Character> chars;
@@ -30,7 +30,7 @@ public class InputArgument {
 
         isOption = value.length() > 1
                 && value.charAt(0) == OPTION_PREFIX
-                && !value.equals(BREAK_SEQUENCE)
+                && !value.equals(OPERAND_DELIMITER)
                 && value.chars().skip(1).noneMatch(Character::isSpaceChar);
         isPOSIXConform = isOption
                 && value.charAt(1) != OPTION_PREFIX
@@ -46,7 +46,7 @@ public class InputArgument {
     }
 
     public boolean isBreakSequence() {
-        return BREAK_SEQUENCE.equals(value);
+        return OPERAND_DELIMITER.equals(value);
     }
 
     public boolean contains(char name) {

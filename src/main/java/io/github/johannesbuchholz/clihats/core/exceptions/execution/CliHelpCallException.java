@@ -15,4 +15,5 @@ public class CliHelpCallException extends CliException {
     public int getExitCode() {
         return 0;
     }
+
 }

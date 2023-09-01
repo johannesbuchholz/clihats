@@ -335,9 +335,10 @@ public class NameTest {
         // given
         TestResult testResult = TestResult.newEmpty();
         String name = "-a";
+        ValuedParser<String> stringValuedParser = ValuedParser.forName(name);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser.forName(name));
+                .withParsers(stringValuedParser);
         String[] args = {name};
 
         // when
@@ -350,7 +351,7 @@ public class NameTest {
 
         // and expected
         ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putError(new MissingValueException(name));
+        parsingResultBuilder.putError(new MissingValueException(stringValuedParser));
         String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
 
         // then

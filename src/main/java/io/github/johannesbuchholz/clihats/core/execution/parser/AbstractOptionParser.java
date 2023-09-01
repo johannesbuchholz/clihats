@@ -7,37 +7,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-abstract class AbstractOptionParser extends AbstractParser {
+public abstract class AbstractOptionParser extends AbstractParser {
 
-    abstract Collection<OptionName> getNames();
-
-    @Override
-    protected int getParsingPriority() {
-        return 0;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(","));
-    }
-
-    @Override
-    public String toString() {
-        return "Option " + getDisplayName();
-    }
-
-    @Override
-    protected Optional<String> getConflictMessage(AbstractParser other) {
-       if (!(other instanceof AbstractOptionParser))
-           return Optional.empty();
-        HashSet<OptionName> duplicateNames = new HashSet<>(getNames());
-        duplicateNames.retainAll(((AbstractOptionParser) other).getNames());
-        if (!duplicateNames.isEmpty())
-            return Optional.of(String.format("Parser %s conflicts with parser %s on names %s", this, other, duplicateNames));
-        return Optional.empty();
-    }
-
-    static Set<OptionName> asOptionNames(String name, String... names) {
+    protected static Set<OptionName> collectAsOptionNamesFrom(String name, String... names) {
         Set<OptionName> optionOptionNames = new HashSet<>();
         Set<OptionName> posixConformNames = new HashSet<>();
         Stream.concat(Stream.of(name), Stream.of(names))
@@ -53,7 +25,35 @@ abstract class AbstractOptionParser extends AbstractParser {
         return optionOptionNames;
     }
 
-    static class OptionName implements Comparable<OptionName> {
+    public abstract Collection<OptionName> getNames();
+
+    @Override
+    public String getDisplayName() {
+        return getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(","));
+    }
+
+    @Override
+    public String toString() {
+        return "Option " + getDisplayName();
+    }
+
+    @Override
+    protected int getParsingPriority() {
+        return 0;
+    }
+
+    @Override
+    protected Optional<String> getConflictMessage(AbstractParser other) {
+       if (!(other instanceof AbstractOptionParser))
+           return Optional.empty();
+        HashSet<OptionName> duplicateNames = new HashSet<>(getNames());
+        duplicateNames.retainAll(((AbstractOptionParser) other).getNames());
+        if (!duplicateNames.isEmpty())
+            return Optional.of(String.format("Parser %s conflicts with parser %s on names %s", this, other, duplicateNames));
+        return Optional.empty();
+    }
+
+    public static class OptionName implements Comparable<OptionName> {
 
         private final String value;
         private final boolean isPOSIXConformOptionName;
@@ -62,7 +62,7 @@ abstract class AbstractOptionParser extends AbstractParser {
             if (value == null
                     || value.length() < 2
                     || value.charAt(0) != InputArgument.OPTION_PREFIX
-                    || value.equals(InputArgument.BREAK_SEQUENCE)
+                    || value.equals(InputArgument.OPERAND_DELIMITER)
                     || value.chars().skip(1).anyMatch(Character::isSpaceChar))
                 throw new IllegalArgumentException("Value is not a valid option name: " + value);
             return new OptionName(value);
@@ -70,8 +70,7 @@ abstract class AbstractOptionParser extends AbstractParser {
 
         private OptionName(String value) {
             this.value = value;
-            isPOSIXConformOptionName = value.length() == 2
-                    && Character.isLetterOrDigit(value.charAt(1));
+            isPOSIXConformOptionName = value.length() == 2 && Character.isLetterOrDigit(value.charAt(1));
         }
 
         public boolean isPOSIXConformOptionName() {
@@ -120,5 +119,6 @@ abstract class AbstractOptionParser extends AbstractParser {
                 return 1;
             return value.compareTo(o.value);
         }
+
     }
 }

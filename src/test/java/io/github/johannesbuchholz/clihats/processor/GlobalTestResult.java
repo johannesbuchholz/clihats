@@ -41,7 +41,6 @@ public class GlobalTestResult {
     }
 
     public static void setSuccess(String commandName, Object... args) {
-        System.out.println("New test result: " + commandName + ", " + Arrays.toString(args));
         latestResult = constructSuccess(commandName, args);
         resultLatch.countDown();
     }

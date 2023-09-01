@@ -55,7 +55,7 @@ public class InputArgumentTest {
         List<String> argValues = List.of("-a ", "--", "-", "", "- abc", "- --ABCd", "a-b-c", "--abc def", "-- ");
         List<InputArgument> args = argValues.stream().map(InputArgument::of).collect(Collectors.toList());
 
-        assertTrue(args.stream().peek(a -> System.out.println(a.toString()+ ": " + a.isOption())).noneMatch(InputArgument::isOption));
+        assertTrue(args.stream().noneMatch(InputArgument::isOption));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class InputArgumentTest {
         List<String> argValues = List.of("-", "---", "", "-a", "--abc-d", "--a--b");
         List<InputArgument> args = argValues.stream().map(InputArgument::of).collect(Collectors.toList());
 
-        assertTrue(args.stream().peek(a -> System.out.println(a.toString()+ ": " + a.isOption())).noneMatch(InputArgument::isBreakSequence));
+        assertTrue(args.stream().noneMatch(InputArgument::isBreakSequence));
     }
 
     @Test

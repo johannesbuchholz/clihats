@@ -29,11 +29,12 @@ public class OptionNameTest {
 
     @Test
     public void createOptionName_negative() {
-        List<String> names = List.of("-", "", "--", "- -", "- ", "--a b-c", "--blubb ", " --k", "*", "a", "a-", "a  b", "abc");
+        List<String> names = List.of("-", "", "--", "- -", "- ", "--a b-c",
+                "--blubb ", " --k", "*", "a", "a-", "a  b", "abc");
         List<Exception> exceptions = new ArrayList<>();
         for (String s : names) {
             try {
-                System.out.println(AbstractOptionParser.OptionName.of(s));
+                AbstractOptionParser.OptionName.of(s);
             } catch (IllegalArgumentException e ) {
                 exceptions.add(e);
             }
@@ -51,7 +52,8 @@ public class OptionNameTest {
 
     @Test
     public void createOptionName_IsPOSIXConform_negative() {
-        List<String> names = List.of("-ab", "--a", "--a-b");
+        List<String> names = List.of("-ab", "--a", "--a-b",
+                "-*", "-!", "-*", "-#", "-'", "-!", "-?", "-\"", "-§", "-$", "-%", "-&", "-/", "-(", "-)", "-=");
         List<AbstractOptionParser.OptionName> optionNames = names.stream().map(AbstractOptionParser.OptionName::of).collect(Collectors.toList());
         assertTrue(optionNames.stream().noneMatch(AbstractOptionParser.OptionName::isPOSIXConformOptionName));
     }

@@ -26,7 +26,6 @@ public class ConflictTest {
             expectedException = e;
         }
 
-        System.out.println("Excpetion:" + expectedException);
         assertNotNull(expectedException);
         assertTrue(expectedException.getMessage().contains(repeatedCommandName));
     }
@@ -51,7 +50,6 @@ public class ConflictTest {
             expectedException = e;
         }
 
-        System.out.println("Received Exception: " + expectedException);
         assertNotNull(expectedException);
         assertTrue(expectedException.getMessage().contains(repeatedArgName));
     }
@@ -76,7 +74,6 @@ public class ConflictTest {
             expectedException = e;
         }
 
-        System.out.println("Received Exception: " + expectedException);
         assertNotNull(expectedException);
         assertTrue(expectedException.getMessage().contains(repeatedArgName));
     }
@@ -126,7 +123,6 @@ public class ConflictTest {
             expectedException = e;
         }
 
-        System.out.println("Received Exception: " + expectedException);
         assertNotNull(expectedException);
         assertTrue(expectedException.getMessage().contains(repeatedArgName));
     }

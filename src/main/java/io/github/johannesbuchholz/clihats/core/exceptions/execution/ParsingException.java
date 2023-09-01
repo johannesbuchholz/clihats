@@ -7,11 +7,13 @@ import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
 import java.util.LinkedList;
 import java.util.List;
 
+// Rename this to InvalidInputArgumentException and make "ParsingException" a base class of all Exceptions currently under package exceptions.parsing
 public class ParsingException extends CommandExecutionException {
 
     /**
      * Constructs a message from the presumably invalid parsingState.
      */
+    // TODO: Do not use ParsingResult. Instead, let each individual cause have its own Exception and input that into this constructor.
     public ParsingException(Command failingCommand, ParsingResult parsingResult) {
         super(failingCommand, generateErrorMessage(parsingResult));
     }
