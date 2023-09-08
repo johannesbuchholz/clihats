@@ -1,10 +1,10 @@
 package io.github.johannesbuchholz.clihats.core;
 
+import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.CliException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
 import io.github.johannesbuchholz.clihats.core.execution.exception.*;
-import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.BooleanMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.LocalDateMapper;

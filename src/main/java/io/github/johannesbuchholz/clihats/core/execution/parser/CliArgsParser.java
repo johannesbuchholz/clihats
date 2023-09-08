@@ -1,7 +1,10 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
+import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
+import io.github.johannesbuchholz.clihats.core.execution.ArgsParser;
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingArgumentException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.UnknownArgumentException;
 
@@ -51,7 +54,6 @@ public class CliArgsParser implements ArgsParser {
         return parsedValues;
     }
 
-    // TODO: Simplify by now relying on separation of parser types
     /**
      * @param tokens Parser tokens for this round.
      * @param args Array of input arguments. May contain null entries indicating that the respective element has already been parsed.

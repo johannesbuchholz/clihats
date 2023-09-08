@@ -1,6 +1,8 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
+import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +47,16 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
         if (!duplicateNames.isEmpty())
             return Optional.of(String.format("Parser %s conflicts with parser %s on names %s", this, other, duplicateNames));
         return Optional.empty();
+    }
+
+    T mapWithThrows(ValueMapper<T> mapper, String stringValue) throws ValueMappingException {
+        if (stringValue == null)
+            return null;
+        try {
+            return mapper.map(stringValue);
+        } catch (Exception e) {
+            throw new ValueMappingException(this, e);
+        }
     }
 
     public static class OptionName implements Comparable<OptionName> {

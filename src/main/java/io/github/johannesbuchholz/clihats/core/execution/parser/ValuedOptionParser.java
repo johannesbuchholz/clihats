@@ -1,7 +1,8 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingValueException;
 
 import java.util.*;
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type this parser returns.
  */
-public class ValuedParser<T> extends AbstractOptionParser<T> {
+public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
 
     private final Set<OptionName> names;
     /*
@@ -24,11 +25,11 @@ public class ValuedParser<T> extends AbstractOptionParser<T> {
     private final String description;
     private final Supplier<String> defaultSupplier;
 
-    protected static ValuedParser<String> forName(String name, String... names) {
-        return new ValuedParser<>(collectAsOptionNamesFrom(name, names), false, () -> null, s -> s, null);
+    protected static ValuedOptionParser<String> forName(String name, String... names) {
+        return new ValuedOptionParser<>(collectAsOptionNamesFrom(name, names), false, () -> null, s -> s, null);
     }
 
-    private ValuedParser(Set<OptionName> names, boolean required, Supplier<String> defaultSupplier, ValueMapper<T> valueMapper, String description) {
+    private ValuedOptionParser(Set<OptionName> names, boolean required, Supplier<String> defaultSupplier, ValueMapper<T> valueMapper, String description) {
         this.names = names;
         this.required = required;
         this.valueMapper = valueMapper;
@@ -38,24 +39,24 @@ public class ValuedParser<T> extends AbstractOptionParser<T> {
 
     // builder like methods
 
-    public <X> ValuedParser<X> withMapper(ValueMapper<X> valueMapper) {
-        return new ValuedParser<>(names, required, defaultSupplier, Objects.requireNonNull(valueMapper), description);
+    public <X> ValuedOptionParser<X> withMapper(ValueMapper<X> valueMapper) {
+        return new ValuedOptionParser<>(names, required, defaultSupplier, Objects.requireNonNull(valueMapper), description);
     }
 
-    public ValuedParser<T> withDefault(String defaultValue) {
-        return new ValuedParser<>(names, required, () -> defaultValue, valueMapper, description);
+    public ValuedOptionParser<T> withDefault(String defaultValue) {
+        return new ValuedOptionParser<>(names, required, () -> defaultValue, valueMapper, description);
     }
 
-    public ValuedParser<T> withDefault(Supplier<String> inputSupplier) {
-        return new ValuedParser<>(names, required, Objects.requireNonNull(inputSupplier), valueMapper, description);
+    public ValuedOptionParser<T> withDefault(Supplier<String> inputSupplier) {
+        return new ValuedOptionParser<>(names, required, Objects.requireNonNull(inputSupplier), valueMapper, description);
     }
 
-    public ValuedParser<T> withRequired(boolean required) {
-        return new ValuedParser<>(names, required, defaultSupplier, valueMapper, description);
+    public ValuedOptionParser<T> withRequired(boolean required) {
+        return new ValuedOptionParser<>(names, required, defaultSupplier, valueMapper, description);
     }
 
-    public ValuedParser<T> withDescription(String description) {
-        return new ValuedParser<>(names, required, defaultSupplier, valueMapper, Objects.requireNonNullElse(description, "").trim());
+    public ValuedOptionParser<T> withDescription(String description) {
+        return new ValuedOptionParser<>(names, required, defaultSupplier, valueMapper, Objects.requireNonNullElse(description, "").trim());
     }
 
     @Override

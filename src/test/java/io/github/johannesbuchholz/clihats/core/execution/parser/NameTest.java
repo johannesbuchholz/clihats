@@ -32,7 +32,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser.forName(name));
+                .withParsers(ValuedOptionParser.forName(name));
         String stringArg = "a string argument";
         String[] args = {name, stringArg};
 
@@ -52,7 +52,7 @@ public class NameTest {
         String alias = "--abc";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName(name, alias)
                 );
         String stringArg = "a string argument";
@@ -73,7 +73,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser.forName(name));
+                .withParsers(ValuedOptionParser.forName(name));
         String[] args = {};
 
         // when
@@ -92,7 +92,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName(name)
                         .withDefault(defaultValue)
                 );
@@ -114,7 +114,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName(name)
                         .withDefault(() -> defaultValue)
                 );
@@ -135,7 +135,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName(name)
                         .withMapper(s -> s == null ? null : BigDecimal.valueOf(Double.parseDouble(s)))
                 );
@@ -160,7 +160,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName(name)
                         .withMapper(mapper)
                 );
@@ -186,7 +186,7 @@ public class NameTest {
         // when
         Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName(name, name))
                 .execute(args);
 
@@ -206,7 +206,7 @@ public class NameTest {
         // given
         TestResult testResult = TestResult.newEmpty();
         String name = "-a";
-        ValuedParser<String> requiredParser = ValuedParser
+        ValuedOptionParser<String> requiredParser = ValuedOptionParser
                 .forName(name)
                 .withRequired(true);
         Command c = Command.forName("run")
@@ -237,7 +237,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser.forName(name));
+                .withParsers(ValuedOptionParser.forName(name));
         String unknownArg = "unknown";
         String[] args = {unknownArg};
 
@@ -268,7 +268,7 @@ public class NameTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName(name)
                         .withMapper(throwingMapper));
         String[] args = {name, "anyways"};
@@ -294,10 +294,10 @@ public class NameTest {
         // given
         TestResult testResult = TestResult.newEmpty();
         String name = "-a";
-        ValuedParser<String> stringValuedParser = ValuedParser.forName(name);
+        ValuedOptionParser<String> stringValuedOptionParser = ValuedOptionParser.forName(name);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(stringValuedParser);
+                .withParsers(stringValuedOptionParser);
         String[] args = {name};
 
         // when

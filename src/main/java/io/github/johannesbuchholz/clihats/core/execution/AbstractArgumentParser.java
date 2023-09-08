@@ -1,9 +1,8 @@
-package io.github.johannesbuchholz.clihats.core.execution.parser;
+package io.github.johannesbuchholz.clihats.core.execution;
 
-import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ParserHelpContent;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingArgumentException;
-import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -47,17 +46,8 @@ public abstract class AbstractArgumentParser<T> {
      * @param other Another parser.
      * @return A message describing the conflict with other or empty if not conflicting.
      */
+    // TODO: Consider moving this to newly created Id-Type returned from getId()
     public abstract Optional<String> getConflictMessage(AbstractArgumentParser<?> other);
-
-    T mapWithThrows(ValueMapper<T> mapper, String stringValue) throws ValueMappingException {
-        if (stringValue == null)
-            return null;
-        try {
-            return mapper.map(stringValue);
-        } catch (Exception e) {
-            throw new ValueMappingException(this, e);
-        }
-    }
 
     @Override
     public boolean equals(Object o) {

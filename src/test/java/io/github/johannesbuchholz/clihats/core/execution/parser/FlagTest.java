@@ -28,7 +28,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser.forName(name));
+                .withParsers(FlagOptionParser.forName(name));
         String[] args = {name};
 
         // when
@@ -47,7 +47,7 @@ public class FlagTest {
         String alias = "--abc";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name, alias)
                 );
         String[] args = {alias};
@@ -67,7 +67,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser.forName(name));
+                .withParsers(FlagOptionParser.forName(name));
         String[] args = {};
 
         // when
@@ -86,7 +86,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name)
                         .withDefault(defaultValue)
                 );
@@ -107,7 +107,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name)
                 );
         String[] args = {name};
@@ -128,7 +128,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name)
                         .withFlagValue(flagValue)
                 );
@@ -149,7 +149,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name)
                         .withMapper(Objects::nonNull)
                 );
@@ -173,7 +173,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name)
                         .withMapper(mapper)
                 );
@@ -197,7 +197,7 @@ public class FlagTest {
         // when
         Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name, name))
                         .execute(args);
 
@@ -219,7 +219,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser.forName(name));
+                .withParsers(FlagOptionParser.forName(name));
         String unknownArg = "-unknown";
         String[] args = {unknownArg};
 
@@ -250,7 +250,7 @@ public class FlagTest {
         String name = "-a";
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
-                .withParsers(FlagParser
+                .withParsers(FlagOptionParser
                         .forName(name)
                         .withMapper(throwingMapper));
         String[] args = {name};

@@ -1,11 +1,11 @@
-package io.github.johannesbuchholz.clihats.core.execution.parser.exception;
+package io.github.johannesbuchholz.clihats.core.execution.exception;
 
 /**
  * Exceptions during argument parsing
  */
 public class ArgumentParsingException extends Exception {
 
-    ArgumentParsingException(String message) {
+    public ArgumentParsingException(String message) {
         super(message);
     }
 
@@ -13,7 +13,7 @@ public class ArgumentParsingException extends Exception {
         super(cause.getMessage(), cause);
     }
 
-    ArgumentParsingException(String message, Throwable e) {
+    public ArgumentParsingException(String message, Throwable e) {
         super(message, e);
     }
 

@@ -1,7 +1,8 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 
 import java.util.*;
 
@@ -11,7 +12,7 @@ import java.util.*;
  * Otherwise, returns the stored flag value. The default flag value is the empty string.</p>
  * @param <T> the type this parser returns.
  */
-public class FlagParser<T> extends AbstractOptionParser<T> {
+public class FlagOptionParser<T> extends AbstractOptionParser<T> {
 
     private final Set<OptionName> names;
     private final String flagValue;
@@ -19,11 +20,11 @@ public class FlagParser<T> extends AbstractOptionParser<T> {
     private final ValueMapper<T> valueMapper;
     private final String description;
 
-    protected static FlagParser<String> forName(String name, String... names) {
-        return new FlagParser<>(collectAsOptionNamesFrom(name, names), "", null, s -> s, null);
+    protected static FlagOptionParser<String> forName(String name, String... names) {
+        return new FlagOptionParser<>(collectAsOptionNamesFrom(name, names), "", null, s -> s, null);
     }
 
-    private FlagParser(Set<OptionName> names, String flagValue, String defaultValue, ValueMapper<T> valueMapper, String description) {
+    private FlagOptionParser(Set<OptionName> names, String flagValue, String defaultValue, ValueMapper<T> valueMapper, String description) {
         this.names = names;
         this.flagValue = flagValue;
         this.defaultValue = defaultValue;
@@ -31,20 +32,20 @@ public class FlagParser<T> extends AbstractOptionParser<T> {
         this.description = Objects.requireNonNullElse(description, "").trim();
     }
 
-    public FlagParser<T> withFlagValue(String flagValue) {
-        return new FlagParser<>(names, Objects.requireNonNull(flagValue), defaultValue, valueMapper, description);
+    public FlagOptionParser<T> withFlagValue(String flagValue) {
+        return new FlagOptionParser<>(names, Objects.requireNonNull(flagValue), defaultValue, valueMapper, description);
     }
 
-    public FlagParser<T> withDefault(String defaultValue) {
-        return new FlagParser<>(names, flagValue, defaultValue, valueMapper, description);
+    public FlagOptionParser<T> withDefault(String defaultValue) {
+        return new FlagOptionParser<>(names, flagValue, defaultValue, valueMapper, description);
     }
 
-    public <X> FlagParser<X> withMapper(ValueMapper<X> valueMapper) {
-        return new FlagParser<>(names, flagValue, defaultValue, Objects.requireNonNull(valueMapper), description);
+    public <X> FlagOptionParser<X> withMapper(ValueMapper<X> valueMapper) {
+        return new FlagOptionParser<>(names, flagValue, defaultValue, Objects.requireNonNull(valueMapper), description);
     }
 
-    public FlagParser<T> withDescription(String description) {
-        return new FlagParser<>(names, flagValue, defaultValue, valueMapper, Objects.requireNonNullElse(description, "").trim());
+    public FlagOptionParser<T> withDescription(String description) {
+        return new FlagOptionParser<>(names, flagValue, defaultValue, valueMapper, Objects.requireNonNullElse(description, "").trim());
     }
 
     @Override

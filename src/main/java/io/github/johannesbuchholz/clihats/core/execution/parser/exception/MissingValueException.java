@@ -1,5 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser.exception;
 
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractOptionParser;
 
 /**

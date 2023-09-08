@@ -1,8 +1,8 @@
 package io.github.johannesbuchholz.clihats.processor.annotations;
 
-import io.github.johannesbuchholz.clihats.core.execution.parser.FlagParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.FlagOptionParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.OperandParser;
-import io.github.johannesbuchholz.clihats.core.execution.parser.ValuedParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ValuedOptionParser;
 import io.github.johannesbuchholz.clihats.processor.mapper.AbstractValueMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.NoMapper;
 
@@ -28,15 +28,15 @@ public @interface Option {
 
     /**
      * Name and aliases of the option.
-     * @see FlagParser
-     * @see ValuedParser
+     * @see FlagOptionParser
+     * @see ValuedOptionParser
      */
     String[] name() default {};
 
     /**
      * If non-empty, indicates that this option represents a flag-type option.
      * <p>This flag-option will return the specified value if present and {@code null} or a specified default value otherwise.</p>
-     * @see FlagParser
+     * @see FlagOptionParser
      */
     String flagValue() default "";
 

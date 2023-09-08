@@ -13,12 +13,12 @@ public class ArgumentParsers {
         return OperandParser.at(position);
     }
 
-    public static FlagParser<String> flagOption(String name, String... names) {
-        return FlagParser.forName(name, names);
+    public static FlagOptionParser<String> flagOption(String name, String... names) {
+        return FlagOptionParser.forName(name, names);
     }
 
-    public static ValuedParser<String> valuedOption(String name, String... names) {
-        return ValuedParser.forName(name, names);
+    public static ValuedOptionParser<String> valuedOption(String name, String... names) {
+        return ValuedOptionParser.forName(name, names);
     }
 
 }

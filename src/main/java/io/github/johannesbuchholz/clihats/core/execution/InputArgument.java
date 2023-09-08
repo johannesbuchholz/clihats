@@ -16,6 +16,7 @@ public class InputArgument {
     private final boolean isPOSIXConform;
     private final boolean isOption;
 
+    // TODO: Remove
     public static InputArgument empty() {
         return InputArgument.of("");
     }

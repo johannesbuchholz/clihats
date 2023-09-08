@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.execution.parser;
+package io.github.johannesbuchholz.clihats.core.execution;
 
 public class ArgumentParsingResult<T> {
 

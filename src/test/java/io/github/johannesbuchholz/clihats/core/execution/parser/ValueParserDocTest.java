@@ -15,7 +15,7 @@ public class ValueParserDocTest {
         // given
         Command c = Command.forName("run")
                 .withInstruction(args -> {})
-                .withParsers(ValuedParser.forName("-a"));
+                .withParsers(ValuedOptionParser.forName("-a"));
 
         // when
         String actualDoc = c.getDoc();
@@ -34,7 +34,7 @@ public class ValueParserDocTest {
         Command c = Command.forName("run")
                 .withDescription("This is a lengthy Description that should be wrapped into a new line. Hopefully this works out fine: A new line for this command. Yeah!")
                 .withInstruction(args -> {})
-                .withParsers(ValuedParser.forName("-a"));
+                .withParsers(ValuedOptionParser.forName("-a"));
 
         // when
         String actualDoc = c.getDoc();
@@ -54,7 +54,7 @@ public class ValueParserDocTest {
         // given
         Command c = Command.forName("run")
                 .withInstruction(args -> {})
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName("-a")
                         .withDescription("Some meaningful argument. Defaults to 'null' if missing.")
                 );
@@ -75,7 +75,7 @@ public class ValueParserDocTest {
         // given
         Command c = Command.forName("run")
                 .withInstruction(args -> {})
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName("-a")
                         .withRequired(true)
                         .withDescription("Some meaningful argument. Defaults to 'null' if missing.")
@@ -97,7 +97,7 @@ public class ValueParserDocTest {
         // given
         Command c = Command.forName("run")
                 .withInstruction(args -> {})
-                .withParsers(ValuedParser
+                .withParsers(ValuedOptionParser
                         .forName("-a")
                         .withRequired(true)
                         .withDefault("some default")
@@ -120,7 +120,7 @@ public class ValueParserDocTest {
         // given
         Command c = Command.forName("run")
                 .withInstruction(args -> {})
-                .withParsers(ValuedParser.forName("-a", "--abc", "--abcdefg", "--another-alias")
+                .withParsers(ValuedOptionParser.forName("-a", "--abc", "--abcdefg", "--another-alias")
                         .withDescription("Some meaningful argument. Defaults to 'null' if missing.")
                 );
 
@@ -144,9 +144,9 @@ public class ValueParserDocTest {
                 .withInstruction(args -> {})
                 .withDescription("This is a command that runs into nothing, the great void and across all emptiness of space and time as long as this documentation string is taking to consume all that is left.")
                 .withParsers(
-                        ValuedParser.forName("-p", "--poop", "--why-so-much", "--POOP")
+                        ValuedOptionParser.forName("-p", "--poop", "--why-so-much", "--POOP")
                                 .withDescription("Poopdipoop. Another Description. Not too long."),
-                        ValuedParser.forName("-a", "--abc")
+                        ValuedOptionParser.forName("-a", "--abc")
                                 .withRequired(true)
                                 .withDescription("Some meaningful argument. Defaults to 'null' if missing.")
                 );

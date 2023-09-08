@@ -1,6 +1,7 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser.exception;
 
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 
 import java.util.Collection;
 

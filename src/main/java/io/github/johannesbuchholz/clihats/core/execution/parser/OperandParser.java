@@ -1,7 +1,8 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
-import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 
 import java.util.ArrayList;
 import java.util.List;

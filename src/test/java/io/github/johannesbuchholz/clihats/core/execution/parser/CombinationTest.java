@@ -24,8 +24,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        ValuedParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        ValuedOptionParser.forName(nameB)
                 );
         String stringArg = "a string argument";
         String[] args = {nameA, stringArg};
@@ -47,8 +47,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        ValuedParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        ValuedOptionParser.forName(nameB)
                 );
         String stringArg = "a string argument";
         String[] args = {nameB, stringArg};
@@ -70,8 +70,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        ValuedParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        ValuedOptionParser.forName(nameB)
                 );
         String stringArgA = "a string argument A";
         String stringArgB = "a string argument B";
@@ -94,8 +94,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        ValuedParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        ValuedOptionParser.forName(nameB)
                 );
         String stringArgA = "a string argument A";
         String stringArgB = "a string argument B";
@@ -124,8 +124,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        FlagOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String[] args = {nameA};
 
@@ -146,8 +146,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        FlagOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String[] args = {nameB};
 
@@ -168,8 +168,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        FlagOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String[] args = {nameA, nameB};
 
@@ -190,8 +190,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        FlagOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String[] args = {nameB, nameA};
 
@@ -289,8 +289,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String stringArgA = "a string arg A";
         String[] args = {nameA, stringArgA};
@@ -312,8 +312,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String[] args = {nameB};
 
@@ -334,8 +334,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String stringArgA = "a string arg A";
         String[] args = {nameA, stringArgA, nameB};
@@ -357,8 +357,8 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
-                        FlagParser.forName(nameB)
+                        ValuedOptionParser.forName(nameA),
+                        FlagOptionParser.forName(nameB)
                 );
         String stringArgA = "a string arg A";
         String[] args = {nameB, nameA, stringArgA};
@@ -385,7 +385,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
+                        ValuedOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
@@ -407,7 +407,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
+                        ValuedOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String stringArgB = "a string arg B";
@@ -429,7 +429,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
+                        ValuedOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
@@ -452,7 +452,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        ValuedParser.forName(nameA),
+                        ValuedOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
@@ -482,7 +482,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
+                        FlagOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String[] args = {nameA};
@@ -503,7 +503,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
+                        FlagOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
@@ -525,7 +525,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
+                        FlagOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
@@ -547,7 +547,7 @@ public class CombinationTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(
-                        FlagParser.forName(nameA),
+                        FlagOptionParser.forName(nameA),
                         OperandParser.at(0)
                 );
         String stringArgA = "a string arg A";
