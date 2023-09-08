@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.processor.generators;
 
-import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ValueMapper;
 import io.github.johannesbuchholz.clihats.processor.CommandLineInterfaceProcessor;
 import io.github.johannesbuchholz.clihats.processor.annotations.OptionNecessity;
@@ -129,13 +129,13 @@ public class OptionCodeGenerator {
     private SnippetCodeData generatePositionalParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
         SnippetCodeData promptSnippetCodeData = generatePromptCode();
-        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(Parsers.class));
+        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(ArgumentParsers.class));
         imports.addAll(promptSnippetCodeData.getImportPackages());
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
                         "%s.positional(%s)%s%s%s%s%s",
-                        Parsers.class.getSimpleName(),
+                        ArgumentParsers.class.getSimpleName(),
                         optionInputs.getPosition(),
                         generateRequiredCode(),
                         generateDefaultValueCode(),
@@ -156,12 +156,12 @@ public class OptionCodeGenerator {
      */
     private SnippetCodeData generateFlagParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
-        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(Parsers.class));
+        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(ArgumentParsers.class));
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
                         "%s.flag(%s)%s%s%s%s",
-                        Parsers.class.getSimpleName(),
+                        ArgumentParsers.class.getSimpleName(),
                         generateNames(),
                         generateFlagValueCode(),
                         generateDefaultValueCode(),
@@ -182,13 +182,13 @@ public class OptionCodeGenerator {
     private SnippetCodeData generateValuedParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
         SnippetCodeData promptSnippetCodeData = generatePromptCode();
-        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(Parsers.class));
+        Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(ArgumentParsers.class));
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         imports.addAll(promptSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
                         "%s.valued(%s)%s%s%s%s%s",
-                        Parsers.class.getSimpleName(),
+                        ArgumentParsers.class.getSimpleName(),
                         generateNames(),
                         generateRequiredCode(),
                         generateDefaultValueCode(),

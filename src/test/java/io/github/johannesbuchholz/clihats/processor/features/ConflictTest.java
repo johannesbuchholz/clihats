@@ -3,7 +3,7 @@ package io.github.johannesbuchholz.clihats.processor.features;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
 import io.github.johannesbuchholz.clihats.core.execution.CommanderCreationException;
-import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -40,10 +40,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.valuedOption(repeatedArgName),
-                                            Parsers.operand(0),
-                                            Parsers.flagOption("-f"),
-                                            Parsers.valuedOption(repeatedArgName)
+                                            ArgumentParsers.valuedOption(repeatedArgName),
+                                            ArgumentParsers.operand(0),
+                                            ArgumentParsers.flagOption("-f"),
+                                            ArgumentParsers.valuedOption(repeatedArgName)
                                     )
                     );
         } catch (IllegalArgumentException e) {
@@ -64,10 +64,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.flagOption(repeatedArgName),
-                                            Parsers.operand(0),
-                                            Parsers.flagOption("-f"),
-                                            Parsers.flagOption(repeatedArgName)
+                                            ArgumentParsers.flagOption(repeatedArgName),
+                                            ArgumentParsers.operand(0),
+                                            ArgumentParsers.flagOption("-f"),
+                                            ArgumentParsers.flagOption(repeatedArgName)
                                     )
                     );
         } catch (IllegalArgumentException e) {
@@ -88,10 +88,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.valuedOption("-n"),
-                                            Parsers.operand(repeatedPos),
-                                            Parsers.flagOption("-f"),
-                                            Parsers.operand(repeatedPos)
+                                            ArgumentParsers.valuedOption("-n"),
+                                            ArgumentParsers.operand(repeatedPos),
+                                            ArgumentParsers.flagOption("-f"),
+                                            ArgumentParsers.operand(repeatedPos)
                                     )
                     );
         } catch (IllegalArgumentException e) {
@@ -112,10 +112,10 @@ public class ConflictTest {
                     .withCommands(
                             Command.forName(commandName)
                                     .withParsers(
-                                            Parsers.valuedOption(repeatedArgName),
-                                            Parsers.operand(0),
-                                            Parsers.flagOption("-f"),
-                                            Parsers.flagOption(repeatedArgName)
+                                            ArgumentParsers.valuedOption(repeatedArgName),
+                                            ArgumentParsers.operand(0),
+                                            ArgumentParsers.flagOption("-f"),
+                                            ArgumentParsers.flagOption(repeatedArgName)
                                     )
                     );
         } catch (IllegalArgumentException e) {

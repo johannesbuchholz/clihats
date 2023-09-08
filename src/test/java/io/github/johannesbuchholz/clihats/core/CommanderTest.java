@@ -2,7 +2,7 @@ package io.github.johannesbuchholz.clihats.core;
 
 import io.github.johannesbuchholz.clihats.core.execution.*;
 import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractParser;
-import io.github.johannesbuchholz.clihats.core.execution.parser.Parsers;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.BooleanMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.LocalDateMapper;
 import org.junit.Before;
@@ -90,9 +90,9 @@ public class CommanderTest {
     public void setup() {
         result = null;
 
-        AbstractParser<?> p1 = Parsers.operand(0)
+        AbstractParser<?> p1 = ArgumentParsers.operand(0)
                 .withMapper(X::new);
-        AbstractParser<?> p2 = Parsers.valuedOption("-d")
+        AbstractParser<?> p2 = ArgumentParsers.valuedOption("-d")
                 .withDefault("999.99");
         Command c1 = Command.forName("execute-first")
                 .withInstruction(CommanderTest::dummyAdapter1)
@@ -115,10 +115,10 @@ public class CommanderTest {
                         Command.forName("print-all").withInstruction(args -> dummyMethod3((String) args[0], (String) args[1], (Boolean) args[2], (LocalDate) args[3]))
                                 .withDescription("prints all input arguments to console")
                                 .withParsers(
-                                        Parsers.operand(0),
-                                        Parsers.operand(1),
-                                        Parsers.flagOption("-f", "--flag").withFlagValue("true").withMapper(new BooleanMapper()),
-                                        Parsers.valuedOption("-t", "--time").withMapper(new LocalDateMapper())
+                                        ArgumentParsers.operand(0),
+                                        ArgumentParsers.operand(1),
+                                        ArgumentParsers.flagOption("-f", "--flag").withFlagValue("true").withMapper(new BooleanMapper()),
+                                        ArgumentParsers.valuedOption("-t", "--time").withMapper(new LocalDateMapper())
                                 ));
     }
 
@@ -146,9 +146,9 @@ public class CommanderTest {
 
     @Test(expected = CommanderCreationException.class)
     public void commanderCreationShouldFail_sameCommandName() {
-        AbstractParser<?> p1 = Parsers.operand(0)
+        AbstractParser<?> p1 = ArgumentParsers.operand(0)
                 .withMapper(X::new);
-        AbstractParser<?> p2 = Parsers.valuedOption("-d")
+        AbstractParser<?> p2 = ArgumentParsers.valuedOption("-d")
                 .withDefault("999.99");
         Command c3 = Command.forName("execute-second").withInstruction(CommanderTest::dummyAdapter2).withParsers(p1, p2);
         Commander.forName("commander2")

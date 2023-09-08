@@ -27,13 +27,13 @@ public abstract class AbstractOptionParser<T> extends AbstractParser<T> {
     public abstract Collection<OptionName> getNames();
 
     @Override
-    public String getDisplayName() {
+    public String getId() {
         return getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(","));
     }
 
     @Override
     public String toString() {
-        return "Option " + getDisplayName();
+        return "Option " + getId();
     }
 
     @Override

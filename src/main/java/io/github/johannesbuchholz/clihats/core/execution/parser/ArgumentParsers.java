@@ -1,11 +1,11 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 /**
- * Utility class for static factory methods creating option parsers.
+ * Utility class for static factory methods creating argument parsers.
  */
-public class Parsers {
+public class ArgumentParsers {
 
-    private Parsers() {
+    private ArgumentParsers() {
         // do not instantiate
     }
 

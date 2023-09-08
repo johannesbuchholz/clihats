@@ -3,6 +3,7 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
 public class ArgumentParsingResult<T> {
 
     private final boolean isPresent;
+    // Can be null
     private final T value;
 
     public static <T> ArgumentParsingResult<T> of(T value) {

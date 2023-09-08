@@ -11,9 +11,11 @@ import java.util.Optional;
 public abstract class AbstractParser<T> {
 
     /**
-     * @return The displayable name of this parser.
+     * @return The unique displayable name of this parser.
+     * @apiNote Parsers possessing the same id value should be considered equal.
      */
-    public abstract String getDisplayName();
+    // TODO: Consider introducing a distinct type serving the desired purpose.
+    public abstract String getId();
 
     public abstract ParserHelpContent getHelpContent();
 
@@ -64,7 +66,7 @@ public abstract class AbstractParser<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractParser<?> that = (AbstractParser<?>) o;
-        return this.toString().equals(that.toString());
+        return this.getId().equals(that.getId());
     }
 
     @Override

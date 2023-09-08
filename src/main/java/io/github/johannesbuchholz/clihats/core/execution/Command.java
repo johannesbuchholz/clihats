@@ -159,7 +159,7 @@ public class Command {
                     .row()
                     .row(COMMAND_DESCRIPTION_WIDTH, "Options:");
             parsers.stream()
-                    .sorted(Comparator.comparing(AbstractParser::getDisplayName))
+                    .sorted(Comparator.comparing(AbstractParser::getId))
                     .map(p -> p.getHelpContent().asTextCells())
                     .forEach(matrixParsers::row);
         }

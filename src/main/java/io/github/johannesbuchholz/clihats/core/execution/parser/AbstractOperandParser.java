@@ -7,7 +7,7 @@ public abstract class AbstractOperandParser<T> extends AbstractParser<T> {
     public abstract int getPosition();
 
     @Override
-    public String getDisplayName() {
+    public String getId() {
         return "<" + getPosition() + ">";
     }
 
