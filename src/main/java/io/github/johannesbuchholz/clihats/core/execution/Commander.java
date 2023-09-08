@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  *
  * @see Command
  */
-public class Commander implements Documented {
+public class Commander {
 
     private static final int COMMANDER_DESCRIPTION_WIDTH = 100;
     private static final int COMMAND_NAME_WIDTH = 24;
@@ -153,7 +153,6 @@ public class Commander implements Documented {
         return cliName;
     }
 
-    @Override
     public String getDoc() {
         return generateHelpString();
     }

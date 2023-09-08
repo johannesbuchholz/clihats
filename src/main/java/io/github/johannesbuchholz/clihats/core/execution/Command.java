@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @see Commander
  * @see AbstractParser
  */
-public class Command implements Documented {
+public class Command {
 
     public static final int COMMAND_DESCRIPTION_WIDTH = 80;
 
@@ -166,7 +166,6 @@ public class Command implements Documented {
         return matrixHeader + "\n" + matrixParsers.removeEmptyCols().resizeColumnWidths();
     }
 
-    @Override
     public String getDoc() {
         return generateHelpString();
     }
