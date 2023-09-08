@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.core.execution.parser;
+package io.github.johannesbuchholz.clihats.core.execution.parser.exception;
 
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
 
@@ -9,7 +9,7 @@ import java.util.Collection;
  */
 public class UnknownArgumentException extends ArgumentParsingException {
 
-    UnknownArgumentException(Collection<InputArgument> inputArguments) {
+    public UnknownArgumentException(Collection<InputArgument> inputArguments) {
         super("Unknown input arguments " + inputArguments);
     }
 

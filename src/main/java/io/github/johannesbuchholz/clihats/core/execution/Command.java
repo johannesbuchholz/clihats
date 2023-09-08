@@ -1,9 +1,12 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
+import io.github.johannesbuchholz.clihats.core.execution.exception.ClientCodeExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgsParser;
-import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.CliArgsParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ArgumentParsingException;
 import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 
 import java.util.*;

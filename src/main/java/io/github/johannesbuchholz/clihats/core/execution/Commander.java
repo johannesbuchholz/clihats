@@ -1,5 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
+import io.github.johannesbuchholz.clihats.core.execution.exception.*;
 import io.github.johannesbuchholz.clihats.core.text.TextCell;
 import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 

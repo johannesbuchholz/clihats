@@ -1,6 +1,7 @@
-package io.github.johannesbuchholz.clihats.core.execution;
+package io.github.johannesbuchholz.clihats.core.execution.exception;
 
-import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.Command;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ArgumentParsingException;
 
 public class InvalidInputArgumentException extends CommandExecutionException {
 

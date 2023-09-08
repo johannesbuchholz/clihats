@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// TODO: Add synopsis part.
 public class ParserHelpContent {
 
     private static final int MIN_DESCRIPTION_COL_WIDTH = 16;

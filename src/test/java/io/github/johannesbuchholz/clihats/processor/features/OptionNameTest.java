@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.processor.features;
 
-import io.github.johannesbuchholz.clihats.core.execution.InvalidInputArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
 import io.github.johannesbuchholz.clihats.processor.GlobalTestResult;
 import io.github.johannesbuchholz.clihats.processor.subjects.Cli3;
 import io.github.johannesbuchholz.clihats.processor.subjects.CliTestInvoker;

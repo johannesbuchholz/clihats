@@ -1,9 +1,10 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractOperandParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractOptionParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
-import io.github.johannesbuchholz.clihats.core.execution.parser.MissingValueException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingValueException;
 import org.junit.Test;
 
 import java.util.ArrayList;

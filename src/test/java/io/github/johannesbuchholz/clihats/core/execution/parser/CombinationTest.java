@@ -2,7 +2,7 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.TestResult;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
-import io.github.johannesbuchholz.clihats.core.execution.CommandExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

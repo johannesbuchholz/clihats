@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.processor.exceptions;
 
 import io.github.johannesbuchholz.clihats.core.execution.CliException;
-import io.github.johannesbuchholz.clihats.core.execution.CliHelpCallException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CliHelpCallException;
 
 import java.io.PrintStream;
 

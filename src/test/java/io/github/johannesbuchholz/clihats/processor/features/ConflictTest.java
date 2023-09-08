@@ -2,7 +2,7 @@ package io.github.johannesbuchholz.clihats.processor.features;
 
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
-import io.github.johannesbuchholz.clihats.core.execution.CommanderCreationException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommanderCreationException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
 import org.junit.Test;
 
