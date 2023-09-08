@@ -4,32 +4,41 @@ import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class InputParser {
+public class CliArgsParser implements ArgsParser {
 
-    private final int parserCount;
-    private final List<AbstractParser<?>> abstractParsers;
+    private final List<ParserToken<AbstractArgumentParser<?>>> optionParsers;
+    private final List<ParserToken<AbstractArgumentParser<?>>> operandParsers;
 
-    public InputParser(List<AbstractParser<?>> abstractParsers) {
-        parserCount = abstractParsers.size();
-        this.abstractParsers = abstractParsers;
+    public CliArgsParser(List<AbstractArgumentParser<?>> abstractParsers) {
+        List<ParserToken<AbstractArgumentParser<?>>> optionParsers = new ArrayList<>();
+        List<ParserToken<AbstractArgumentParser<?>>> operandParsers = new ArrayList<>();
+        int targetPosition = 0;
+        for (AbstractArgumentParser<?> abstractParser : abstractParsers) {
+            if (abstractParser instanceof AbstractOptionParser) {
+                optionParsers.add(new ParserToken<>(targetPosition, abstractParser));
+            } else if (abstractParser instanceof AbstractOperandParser) {
+                operandParsers.add(new ParserToken<>(targetPosition, abstractParser));
+            } else {
+                throw new IllegalArgumentException("Encountered parser of unknown type " + abstractParser.getClass());
+            }
+            targetPosition++;
+        }
+        this.optionParsers = optionParsers;
+        this.operandParsers = operandParsers;
     }
 
-    public Object[] parse(String[] inputArgs) throws ArgumentParsingException {
-        Object[] parsedValues = new Object[parserCount];
+    @Override
+    public Object[] parse(InputArgument[] args) throws ArgumentParsingException {
+        Object[] parsedValues = new Object[optionParsers.size() + operandParsers.size()];
 
-        // collect tokens
-        Map<Integer, List<ParserToken>> tokensByPriority = IntStream.range(0, abstractParsers.size())
-                .mapToObj(i -> new ParserToken(i, abstractParsers.get(i)))
-                .collect(Collectors.groupingBy(token -> token.abstractParser.getParsingPriority()));
         // parse options
-        InputArgument[] args = Arrays.stream(inputArgs).map(InputArgument::of).toArray(InputArgument[]::new);
-        List<Integer> ascendingPriorities = tokensByPriority.keySet().stream().sorted().collect(Collectors.toList());
-        for (int priority : ascendingPriorities) {
-            parseNextRound(tokensByPriority.get(priority), args, parsedValues);
-            args = Arrays.stream(args).filter(Objects::nonNull).toArray(InputArgument[]::new);
-        }
+        parseNextRound(optionParsers, args, parsedValues);
+        args = Arrays.stream(args).filter(Objects::nonNull).toArray(InputArgument[]::new);
+
+        // parse operands
+        parseNextRound(operandParsers, args, parsedValues);
+
         // mark remaining args as unknown
         List<InputArgument> unknownInputArguments = Arrays.stream(args)
                 .filter(Objects::nonNull)
@@ -39,15 +48,16 @@ public class InputParser {
 
         return parsedValues;
     }
-    
+
+    // TODO: Simplify by now relying on separation of parser types
     /**
      * @param tokens Parser tokens for this round.
      * @param args Array of input arguments. May contain null entries indicating that the respective element has already been parsed.
      * @param parsedValues The current parsing result builder to put values into.
      */
-    private void parseNextRound(Collection<ParserToken> tokens, InputArgument[] args, Object[] parsedValues) throws ArgumentParsingException {
-        Set<ParserToken> remainingTokens = new HashSet<>(tokens);
-        List<ParserToken> usedParsers = new ArrayList<>(tokens.size());
+    private void parseNextRound(List<ParserToken<AbstractArgumentParser<?>>> tokens, InputArgument[] args, Object[] parsedValues) throws ArgumentParsingException {
+        Set<ParserToken<?>> remainingTokens = new HashSet<>(tokens);
+        List<ParserToken<?>> usedParsers = new ArrayList<>(tokens.size());
 
         for (int i = 0; i < args.length; i++) {
             boolean noneFound = true;
@@ -55,11 +65,11 @@ public class InputParser {
             if (currentArg == null)
                 // skip already parsed args
                 continue;
-            for (ParserToken token : remainingTokens) {
+            for (ParserToken<?> token : remainingTokens) {
                 if (args[i] == null)
                     // argument position has already been parsed by previous parsers
                     break;
-                ArgumentParsingResult<?> result = token.abstractParser.parse(args, i);
+                ArgumentParsingResult<?> result = token.parser.parse(args, i);
                 if (result.isPresent()) {
                     // parser could extract a value from the current arg
                     noneFound = false;
@@ -85,36 +95,37 @@ public class InputParser {
     /**
      * Apply default values for specified parsers.
      */
-    private void putDefaultValues(Collection<ParserToken> tokens, Object[] parsingResultBuilder) throws ArgumentParsingException {
-        for (ParserToken token : tokens) {
+    private void putDefaultValues(Collection<ParserToken<?>> tokens, Object[] parsingResultBuilder) throws ArgumentParsingException {
+        for (ParserToken<?> token : tokens) {
             ArgumentParsingResult<?> defaultResult;
-            defaultResult = token.abstractParser.defaultValue();
+            defaultResult = token.parser.defaultValue();
             if (defaultResult.isPresent()) {
                 parsingResultBuilder[token.targetPosition] = defaultResult.getValue();
             } else {
                 // parser does not have a default value
-                throw new MissingArgumentException(token.abstractParser);
+                throw new MissingArgumentException(token.parser);
             }
         }
     }
 
     /**
-     * Stores one {@link AbstractParser} and the argument position that parser parses into.
+     * Stores one {@link AbstractArgumentParser} and the argument position that parser parses into.
+     * @param <T> the stored parser type
      */
-    private static class ParserToken {
+    private static class ParserToken<T extends AbstractArgumentParser<?>> {
         private final int targetPosition;
-        private final AbstractParser<?> abstractParser;
+        private final T parser;
 
-        private ParserToken(int targetPosition, AbstractParser<?> abstractParser) {
+        private ParserToken(int targetPosition, T parser) {
             this.targetPosition = targetPosition;
-            this.abstractParser = abstractParser;
+            this.parser = parser;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ParserToken that = (ParserToken) o;
+            ParserToken<?> that = (ParserToken<?>) o;
             return targetPosition == that.targetPosition;
         }
 
@@ -125,7 +136,7 @@ public class InputParser {
 
         @Override
         public String toString() {
-            return targetPosition + " <- " + abstractParser.toString();
+            return targetPosition + " <- " + parser.toString();
         }
     }
 

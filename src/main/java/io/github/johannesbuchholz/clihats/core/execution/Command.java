@@ -1,8 +1,9 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
-import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractArgumentParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ArgsParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsingException;
-import io.github.johannesbuchholz.clihats.core.execution.parser.InputParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.CliArgsParser;
 import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 
 import java.util.*;
@@ -15,18 +16,18 @@ import java.util.stream.Collectors;
  *     to the specified {@link Instruction}.
  * </p>
  * @see Commander
- * @see AbstractParser
+ * @see AbstractArgumentParser
  */
 public class Command {
 
     public static final int COMMAND_DESCRIPTION_WIDTH = 80;
 
     private final Instruction instruction;
-    private final List<AbstractParser<?>> parsers;
+    private final List<AbstractArgumentParser<?>> parsers;
     private final String description;
 
     private final String name;
-    private final InputParser inputParser;
+    private final ArgsParser argsParser;
 
     /**
      * A new Command with the specified name. The name will be used to identify this Command and may not contain
@@ -49,10 +50,10 @@ public class Command {
         return new Command(name, Instruction.empty(), List.of(), "");
     }
 
-    private static List<AbstractParser<?>> validate(List<AbstractParser<?>> parsers) {
-        List<AbstractParser<?>> processedParsers = new ArrayList<>(parsers.size());
+    private static List<AbstractArgumentParser<?>> validate(List<AbstractArgumentParser<?>> parsers) {
+        List<AbstractArgumentParser<?>> processedParsers = new ArrayList<>(parsers.size());
         List<String> conflictsMessages = new ArrayList<>();
-        for (AbstractParser<?> parser : parsers) {
+        for (AbstractArgumentParser<?> parser : parsers) {
             processedParsers.forEach(coherent -> coherent.getConflictMessage(parser).ifPresent(conflictsMessages::add));
             processedParsers.add(parser);
         }
@@ -64,13 +65,13 @@ public class Command {
         return parsers;
     }
 
-    private Command(String name, Instruction instruction, List<AbstractParser<?>> parsers, String description) {
+    private Command(String name, Instruction instruction, List<AbstractArgumentParser<?>> parsers, String description) {
         this.name = name;
         this.instruction = instruction;
         this.parsers = parsers;
         this.description = description;
 
-        inputParser = new InputParser(validate(parsers));
+        argsParser = new CliArgsParser(validate(parsers));
     }
 
     // builder likes
@@ -80,9 +81,9 @@ public class Command {
      * @param parsers the parsers to set.
      * @return a new Command with the specified parsers.
      * @throws NullPointerException if the specified array is null.
-     * @see AbstractParser
+     * @see AbstractArgumentParser
      */
-    public Command withParsers(AbstractParser<?>... parsers) {
+    public Command withParsers(AbstractArgumentParser<?>... parsers) {
         return new Command(name, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
     }
 
@@ -115,9 +116,10 @@ public class Command {
      * @throws CommandExecutionException if parsing of arguments or execution fails.
      */
     public void execute(String[] inputArgs) throws CommandExecutionException {
+        InputArgument[] args = Arrays.stream(inputArgs).map(InputArgument::of).toArray(InputArgument[]::new);
         Object[] parsedValues;
         try {
-            parsedValues = inputParser.parse(inputArgs);
+            parsedValues = argsParser.parse(args);
         } catch (ArgumentParsingException e) {
             throw new InvalidInputArgumentException(this, e);
         }
@@ -159,7 +161,7 @@ public class Command {
                     .row()
                     .row(COMMAND_DESCRIPTION_WIDTH, "Options:");
             parsers.stream()
-                    .sorted(Comparator.comparing(AbstractParser::getId))
+                    .sorted(Comparator.comparing(AbstractArgumentParser::getId))
                     .map(p -> p.getHelpContent().asTextCells())
                     .forEach(matrixParsers::row);
         }

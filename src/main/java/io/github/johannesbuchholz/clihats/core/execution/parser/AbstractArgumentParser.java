@@ -7,8 +7,9 @@ import java.util.Optional;
 
 /**
  * Extending classes are able to parse a value from a list of options.
+ * @param <T> The type this parser returns.
  */
-public abstract class AbstractParser<T> {
+public abstract class AbstractArgumentParser<T> {
 
     /**
      * @return The unique displayable name of this parser.
@@ -43,13 +44,7 @@ public abstract class AbstractParser<T> {
      * @param other Another parser.
      * @return A message describing the conflict with other or empty if not conflicting.
      */
-    public abstract Optional<String> getConflictMessage(AbstractParser<?> other);
-
-    /**
-     * @return the desired priority to be called with. Lower values indicate earlier parsing.
-     */
-    // TODO: Consider removing this field and let Command have one field for option parsers and one for operand parsers.
-    public abstract int getParsingPriority();
+    public abstract Optional<String> getConflictMessage(AbstractArgumentParser<?> other);
 
     T mapWithThrows(ValueMapper<T> mapper, String stringValue) throws ValueMappingException {
         if (stringValue == null)
@@ -65,7 +60,7 @@ public abstract class AbstractParser<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractParser<?> that = (AbstractParser<?>) o;
+        AbstractArgumentParser<?> that = (AbstractArgumentParser<?>) o;
         return this.getId().equals(that.getId());
     }
 

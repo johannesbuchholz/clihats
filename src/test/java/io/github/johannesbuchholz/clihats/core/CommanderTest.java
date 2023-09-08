@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.core;
 
 import io.github.johannesbuchholz.clihats.core.execution.*;
-import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractParser;
+import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.BooleanMapper;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.LocalDateMapper;
@@ -90,9 +90,9 @@ public class CommanderTest {
     public void setup() {
         result = null;
 
-        AbstractParser<?> p1 = ArgumentParsers.operand(0)
+        AbstractArgumentParser<?> p1 = ArgumentParsers.operand(0)
                 .withMapper(X::new);
-        AbstractParser<?> p2 = ArgumentParsers.valuedOption("-d")
+        AbstractArgumentParser<?> p2 = ArgumentParsers.valuedOption("-d")
                 .withDefault("999.99");
         Command c1 = Command.forName("execute-first")
                 .withInstruction(CommanderTest::dummyAdapter1)
@@ -146,9 +146,9 @@ public class CommanderTest {
 
     @Test(expected = CommanderCreationException.class)
     public void commanderCreationShouldFail_sameCommandName() {
-        AbstractParser<?> p1 = ArgumentParsers.operand(0)
+        AbstractArgumentParser<?> p1 = ArgumentParsers.operand(0)
                 .withMapper(X::new);
-        AbstractParser<?> p2 = ArgumentParsers.valuedOption("-d")
+        AbstractArgumentParser<?> p2 = ArgumentParsers.valuedOption("-d")
                 .withDefault("999.99");
         Command c3 = Command.forName("execute-second").withInstruction(CommanderTest::dummyAdapter2).withParsers(p1, p2);
         Commander.forName("commander2")

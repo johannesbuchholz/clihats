@@ -2,7 +2,7 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import java.util.Optional;
 
-public abstract class AbstractOperandParser<T> extends AbstractParser<T> {
+public abstract class AbstractOperandParser<T> extends AbstractArgumentParser<T> {
 
     public abstract int getPosition();
 
@@ -17,12 +17,7 @@ public abstract class AbstractOperandParser<T> extends AbstractParser<T> {
     }
 
     @Override
-    public int getParsingPriority() {
-        return Integer.MAX_VALUE;
-    }
-
-    @Override
-    public Optional<String> getConflictMessage(AbstractParser<?> other) {
+    public Optional<String> getConflictMessage(AbstractArgumentParser<?> other) {
         if (!(other instanceof AbstractOperandParser))
             return Optional.empty();
         if (getPosition() == ((AbstractOperandParser<?>) other).getPosition())

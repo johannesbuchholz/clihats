@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractOptionParser<T> extends AbstractParser<T> {
+public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> {
 
     protected static Set<OptionName> collectAsOptionNamesFrom(String name, String... names) {
         Set<OptionName> optionOptionNames = new HashSet<>();
@@ -37,12 +37,7 @@ public abstract class AbstractOptionParser<T> extends AbstractParser<T> {
     }
 
     @Override
-    public int getParsingPriority() {
-        return 0;
-    }
-
-    @Override
-    public Optional<String> getConflictMessage(AbstractParser<?> other) {
+    public Optional<String> getConflictMessage(AbstractArgumentParser<?> other) {
        if (!(other instanceof AbstractOptionParser))
            return Optional.empty();
         HashSet<OptionName> duplicateNames = new HashSet<>(getNames());

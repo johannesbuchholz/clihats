@@ -5,7 +5,7 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
  */
 public class MissingArgumentException extends ArgumentParsingException {
 
-    MissingArgumentException(AbstractParser<?> failingParser) {
+    MissingArgumentException(AbstractArgumentParser<?> failingParser) {
         super("Missing required argument "+ failingParser.getId());
     }
 

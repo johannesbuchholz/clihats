@@ -5,7 +5,7 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
  */
 public class ValueMappingException extends ArgumentParsingException {
 
-    ValueMappingException(AbstractParser<?> failingParser, Throwable e) {
+    ValueMappingException(AbstractArgumentParser<?> failingParser, Throwable e) {
         super(String.format("Could not map value of %s: %s", failingParser, e.getCause()), e);
     }
 
