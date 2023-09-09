@@ -22,7 +22,6 @@ public class Commander {
     private static final int COMMANDER_DESCRIPTION_WIDTH = 100;
     private static final int COMMAND_NAME_WIDTH = 24;
     private static final int COMMAND_DESCRIPTION_WIDTH = 76;
-    private final List<String> helpArgs = List.of("--help"); // TODO: Move to input argument
     private final String cliName;
     private final Map<String, Command> commandsByName;
     private final String description;
@@ -100,11 +99,8 @@ public class Commander {
         }
     }
 
-    /**
-     * true, iff the last input argument is among {@link #helpArgs}
-     */
     private boolean isHelpCall(String[] inputArgs) {
-        return inputArgs.length == 0 || Arrays.stream(inputArgs).anyMatch(helpArgs::contains);
+        return inputArgs.length == 0 || Arrays.stream(inputArgs).anyMatch(InputArgument::isHelpArgument);
     }
 
     private void checkForCommandConflicts(Command... commands) throws CommanderCreationException {

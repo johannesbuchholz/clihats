@@ -9,12 +9,17 @@ public class InputArgument {
 
     public static final char OPTION_PREFIX = '-';
     public static final String OPERAND_DELIMITER =  String.valueOf(new char[] {OPTION_PREFIX, OPTION_PREFIX});
+    private static final Set<String> HELP_ARGUMENT_VALUES = Set.of("--help");
 
     private final String value;
     private final Set<Character> chars;
 
     private final boolean isPOSIXConform;
     private final boolean isOption;
+
+    public static boolean isHelpArgument(String value) {
+        return HELP_ARGUMENT_VALUES.contains(value);
+    }
 
     public static InputArgument of(String value) {
         return new InputArgument(value);
