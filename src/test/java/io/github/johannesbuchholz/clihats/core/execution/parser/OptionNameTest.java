@@ -135,7 +135,7 @@ public class OptionNameTest {
     public void matchesInputArg_POSIX_misc_negative() {
         AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("-a");
         List<InputArgument> args = List.of(
-                InputArgument.empty(),
+                InputArgument.of(""),
                 InputArgument.of(""),
                 InputArgument.of("a"),
                 InputArgument.of("abc"),
@@ -151,7 +151,7 @@ public class OptionNameTest {
     public void matchesInputArg_NONPOSIX_misc_negative() {
         AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("--a");
         List<InputArgument> args = List.of(
-                InputArgument.empty(),
+                InputArgument.of(""),
                 InputArgument.of(""),
                 InputArgument.of("a"),
                 InputArgument.of("abc"),
