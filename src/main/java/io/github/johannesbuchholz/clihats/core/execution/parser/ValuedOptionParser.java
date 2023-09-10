@@ -49,8 +49,8 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
         return new ValuedOptionParser<>(names, required, () -> defaultValue, valueMapper, description);
     }
 
-    public ValuedOptionParser<T> withDefault(Supplier<String> inputSupplier) {
-        return new ValuedOptionParser<>(names, required, Objects.requireNonNull(inputSupplier), valueMapper, description);
+    public ValuedOptionParser<T> withDefault(Supplier<String> defaultSupplier) {
+        return new ValuedOptionParser<>(names, required, Objects.requireNonNull(defaultSupplier), valueMapper, description);
     }
 
     public ValuedOptionParser<T> withRequired(boolean required) {
@@ -58,7 +58,7 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
     }
 
     public ValuedOptionParser<T> withDescription(String description) {
-        return new ValuedOptionParser<>(names, required, defaultSupplier, valueMapper, Objects.requireNonNullElse(description, "").trim());
+        return new ValuedOptionParser<>(names, required, defaultSupplier, valueMapper, description);
     }
 
     @Override

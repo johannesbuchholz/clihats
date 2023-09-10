@@ -15,13 +15,14 @@ public class ParserHelpContent {
     private final Collection<String> primaryNames;
     private final Collection<String> secondaryNames;
     private final List<String> additionalInfo;
+    // nullable
     private final String description;
     private final String synopsisSnippet;
 
     public ParserHelpContent(Collection<String> primaryNames, Collection<String> secondaryNames, List<String> additionalInfo, String description, String synopsisSnippet) {
-        this.primaryNames = primaryNames;
-        this.secondaryNames = secondaryNames;
-        this.additionalInfo = additionalInfo;
+        this.primaryNames = Objects.requireNonNull(primaryNames);
+        this.secondaryNames = Objects.requireNonNull(secondaryNames);
+        this.additionalInfo = Objects.requireNonNull(additionalInfo);
         this.description = description;
         this.synopsisSnippet = synopsisSnippet;
     }
@@ -35,6 +36,7 @@ public class ParserHelpContent {
                 Command.COMMAND_DESCRIPTION_WIDTH - (nameCol.getWidth() + aliasesCell.getWidth() + valueDescCell.getWidth())
         );
         TextCell paragraphCell = Optional.ofNullable(description)
+                .map(String::trim)
                 .map(desc -> TextCell.getNew(descriptionColWidth).paragraph(desc))
                 .orElse(TextCell.getNew());
         return new TextCell[] {nameCol, aliasesCell, valueDescCell, paragraphCell};

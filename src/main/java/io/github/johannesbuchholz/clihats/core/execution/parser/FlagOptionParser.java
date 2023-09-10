@@ -31,11 +31,11 @@ public class FlagOptionParser<T> extends AbstractOptionParser<T> {
         this.flagValue = flagValue;
         this.defaultValue = defaultValue;
         this.valueMapper = valueMapper;
-        this.description = Objects.requireNonNullElse(description, "").trim();
+        this.description = description;
     }
 
     public FlagOptionParser<T> withFlagValue(String flagValue) {
-        return new FlagOptionParser<>(names, Objects.requireNonNull(flagValue), defaultValue, valueMapper, description);
+        return new FlagOptionParser<>(names, flagValue, defaultValue, valueMapper, description);
     }
 
     public FlagOptionParser<T> withDefault(String defaultValue) {
@@ -47,7 +47,7 @@ public class FlagOptionParser<T> extends AbstractOptionParser<T> {
     }
 
     public FlagOptionParser<T> withDescription(String description) {
-        return new FlagOptionParser<>(names, flagValue, defaultValue, valueMapper, Objects.requireNonNullElse(description, "").trim());
+        return new FlagOptionParser<>(names, flagValue, defaultValue, valueMapper, description);
     }
 
     @Override

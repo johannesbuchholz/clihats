@@ -18,10 +18,9 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
 
     private final int position;
     private final ValueMapper<T> valueMapper;
-    private final String description; // FIXME: make this nullable since ParsingResult can already handles null descriptions (in all parsers)
+    private final String description;
     private final boolean required;
     private final Supplier<String> defaultSupplier;
-    // nullable
     private final String displayName;
 
     protected static OperandParser<String> at(int position) {
@@ -48,7 +47,7 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
     }
 
     public OperandParser<T> withDescription(String description) {
-        return new OperandParser<>(position, defaultSupplier, required, valueMapper,  Objects.requireNonNullElse(description, "").trim(), displayName);
+        return new OperandParser<>(position, defaultSupplier, required, valueMapper,  description, displayName);
     }
 
     public OperandParser<T> withRequired(boolean required) {
@@ -64,7 +63,7 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
     }
 
     public OperandParser<T> withDisplayName(String displayName) {
-        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, Objects.requireNonNull(displayName).trim());
+        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, displayName);
     }
 
     @Override
