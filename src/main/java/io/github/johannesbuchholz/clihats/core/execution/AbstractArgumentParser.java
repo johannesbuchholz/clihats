@@ -1,7 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
 import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
-import io.github.johannesbuchholz.clihats.core.execution.parser.ParserHelpContent;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingArgumentException;
 
 import java.util.Objects;

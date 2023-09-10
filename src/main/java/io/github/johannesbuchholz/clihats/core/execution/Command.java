@@ -151,8 +151,20 @@ public class Command {
         String normalizedName = getName();
         TextMatrix matrixHeader = TextMatrix.empty()
                 .row(COMMAND_DESCRIPTION_WIDTH, "Help for " + normalizedName);
+        List<ParserHelpContent> helpContentList = parsers.stream()
+                .sorted(Comparator.comparing(AbstractArgumentParser::getId))
+                .map(AbstractArgumentParser::getHelpContent)
+                .collect(Collectors.toList());
+        // synopsis
+        String synopsis = normalizedName + " " + helpContentList.stream().map(ParserHelpContent::getSynopsisSnippet).collect(Collectors.joining(" "));
+        matrixHeader
+                .row()
+                .row("Synopsis:")
+                .row(synopsis);
+        // description
         if (!description.isEmpty()) {
             matrixHeader
+                    .row()
                     .row(COMMAND_DESCRIPTION_WIDTH, description);
         }
         // add option description
@@ -160,10 +172,9 @@ public class Command {
         if (!parsers.isEmpty()) {
             matrixHeader
                     .row()
-                    .row(COMMAND_DESCRIPTION_WIDTH, "Options:");
-            parsers.stream()
-                    .sorted(Comparator.comparing(AbstractArgumentParser::getId))
-                    .map(p -> p.getHelpContent().asTextCells())
+                    .row(COMMAND_DESCRIPTION_WIDTH, "Parameters:");
+            helpContentList.stream()
+                    .map(ParserHelpContent::asTextCells)
                     .forEach(matrixParsers::row);
         }
         return matrixHeader + "\n" + matrixParsers.removeEmptyCols().resizeColumnWidths();

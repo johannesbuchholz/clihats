@@ -35,7 +35,7 @@ public class DocStringTest {
         // then
         String expected = "Help for cli-1\n" +
                 "Does stuff for testing purposes. Actually it does nothing of value... This should appear in the     \n" +
-                "description of the cli.  ";
+                "description of the cli.";
         assertNotNull(actualException);
         assertEquals(CliHelpCallException.class, actualException.getClass());
 
@@ -52,10 +52,13 @@ public class DocStringTest {
         CliException actualException = executeAndGetException(args);
 
         // then
-        String expected =
-                "Help for command1                                                               \n" +
-                "This is the first method that is called by {@link Cli1}, when invoked with the  \n" +
-                "right arguments. This is another line of text. One will never know.             \n";
+        String expected = "Help for command1                                                               \n" +
+                        "\n" +
+                        "Synopsis:\n" +
+                        "command1 [--a2|--aa2 <value>] [--a3 <value>] [OPERAND0]\n" +
+                        "\n" +
+                        "This is the first method that is called by {@link Cli1}, when invoked with the  \n" +
+                        "right arguments. This is another line of text. One will never know.";
         assertNotNull(actualException);
         assertEquals(CliHelpCallException.class, actualException.getClass());
 
@@ -72,11 +75,13 @@ public class DocStringTest {
         CliException actualException = executeAndGetException(args);
 
         // then
-        String expected =
-                        "Help for command2                                                               \n" +
-                        "\n" +
-                        "Options:                                                                        \n" +
-                        "   --opt (flag)     This is a lengthy description for a string argument.";
+        String expected = "Help for command2                                                               \n" +
+                "\n" +
+                "Synopsis:\n" +
+                "command2 [--opt] -r <value>\n" +
+                "\n" +
+                "Parameters:                                                                     \n" +
+                "   --opt (flag)     This is a lengthy description for a string argument.";
         assertNotNull(actualException);
         assertEquals(CliHelpCallException.class, actualException.getClass());
 

@@ -2,11 +2,13 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.ParserHelpContent;
 import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingValueException;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Parses named arguments with user input values like
@@ -120,20 +122,40 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
 
     @Override
     public ParserHelpContent getHelpContent() {
-        List<String> primaryNames = new ArrayList<>();
-        List<String> secondaryNames = new ArrayList<>();
+        List<OptionName> primaryNames = new ArrayList<>();
+        List<OptionName> secondaryNames = new ArrayList<>();
         names.forEach(name -> {
             if (name.isPOSIXConformOptionName())
-                primaryNames.add(name.getValue());
+                primaryNames.add(name);
             else
-                secondaryNames.add(name.getValue());
+                secondaryNames.add(name);
         });
         Collections.sort(primaryNames);
         Collections.sort(secondaryNames);
+        // synopsis
         List<String> indicators = new ArrayList<>();
         if (required)
             indicators.add("required");
-        return new ParserHelpContent(primaryNames, secondaryNames, indicators, description);
+        return new ParserHelpContent(
+                primaryNames.stream().map(OptionName::getValue).collect(Collectors.toList()), 
+                secondaryNames.stream().map(OptionName::getValue).collect(Collectors.toList()),
+                indicators,
+                description,
+                getSynopsisSnippet(primaryNames, secondaryNames)
+        );
+    }
+
+    private String getSynopsisSnippet(List<OptionName> primaryNames, List<OptionName> secondaryNames) {
+        List<OptionName> namesToDisplay;
+        if (!primaryNames.isEmpty()) {
+            namesToDisplay = primaryNames;
+        } else {
+            namesToDisplay = secondaryNames;
+        }
+        String synopsisSnippet = namesToDisplay.stream().map(OptionName::getValue).collect(Collectors.joining("|")) + " <value>";
+        if (!required)
+            synopsisSnippet = "[" + synopsisSnippet + "]";
+        return synopsisSnippet;
     }
 
 }

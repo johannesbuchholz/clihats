@@ -2,6 +2,7 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.ParserHelpContent;
 import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 
 import java.util.ArrayList;
@@ -17,46 +18,53 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
 
     private final int position;
     private final ValueMapper<T> valueMapper;
-    private final String description;
+    private final String description; // FIXME: make this nullable since ParsingResult can already handles null descriptions (in all parsers)
     private final boolean required;
     private final Supplier<String> defaultSupplier;
+    // nullable
+    private final String displayName;
 
     protected static OperandParser<String> at(int position) {
         if (position < 0) {
             throw new IllegalArgumentException("position needs to be non-negative but was " + position);
         }
-        return new OperandParser<>(position, () -> null, false, stringValue -> stringValue, "");
+        return new OperandParser<>(position, () -> null, false, stringValue -> stringValue, "", null);
     }
 
-    private OperandParser(int position, Supplier<String> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description) {
+    private OperandParser(int position, Supplier<String> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description, String displayName) {
         this.position = position;
         this.valueMapper = valueMapper;
         this.description =description;
         this.required = required;
         this.defaultSupplier = defaultSupplier;
+        this.displayName = displayName;
     }
 
     /**
      * Returns a new PositionalArgument with this objects position and the given mapper.
      */
     public <X> OperandParser<X> withMapper(ValueMapper<X> mapper) {
-        return new OperandParser<>(position, defaultSupplier, required, Objects.requireNonNull(mapper), description);
+        return new OperandParser<>(position, defaultSupplier, required, Objects.requireNonNull(mapper), description, displayName);
     }
 
     public OperandParser<T> withDescription(String description) {
-        return new OperandParser<>(position, defaultSupplier, required, valueMapper,  Objects.requireNonNullElse(description, "").trim());
+        return new OperandParser<>(position, defaultSupplier, required, valueMapper,  Objects.requireNonNullElse(description, "").trim(), displayName);
     }
 
     public OperandParser<T> withRequired(boolean required) {
-        return new OperandParser<>(position, defaultSupplier, required, valueMapper, description);
+        return new OperandParser<>(position, defaultSupplier, required, valueMapper, description, displayName);
     }
 
     public OperandParser<T> withDefault(String defaultValue) {
-        return new OperandParser<>(position, () -> defaultValue, required, valueMapper, description);
+        return new OperandParser<>(position, () -> defaultValue, required, valueMapper, description, displayName);
     }
 
     public OperandParser<T> withDefault(Supplier<String> defaultSupplier) {
-        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description);
+        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, displayName);
+    }
+
+    public OperandParser<T> withDisplayName(String displayName) {
+        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, Objects.requireNonNull(displayName).trim());
     }
 
     @Override
@@ -93,10 +101,15 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
 
     @Override
     public ParserHelpContent getHelpContent() {
-        List<String> indicators = new ArrayList<>();
-        if (required)
-            indicators.add("required");
-        return new ParserHelpContent(List.of("< " + position + ">"), List.of(), indicators, description);
+        List<String> additionalInfo = new ArrayList<>();
+        String displayNameToShow = Objects.requireNonNullElseGet(displayName, () -> "OPERAND" + position);
+        String synopsisSnippet = displayNameToShow;
+        if (required) {
+            additionalInfo.add("required");
+        } else {
+            synopsisSnippet = "[" + synopsisSnippet + "]";
+        }
+        return new ParserHelpContent(List.of(displayNameToShow), List.of(), additionalInfo, description, synopsisSnippet);
     }
 
 }
