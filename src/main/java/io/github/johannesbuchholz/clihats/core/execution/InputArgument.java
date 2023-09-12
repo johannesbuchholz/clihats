@@ -22,20 +22,21 @@ public class InputArgument {
     }
 
     public static InputArgument of(String value) {
-        return new InputArgument(value);
-    }
-
-    private InputArgument(String value) {
-        this.value = Objects.requireNonNull(value);
-        chars = value.chars().mapToObj(c -> (char) c).collect(Collectors.toSet());
-
-        isOption = value.length() > 1
+        boolean isOption = value.length() > 1
                 && value.charAt(0) == OPTION_PREFIX
                 && !value.equals(OPERAND_DELIMITER)
                 && value.chars().skip(1).noneMatch(Character::isSpaceChar);
-        isPOSIXConform = isOption
+         boolean isPOSIXConform = isOption
                 && value.charAt(1) != OPTION_PREFIX
                 && value.chars().skip(1).allMatch(Character::isLetterOrDigit);
+        return new InputArgument(value, value.chars().mapToObj(c -> (char) c).collect(Collectors.toSet()), isOption, isPOSIXConform);
+    }
+
+    private InputArgument(String value, Set<Character> chars, boolean isOption, boolean isPOSIXConform) {
+        this.value = Objects.requireNonNull(value);
+        this.chars = chars;
+        this.isOption = isOption;
+        this.isPOSIXConform = isPOSIXConform;
     }
 
     public boolean isPOSIXConform() {
@@ -69,12 +70,10 @@ public class InputArgument {
     }
 
     public InputArgument newWithout(char c) {
-        String newValue = value.chars()
-                .mapToObj(i -> (char) i)
-                .filter(i -> i != c)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
-        return InputArgument.of(newValue);
+        int i = value.indexOf(c);
+        if (i < 0)
+            return new InputArgument(value, chars, isOption, isPOSIXConform);
+        return InputArgument.of(value.substring(0, i) + value.substring(Math.min(i + 1, value.length())));
     }
 
     @Override
