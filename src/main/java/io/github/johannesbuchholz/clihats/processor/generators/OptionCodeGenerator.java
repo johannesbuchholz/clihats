@@ -134,7 +134,7 @@ public class OptionCodeGenerator {
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
-                        "%s.positional(%s)%s%s%s%s%s",
+                        "%s.operand(%s)%s%s%s%s%s",
                         ArgumentParsers.class.getSimpleName(),
                         optionInputs.getPosition(),
                         generateRequiredCode(),
@@ -147,20 +147,13 @@ public class OptionCodeGenerator {
         );
     }
 
-    /**
-     * OptionParsers.flag("--opt")
-     *     .withFlagValue("my/option/path")
-     *     .withDefaultValue("my/default")
-     *     .withAliases("-bli", "-bla", "--blubber")
-     *     .withMapper(Path::of, Path.class)
-     */
     private SnippetCodeData generateFlagParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
         Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(ArgumentParsers.class));
         imports.addAll(mapperSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
-                        "%s.flag(%s)%s%s%s%s",
+                        "%s.flagOption(%s)%s%s%s%s",
                         ArgumentParsers.class.getSimpleName(),
                         generateNames(),
                         generateFlagValueCode(),
@@ -172,13 +165,6 @@ public class OptionCodeGenerator {
         );
     }
 
-    /**
-     * OptionParsers.valued("-d")
-     *     .withAliases("-a", "--blubb")
-     *     .withDelimiter("=")
-     *     .withDefault("-1")
-     *     .withMapper(Integer::parseInt, Integer.class)
-     */
     private SnippetCodeData generateValuedParserCode() {
         SnippetCodeData mapperSnippetCodeData = generateMapperCode();
         SnippetCodeData promptSnippetCodeData = generatePromptCode();
@@ -187,7 +173,7 @@ public class OptionCodeGenerator {
         imports.addAll(promptSnippetCodeData.getImportPackages());
         return SnippetCodeData.from(
                 String.format(
-                        "%s.valued(%s)%s%s%s%s%s",
+                        "%s.valuedOption(%s)%s%s%s%s%s",
                         ArgumentParsers.class.getSimpleName(),
                         generateNames(),
                         generateRequiredCode(),

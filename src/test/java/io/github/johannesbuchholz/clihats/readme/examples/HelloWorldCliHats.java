@@ -19,7 +19,7 @@ public class HelloWorldCliHats {
     // tag::example-class-main[]
 
     public static void main(String[] args) {
-        CliHats.get(HelloWorldCliHats.class).execute(new String[]{"say-hello-to-person", "-p"});
+        CliHats.get(HelloWorldCliHats.class).execute(args);
     }
     // end::example-class-main[]
 
