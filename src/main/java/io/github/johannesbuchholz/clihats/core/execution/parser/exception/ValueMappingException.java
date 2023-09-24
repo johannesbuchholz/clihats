@@ -9,7 +9,7 @@ import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsi
 public class ValueMappingException extends ArgumentParsingException {
 
     public ValueMappingException(AbstractArgumentParser<?> failingParser, Throwable e) {
-        super(String.format("Could not map value of %s: %s", failingParser, e.getCause()), e);
+        super(String.format("Could not map value of %s: %s", failingParser, e), e);
     }
 
 }
