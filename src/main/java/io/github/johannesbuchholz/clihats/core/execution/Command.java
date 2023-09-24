@@ -55,7 +55,10 @@ public class Command {
         List<AbstractArgumentParser<?>> processedParsers = new ArrayList<>(parsers.size());
         List<String> conflictsMessages = new ArrayList<>();
         for (AbstractArgumentParser<?> parser : parsers) {
-            processedParsers.forEach(coherent -> coherent.getId().hasCommonParts(parser.getId()).ifPresent(conflictsMessages::add));
+            processedParsers.forEach(coherent ->
+                    coherent.getId().hasCommonParts(parser.getId()).ifPresent(commonPart -> {
+                        conflictsMessages.add(String.format("Conflicts on parsers %s and %s: %s", parser, coherent, commonPart));
+                    }));
             processedParsers.add(parser);
         }
         if (!conflictsMessages.isEmpty()) {

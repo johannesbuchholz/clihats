@@ -10,25 +10,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> {
-
-    protected static Set<OptionParserName> collectAsOptionNamesFrom(String name, String... names) {
-        Set<OptionParserName> optionOptionParserNames = new HashSet<>();
-        Set<OptionParserName> posixConformNames = new HashSet<>();
-        Stream.concat(Stream.of(name), Stream.of(names))
-                .map(OptionParserName::of)
-                .forEach(optionOptionName -> {
-                    optionOptionParserNames.add(optionOptionName);
-                    if (optionOptionName.isPOSIXConformOptionName())
-                        posixConformNames.add(optionOptionName);
-                });
-        if (posixConformNames.size() > 1) {
-            throw new IllegalArgumentException("Encountered more than one POSIX conform option name: " + posixConformNames);
-        }
-        return optionOptionParserNames;
-    }
 
     final Set<OptionParserName> names;
     final OptionParserId id;
@@ -90,6 +73,12 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
             return value;
         }
 
+        public String getValueWithoutPrefix() {
+            if (isPOSIXConformOptionName)
+                return value.substring(1);
+            return value.substring(2);
+        }
+
         boolean matches(InputArgument arg) {
             if (arg == null ) {
                 return false;
@@ -145,7 +134,7 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
                     .collect(Collectors.joining(", "));
             if (commonNames.isEmpty())
                 return Optional.empty();
-            return Optional.of(commonNames);
+            return Optional.of("Equal on names: " + commonNames);
         }
 
         @Override

@@ -7,6 +7,7 @@ import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsi
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>Parses arguments like {@code -t}, {@code --option-activated}, {@code --blubb} without an additional value.</p>
@@ -22,7 +23,10 @@ public class FlagOptionParser<T> extends AbstractOptionParser<T> {
     private final String description;
 
     protected static FlagOptionParser<String> forName(String name, String... names) {
-        return new FlagOptionParser<>(collectAsOptionNamesFrom(name, names), "", null, s -> s, null);
+        Set<OptionParserName> optionNames = Stream.concat(Stream.of(name), Stream.of(names))
+                .map(OptionParserName::of)
+                .collect(Collectors.toSet());
+        return new FlagOptionParser<>(optionNames, "", null, s -> s, null);
     }
 
     private FlagOptionParser(Set<OptionParserName> names, String flagValue, String defaultValue, ValueMapper<T> valueMapper, String description) {
@@ -101,15 +105,13 @@ public class FlagOptionParser<T> extends AbstractOptionParser<T> {
     }
 
     private String getSynopsisSnippet(List<OptionParserName> primaryNames, List<OptionParserName> secondaryNames) {
-        List<OptionParserName> namesToDisplay;
+        String synopsisSnippet;
         if (!primaryNames.isEmpty()) {
-            namesToDisplay = primaryNames;
+            synopsisSnippet = "-" + primaryNames.stream().map(OptionParserName::getValueWithoutPrefix).sorted().collect(Collectors.joining());
         } else {
-            namesToDisplay = secondaryNames;
+            synopsisSnippet = secondaryNames.stream().map(OptionParserName::getValue).sorted().collect(Collectors.joining("|"));
         }
-        String synopsisSnippet = namesToDisplay.stream().map(OptionParserName::getValue).collect(Collectors.joining("|"));
-        synopsisSnippet = "[" + synopsisSnippet + "]";
-        return synopsisSnippet;
+        return  "[" + synopsisSnippet + "]";
     }
 
 }

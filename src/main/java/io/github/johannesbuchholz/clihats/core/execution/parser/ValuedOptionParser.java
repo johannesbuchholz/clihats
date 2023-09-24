@@ -9,6 +9,7 @@ import io.github.johannesbuchholz.clihats.core.execution.parser.exception.Missin
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Parses named arguments with user input values like
@@ -27,7 +28,10 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
     private final Supplier<String> defaultSupplier;
 
     protected static ValuedOptionParser<String> forName(String name, String... names) {
-        return new ValuedOptionParser<>(collectAsOptionNamesFrom(name, names), false, () -> null, s -> s, null);
+        Set<OptionParserName> optionNames = Stream.concat(Stream.of(name), Stream.of(names))
+                .map(OptionParserName::of)
+                .collect(Collectors.toSet());
+        return new ValuedOptionParser<>(optionNames, false, () -> null, s -> s, null);
     }
 
     private ValuedOptionParser(Set<OptionParserName> names, boolean required, Supplier<String> defaultSupplier, ValueMapper<T> valueMapper, String description) {
@@ -138,13 +142,13 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
     }
 
     private String getSynopsisSnippet(List<OptionParserName> primaryNames, List<OptionParserName> secondaryNames) {
-        List<OptionParserName> namesToDisplay;
+        String synopsisSnippet;
         if (!primaryNames.isEmpty()) {
-            namesToDisplay = primaryNames;
+            synopsisSnippet = "-" + primaryNames.stream().map(OptionParserName::getValueWithoutPrefix).sorted().collect(Collectors.joining());
         } else {
-            namesToDisplay = secondaryNames;
+            synopsisSnippet = secondaryNames.stream().map(OptionParserName::getValue).sorted().collect(Collectors.joining("|"));
         }
-        String synopsisSnippet = namesToDisplay.stream().map(OptionParserName::getValue).collect(Collectors.joining("|")) + " <value>";
+        synopsisSnippet += " <value>";
         if (!required)
             synopsisSnippet = "[" + synopsisSnippet + "]";
         return synopsisSnippet;

@@ -43,7 +43,7 @@ public class ParserIdCommonPartsTest {
         String commonPartX = "-x";
         AbstractOptionParser.OptionParserName nameX = AbstractOptionParser.OptionParserName.of(commonPartX);
         AbstractOptionParser.OptionParserName nameY = AbstractOptionParser.OptionParserName.of("-y");
-        String commonPartZ = "-z";
+        String commonPartZ = "--zZz";
         AbstractOptionParser.OptionParserName nameZ = AbstractOptionParser.OptionParserName.of(commonPartZ);
 
         AbstractOptionParser.OptionParserId idOptionABC = new AbstractOptionParser.OptionParserId(Set.of(nameZ, nameA, nameB, nameC, nameX));

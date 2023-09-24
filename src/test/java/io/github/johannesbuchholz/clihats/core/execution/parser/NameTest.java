@@ -45,6 +45,26 @@ public class NameTest {
     }
 
     @Test
+    public void shouldExecute_usingSecondPrimaryName() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name1 = "-a";
+        String name2 = "-b";
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(ValuedOptionParser.forName(name1, name2));
+        String stringArg = "a string argument";
+        String[] args = {name2, stringArg};
+
+        // when
+        c.execute(args);
+
+        // then
+        TestResult expected = TestResult.newExpected(stringArg);
+        assertEquals(expected, testResult);
+    }
+
+    @Test
     public void shouldExecute_returnInputArgUsingAlias() throws CommandExecutionException {
         // given
         TestResult testResult = TestResult.newEmpty();

@@ -226,28 +226,46 @@ public class CommandDocTest {
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
 
-    // TODO: Implement this and make test green
-//    @Test
-//    public void valuedParserDoc_multiplePrimaryNames() {
-//        // given
-//        Command c = Command.forName("run")
-//                .withInstruction(args -> {})
-//                .withDescription("Some description. Not too long but it is there. Here you go!")
-//                .withParsers(
-//                        ValuedOptionParser.forName("-p", "-q", "-r", "--poop", "--uff")
-//                                .withDescription("Another Description. Very short."),
-//                        ValuedOptionParser.forName("-a", "--abc", "-b")
-//                                .withRequired(true)
-//                                .withDescription("Use -a or -b to target this.")
-//                );
-//
-//        // when
-//        String actualDoc = c.getDoc();
-//
-//        // then
-//        String expectedDoc = "Help for run\n";
-//        assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
-//    }
+    @Test
+    public void valuedParserDoc_multiplePrimaryNames() {
+        // given
+        Command c = Command.forName("run")
+                .withInstruction(args -> {})
+                .withDescription("Some description. Not too long but it is there. Here you go!")
+                .withParsers(
+                        ArgumentParsers.valuedOption("-p", "-q", "-r", "--poop", "--uff")
+                                .withDescription("Another Description. Very short."),
+                        ArgumentParsers.flagOption("--flag", "-f", "-l", "-A", "-g")
+                                .withDescription("So many names for this flag."),
+                        ArgumentParsers.valuedOption("--apologies", "--for", "--length")
+                                .withRequired(true)
+                                .withDescription("Use one of the long names to target this.")
+                );
+
+        // when
+        String actualDoc = c.getDoc();
+
+        // then
+        String expectedDoc = "Help for run\n" +
+                "\n" +
+                "Synopsis:\n" +
+                "run [-Afgl] [-pqr <value>] --apologies|--for|--length <value>\n" +
+                "\n" +
+                "Some description. Not too long but it is there. Here you go!\n" +
+                "\n" +
+                "Parameters:\n" +
+                "-A --flag      (flag)     So many names for this flag.\n" +
+                "-f\n" +
+                "-g\n" +
+                "-l\n" +
+                "-p --poop                 Another Description. Very short.\n" +
+                "-q --uff\n" +
+                "-r\n" +
+                "   --apologies (required) Use one of the long names to target this.\n" +
+                "   --for\n" +
+                "   --length";
+        assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
+    }
 
     private String stripTrailingLinewise(String original) {
         return Arrays.stream(original.split("\n"))
