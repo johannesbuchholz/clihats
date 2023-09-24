@@ -16,7 +16,6 @@ import java.util.function.Supplier;
  */
 public class OperandParser<T> extends AbstractOperandParser<T> {
 
-    private final int position;
     private final ValueMapper<T> valueMapper;
     private final String description;
     private final boolean required;
@@ -31,7 +30,7 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
     }
 
     private OperandParser(int position, Supplier<String> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description, String displayName) {
-        this.position = position;
+        super(position);
         this.valueMapper = valueMapper;
         this.description =description;
         this.required = required;

@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class OptionNameTest {
+public class OptionParserNameTest {
 
     @Test
     public void testName_expectDefaultValuesExceptRequired() {

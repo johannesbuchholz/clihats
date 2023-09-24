@@ -4,7 +4,6 @@ import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsi
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingArgumentException;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Extending classes are able to parse a value from a list of options.
@@ -16,8 +15,7 @@ public abstract class AbstractArgumentParser<T> {
      * @return The unique displayable name of this parser.
      * @apiNote Parsers possessing the same id value should be considered equal.
      */
-    // TODO: Consider introducing a distinct type serving the desired purpose.
-    public abstract String getId();
+    public abstract ParserId getId();
 
     public abstract ParserHelpContent getHelpContent();
 
@@ -41,13 +39,6 @@ public abstract class AbstractArgumentParser<T> {
      */
     public abstract ArgumentParsingResult<T> defaultValue() throws ArgumentParsingException;
 
-    /**
-     * @param other Another parser.
-     * @return A message describing the conflict with other or empty if not conflicting.
-     */
-    // TODO: Consider moving this to newly created Id-Type returned from getId()
-    public abstract Optional<String> getConflictMessage(AbstractArgumentParser<?> other);
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,7 +49,7 @@ public abstract class AbstractArgumentParser<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.toString());
+        return Objects.hashCode(getId());
     }
 
 }

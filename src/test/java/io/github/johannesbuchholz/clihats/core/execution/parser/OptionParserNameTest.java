@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class OptionNameTest {
+public class OptionParserNameTest {
 
     @Test
     public void createOptionName_positive() {
@@ -18,7 +18,7 @@ public class OptionNameTest {
         List<Exception> exceptions = new ArrayList<>();
         for (String s : names) {
             try {
-                AbstractOptionParser.OptionName.of(s);
+                AbstractOptionParser.OptionParserName.of(s);
             } catch (IllegalArgumentException e ) {
                 exceptions.add(e);
             }
@@ -34,7 +34,7 @@ public class OptionNameTest {
         List<Exception> exceptions = new ArrayList<>();
         for (String s : names) {
             try {
-                AbstractOptionParser.OptionName.of(s);
+                AbstractOptionParser.OptionParserName.of(s);
             } catch (IllegalArgumentException e ) {
                 exceptions.add(e);
             }
@@ -46,21 +46,21 @@ public class OptionNameTest {
     @Test
     public void createOptionName_IsPOSIXConform_positive() {
         List<String> names = List.of("-a", "-b", "-ö");
-        List<AbstractOptionParser.OptionName> optionNames = names.stream().map(AbstractOptionParser.OptionName::of).collect(Collectors.toList());
-        assertTrue(optionNames.stream().allMatch(AbstractOptionParser.OptionName::isPOSIXConformOptionName));
+        List<AbstractOptionParser.OptionParserName> optionParserNames = names.stream().map(AbstractOptionParser.OptionParserName::of).collect(Collectors.toList());
+        assertTrue(optionParserNames.stream().allMatch(AbstractOptionParser.OptionParserName::isPOSIXConformOptionName));
     }
 
     @Test
     public void createOptionName_IsPOSIXConform_negative() {
         List<String> names = List.of("-ab", "--a", "--a-b",
                 "-*", "-!", "-*", "-#", "-'", "-!", "-?", "-\"", "-§", "-$", "-%", "-&", "-/", "-(", "-)", "-=");
-        List<AbstractOptionParser.OptionName> optionNames = names.stream().map(AbstractOptionParser.OptionName::of).collect(Collectors.toList());
-        assertTrue(optionNames.stream().noneMatch(AbstractOptionParser.OptionName::isPOSIXConformOptionName));
+        List<AbstractOptionParser.OptionParserName> optionParserNames = names.stream().map(AbstractOptionParser.OptionParserName::of).collect(Collectors.toList());
+        assertTrue(optionParserNames.stream().noneMatch(AbstractOptionParser.OptionParserName::isPOSIXConformOptionName));
     }
 
     @Test
     public void matchesInputArg_POSIX_POSIX_positive() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("-a");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("-a");
         List<InputArgument> args = List.of(
                 InputArgument.of("-a"),
                 InputArgument.of("-abc"),
@@ -73,7 +73,7 @@ public class OptionNameTest {
 
     @Test
     public void matchesInputArg_POSIX_POSIX_negative() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("-a");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("-a");
         List<InputArgument> args = List.of(
                 InputArgument.of("-b"),
                 InputArgument.of("-cde")
@@ -84,7 +84,7 @@ public class OptionNameTest {
 
     @Test
     public void matchesInputArg_NONPOSIX_POSIX_negative() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("--a");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("--a");
         List<InputArgument> args = List.of(
                 InputArgument.of("-a"),
                 InputArgument.of("-abc"),
@@ -97,7 +97,7 @@ public class OptionNameTest {
 
     @Test
     public void matchesInputArg_POSIX_NONPOSIX_negative() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("-a");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("-a");
         List<InputArgument> args = List.of(
                 InputArgument.of("--a"),
                 InputArgument.of("--abc"),
@@ -111,7 +111,7 @@ public class OptionNameTest {
 
     @Test
     public void matchesInputArg_NONPOSIX_NONPOSIX_positive() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("--long");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("--long");
         List<InputArgument> args = List.of(
                 InputArgument.of("--long")
         );
@@ -121,7 +121,7 @@ public class OptionNameTest {
 
     @Test
     public void matchesInputArg_NONPOSIX_NONPOSIX_negative() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("--long");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("--long");
         List<InputArgument> args = List.of(
                 InputArgument.of("--long-long"),
                 InputArgument.of("--l"),
@@ -133,7 +133,7 @@ public class OptionNameTest {
 
     @Test
     public void matchesInputArg_POSIX_misc_negative() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("-a");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("-a");
         List<InputArgument> args = List.of(
                 InputArgument.of(""),
                 InputArgument.of(""),
@@ -149,7 +149,7 @@ public class OptionNameTest {
 
     @Test
     public void matchesInputArg_NONPOSIX_misc_negative() {
-        AbstractOptionParser.OptionName name = AbstractOptionParser.OptionName.of("--a");
+        AbstractOptionParser.OptionParserName name = AbstractOptionParser.OptionParserName.of("--a");
         List<InputArgument> args = List.of(
                 InputArgument.of(""),
                 InputArgument.of(""),
@@ -166,41 +166,6 @@ public class OptionNameTest {
         );
 
         assertTrue(args.stream().noneMatch(name::matches));
-    }
-
-    @Test
-    public void testSorting_POSIXCompliantNamesFirst() {
-        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("-z");
-        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("--a");
-        assertTrue(name1.compareTo(name2) < 0);
-    }
-
-    @Test
-    public void testSorting_POSIXCompliantNamesByValue() {
-        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("-z");
-        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("-a");
-        assertTrue(name1.compareTo(name2) > 0);
-    }
-
-    @Test
-    public void testSorting_NonPOSIXCompliantNamesByValue() {
-        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("--z");
-        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("--a");
-        assertTrue(name1.compareTo(name2) > 0);
-    }
-
-    @Test
-    public void testSorting_POSIXCompliantNamesEqual() {
-        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("-a");
-        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("-a");
-        assertEquals(0, name1.compareTo(name2));
-    }
-
-    @Test
-    public void testSorting_NonPOSIXCompliantNamesEqual() {
-        AbstractOptionParser.OptionName name1 = AbstractOptionParser.OptionName.of("--a");
-        AbstractOptionParser.OptionName name2 = AbstractOptionParser.OptionName.of("--a");
-        assertEquals(0, name1.compareTo(name2));
     }
 
 }

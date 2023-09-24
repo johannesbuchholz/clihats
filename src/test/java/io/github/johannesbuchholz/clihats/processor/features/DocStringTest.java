@@ -55,7 +55,7 @@ public class DocStringTest {
         String expected = "Help for command1                                                               \n" +
                         "\n" +
                         "Synopsis:\n" +
-                        "command1 [--a2|--aa2 <value>] [--a3 <value>] [OPERAND0]\n" +
+                        "command1 [--aa2|--a2 <value>] [--a3 <value>] [OPERAND0]\n" +
                         "\n" +
                         "This is the first method that is called by {@link Cli1}, when invoked with the  \n" +
                         "right arguments. This is another line of text. One will never know.";
@@ -78,9 +78,10 @@ public class DocStringTest {
         String expected = "Help for command2                                                               \n" +
                 "\n" +
                 "Synopsis:\n" +
-                "command2 [--opt] -r <value>\n" +
+                "command2 -r <value> [--opt]\n" +
                 "\n" +
                 "Parameters:                                                                     \n" +
+                "-r       (required)                                                     \n" +
                 "   --opt (flag)     This is a lengthy description for a string argument.";
         assertNotNull(actualException);
         assertEquals(CliHelpCallException.class, actualException.getClass());

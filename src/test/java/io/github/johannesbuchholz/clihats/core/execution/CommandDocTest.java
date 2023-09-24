@@ -204,7 +204,7 @@ public class CommandDocTest {
                                 .withRequired(true)
                                 .withDescription("First operand"),
                         ArgumentParsers.valuedOption("-p", "--poop")
-                                .withDescription("Hope this does not backfires...")
+                                .withDescription("Hope this does not backfire...")
                 );
 
         // when
@@ -220,12 +220,13 @@ public class CommandDocTest {
                 "\n" +
                 "Parameters:\n" +
                 "-f       --flag-in-the-wind (flag)     Changes as the wind blows.\n" +
-                "-p       --poop                        Hope this does not backfires...\n" +
+                "-p       --poop                        Hope this does not backfire...\n" +
                 "OPERAND0                    (required) First operand\n" +
                 "Karl                                   The second operand. This one also has a beautiful name.";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
 
+    // TODO: Implement this and make test green
 //    @Test
 //    public void valuedParserDoc_multiplePrimaryNames() {
 //        // given

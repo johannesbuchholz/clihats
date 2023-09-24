@@ -55,7 +55,7 @@ public class Command {
         List<AbstractArgumentParser<?>> processedParsers = new ArrayList<>(parsers.size());
         List<String> conflictsMessages = new ArrayList<>();
         for (AbstractArgumentParser<?> parser : parsers) {
-            processedParsers.forEach(coherent -> coherent.getConflictMessage(parser).ifPresent(conflictsMessages::add));
+            processedParsers.forEach(coherent -> coherent.getId().hasCommonParts(parser.getId()).ifPresent(conflictsMessages::add));
             processedParsers.add(parser);
         }
         if (!conflictsMessages.isEmpty()) {
@@ -169,7 +169,7 @@ public class Command {
         }
         // add option description
         TextMatrix matrixParsers = TextMatrix.empty();
-        if (!parsers.isEmpty()) {
+        if (!helpContentList.isEmpty()) {
             matrixHeader
                     .row()
                     .row(COMMAND_DESCRIPTION_WIDTH, "Parameters:");

@@ -2,51 +2,54 @@ package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
+import io.github.johannesbuchholz.clihats.core.execution.ParserId;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> {
 
-    protected static Set<OptionName> collectAsOptionNamesFrom(String name, String... names) {
-        Set<OptionName> optionOptionNames = new HashSet<>();
-        Set<OptionName> posixConformNames = new HashSet<>();
+    protected static Set<OptionParserName> collectAsOptionNamesFrom(String name, String... names) {
+        Set<OptionParserName> optionOptionParserNames = new HashSet<>();
+        Set<OptionParserName> posixConformNames = new HashSet<>();
         Stream.concat(Stream.of(name), Stream.of(names))
-                .map(OptionName::of)
+                .map(OptionParserName::of)
                 .forEach(optionOptionName -> {
-                    optionOptionNames.add(optionOptionName);
+                    optionOptionParserNames.add(optionOptionName);
                     if (optionOptionName.isPOSIXConformOptionName())
                         posixConformNames.add(optionOptionName);
                 });
         if (posixConformNames.size() > 1) {
             throw new IllegalArgumentException("Encountered more than one POSIX conform option name: " + posixConformNames);
         }
-        return optionOptionNames;
+        return optionOptionParserNames;
     }
 
-    public abstract Collection<OptionName> getNames();
+    final Set<OptionParserName> names;
+    final OptionParserId id;
+
+    protected AbstractOptionParser(Set<OptionParserName> names) {
+        this.names = names;
+        id = new OptionParserId(names);
+    }
+
+    public Set<OptionParserName> getNames() {
+        return names;
+    }
 
     @Override
-    public String getId() {
-        return getNames().stream().sorted().map(OptionName::getValue).collect(Collectors.joining(","));
+    public OptionParserId getId() {
+        return id;
     }
 
     @Override
     public String toString() {
-        return "Option " + getId();
-    }
-
-    @Override
-    public Optional<String> getConflictMessage(AbstractArgumentParser<?> other) {
-       if (!(other instanceof AbstractOptionParser))
-           return Optional.empty();
-        HashSet<OptionName> duplicateNames = new HashSet<>(getNames());
-        duplicateNames.retainAll(((AbstractOptionParser<?>) other).getNames());
-        if (!duplicateNames.isEmpty())
-            return Optional.of(String.format("Parser %s conflicts with parser %s on names %s", this, other, duplicateNames));
-        return Optional.empty();
+        return "Option " + id.value;
     }
 
     T mapWithThrows(ValueMapper<T> mapper, String stringValue) throws ValueMappingException {
@@ -59,22 +62,22 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
         }
     }
 
-    public static class OptionName implements Comparable<OptionName> {
+    public static class OptionParserName {
 
         private final String value;
         private final boolean isPOSIXConformOptionName;
 
-        public static OptionName of(String value) {
+        static OptionParserName of(String value) {
             if (value == null
                     || value.length() < 2
                     || value.charAt(0) != InputArgument.OPTION_PREFIX
                     || value.equals(InputArgument.OPERAND_DELIMITER)
                     || value.chars().skip(1).anyMatch(Character::isSpaceChar))
                 throw new IllegalArgumentException("Value is not a valid option name: " + value);
-            return new OptionName(value);
+            return new OptionParserName(value);
         }
 
-        private OptionName(String value) {
+        private OptionParserName(String value) {
             this.value = value;
             isPOSIXConformOptionName = value.length() == 2 && Character.isLetterOrDigit(value.charAt(1));
         }
@@ -87,7 +90,7 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
             return value;
         }
 
-        public boolean matches(InputArgument arg) {
+        boolean matches(InputArgument arg) {
             if (arg == null ) {
                 return false;
             }
@@ -106,25 +109,86 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            OptionName that = (OptionName) o;
+            OptionParserName that = (OptionParserName) o;
             return Objects.equals(value, that.value);
         }
 
         @Override
         public String toString() {
+            return "OptionParserName{value=" + value + "}";
+        }
+
+    }
+
+    public static class OptionParserId implements ParserId {
+
+        private final Set<OptionParserName> names;
+        private final String value;
+
+        OptionParserId(Set<OptionParserName> names) {
+            this.names = new HashSet<>(Objects.requireNonNull(names));
+            value = names.stream().map(OptionParserName::getValue).sorted().collect(Collectors.joining(","));
+        }
+
+        @Override
+        public String getValue() {
             return value;
         }
 
         @Override
-        public int compareTo(OptionName o) {
-            if (o == null)
+        public Optional<String> hasCommonParts(ParserId other) {
+            if (!(other instanceof OptionParserId))
+                return Optional.empty();
+            String commonNames = names.stream()
+                    .filter(((OptionParserId) other).names::contains)
+                    .map(OptionParserName::getValue)
+                    .collect(Collectors.joining(", "));
+            if (commonNames.isEmpty())
+                return Optional.empty();
+            return Optional.of(commonNames);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OptionParserId that = (OptionParserId) o;
+            return Objects.equals(names, that.names);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(names);
+        }
+
+        @Override
+        public int compareTo(ParserId o) {
+            if(!(o instanceof OptionParserId))
                 return -1;
-            if (isPOSIXConformOptionName && !o.isPOSIXConformOptionName)
+            String posixNames = names.stream()
+                    .filter(OptionParserName::isPOSIXConformOptionName)
+                    .map(OptionParserName::getValue)
+                    .collect(Collectors.joining());
+            String otherPosixNames = ((OptionParserId) o).names.stream()
+                    .filter(OptionParserName::isPOSIXConformOptionName)
+                    .map(OptionParserName::getValue)
+                    .collect(Collectors.joining());
+            if (posixNames.isEmpty() && otherPosixNames.isEmpty()) {
+                return value.compareTo(o.getValue());
+            } else if (!posixNames.isEmpty() && !otherPosixNames.isEmpty()) {
+                return posixNames.compareTo(otherPosixNames);
+            } else if (otherPosixNames.isEmpty()) {
                 return -1;
-            else if (!isPOSIXConformOptionName && o.isPOSIXConformOptionName)
+            } else {
                 return 1;
-            return value.compareTo(o.value);
+            }
+        }
+
+        @Override
+        public String toString() {
+            throw new IllegalStateException();
         }
 
     }
+
 }

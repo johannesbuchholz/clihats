@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
  */
 public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
 
-    private final Set<OptionName> names;
     /*
     If true, this parser expects values to be separated by a blank ' ' character after the occurrence of this option.
      */
@@ -31,8 +30,8 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
         return new ValuedOptionParser<>(collectAsOptionNamesFrom(name, names), false, () -> null, s -> s, null);
     }
 
-    private ValuedOptionParser(Set<OptionName> names, boolean required, Supplier<String> defaultSupplier, ValueMapper<T> valueMapper, String description) {
-        this.names = names;
+    private ValuedOptionParser(Set<OptionParserName> names, boolean required, Supplier<String> defaultSupplier, ValueMapper<T> valueMapper, String description) {
+        super(names);
         this.required = required;
         this.valueMapper = valueMapper;
         this.description = description;
@@ -62,20 +61,15 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
     }
 
     @Override
-    public Set<OptionName> getNames() {
-        return names;
-    }
-
-    @Override
     public ArgumentParsingResult<T> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException {
         if (inputArgs.length < index)
             throw new IllegalArgumentException("Index " + index + " is out of bounds for argument array of length " + inputArgs.length);
         InputArgument argToParse = Objects.requireNonNull(inputArgs[index], "Argument at index " + index + " is null");
-        Optional<OptionName> match = names.stream()
+        Optional<OptionParserName> match = names.stream()
                 .filter(name -> name.matches(argToParse))
                 .findAny();
 
-        OptionName matchingName;
+        OptionParserName matchingName;
         if (match.isEmpty())
             return ArgumentParsingResult.empty();
         else
@@ -122,37 +116,35 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
 
     @Override
     public ParserHelpContent getHelpContent() {
-        List<OptionName> primaryNames = new ArrayList<>();
-        List<OptionName> secondaryNames = new ArrayList<>();
+        List<OptionParserName> primaryNames = new ArrayList<>();
+        List<OptionParserName> secondaryNames = new ArrayList<>();
         names.forEach(name -> {
             if (name.isPOSIXConformOptionName())
                 primaryNames.add(name);
             else
                 secondaryNames.add(name);
         });
-        Collections.sort(primaryNames);
-        Collections.sort(secondaryNames);
         // synopsis
         List<String> indicators = new ArrayList<>();
         if (required)
             indicators.add("required");
         return new ParserHelpContent(
-                primaryNames.stream().map(OptionName::getValue).collect(Collectors.toList()), 
-                secondaryNames.stream().map(OptionName::getValue).collect(Collectors.toList()),
+                primaryNames.stream().map(OptionParserName::getValue).sorted().collect(Collectors.toList()),
+                secondaryNames.stream().map(OptionParserName::getValue).sorted().collect(Collectors.toList()),
                 indicators,
                 description,
                 getSynopsisSnippet(primaryNames, secondaryNames)
         );
     }
 
-    private String getSynopsisSnippet(List<OptionName> primaryNames, List<OptionName> secondaryNames) {
-        List<OptionName> namesToDisplay;
+    private String getSynopsisSnippet(List<OptionParserName> primaryNames, List<OptionParserName> secondaryNames) {
+        List<OptionParserName> namesToDisplay;
         if (!primaryNames.isEmpty()) {
             namesToDisplay = primaryNames;
         } else {
             namesToDisplay = secondaryNames;
         }
-        String synopsisSnippet = namesToDisplay.stream().map(OptionName::getValue).collect(Collectors.joining("|")) + " <value>";
+        String synopsisSnippet = namesToDisplay.stream().map(OptionParserName::getValue).collect(Collectors.joining("|")) + " <value>";
         if (!required)
             synopsisSnippet = "[" + synopsisSnippet + "]";
         return synopsisSnippet;

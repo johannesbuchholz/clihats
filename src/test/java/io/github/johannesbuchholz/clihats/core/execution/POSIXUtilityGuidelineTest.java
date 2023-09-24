@@ -62,8 +62,8 @@ public class POSIXUtilityGuidelineTest {
         // then
         assertEquals(invalidNames.size(), valued.size());
         assertEquals(invalidNames.size(), flag.size());
-        assertTrue(valued.stream().allMatch(parser -> parser.getNames().stream().noneMatch(AbstractOptionParser.OptionName::isPOSIXConformOptionName)));
-        assertTrue(flag.stream().allMatch(parser -> parser.getNames().stream().noneMatch(AbstractOptionParser.OptionName::isPOSIXConformOptionName)));
+        assertTrue(valued.stream().allMatch(parser -> parser.getNames().stream().noneMatch(AbstractOptionParser.OptionParserName::isPOSIXConformOptionName)));
+        assertTrue(flag.stream().allMatch(parser -> parser.getNames().stream().noneMatch(AbstractOptionParser.OptionParserName::isPOSIXConformOptionName)));
     }
 
     @Test
@@ -184,7 +184,7 @@ public class POSIXUtilityGuidelineTest {
 
         // then
         assertNotNull(expectedException);
-        assertTrue(expectedException.getMessage().contains(valued.getId()));
+        assertTrue(expectedException.getMessage().contains(valued.toString()));
         assertEquals(MissingValueException.class, expectedException.getCause().getClass());
     }
 
@@ -208,7 +208,7 @@ public class POSIXUtilityGuidelineTest {
 
         // then
         assertNotNull(expectedException);
-        assertTrue(expectedException.getMessage().contains(valued.getId()));
+        assertTrue(expectedException.getMessage().contains(valued.toString()));
         assertEquals(MissingValueException.class, expectedException.getCause().getClass());
     }
 
