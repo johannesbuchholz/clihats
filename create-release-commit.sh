@@ -3,10 +3,10 @@
 set -e
 
 print_usage() {
-  echo "Usage of conventional-commit-version"
-  echo "Prints a version obtained from this project's git commit subjects. Expects conventional commit messages."
+  echo "Usage of $0"
+  echo "Prints a version obtained from this project's git commit messages. Expects messages to conform to 'conventional commits'."
   echo "Options:"
-  echo "  -p    Appends the current nanosecond precision timestamp as the 'prerelease' section."
+  echo "  -p    Appends a suffix as the 'prerelease' section containing a commit offset and commit hash."
   echo "  -c    Inserts the new version to all relevant files. Commits these file changes to git."
   echo "        Only applicable if the current git working tree is clean."
   echo "  -t    Adds the computed version as git tag. Only applies if 'c' is set."
