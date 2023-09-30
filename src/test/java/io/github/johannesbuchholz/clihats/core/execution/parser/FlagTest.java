@@ -1,6 +1,7 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.TestResult;
+import io.github.johannesbuchholz.clihats.core.execution.CliException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
 import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
@@ -243,15 +244,8 @@ public class FlagTest {
         String[] args = {unknownArg};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CliException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(UnknownArgumentException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));
@@ -275,15 +269,8 @@ public class FlagTest {
         String[] args = {name};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CliException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(ValueMappingException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));

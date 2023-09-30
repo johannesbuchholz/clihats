@@ -19,11 +19,8 @@ public class CommandTest {
 
         List<IllegalArgumentException> exceptions = new ArrayList<>();
         for (String name : illegalNames) {
-            try {
-                Command.forName(name);
-            } catch (IllegalArgumentException e) {
-                exceptions.add(e);
-            }
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> Command.forName(name));
+            exceptions.add(e);
         }
 
         assertEquals(illegalNames.size(), exceptions.size());

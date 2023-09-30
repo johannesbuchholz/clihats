@@ -235,15 +235,8 @@ public class NameTest {
         String[] args = {};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));
@@ -262,15 +255,8 @@ public class NameTest {
         String[] args = {unknownArg};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(UnknownArgumentException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));
@@ -294,15 +280,8 @@ public class NameTest {
         String[] args = {name, "anyways"};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(ValueMappingException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));
@@ -321,15 +300,8 @@ public class NameTest {
         String[] args = {name};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(MissingValueException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));

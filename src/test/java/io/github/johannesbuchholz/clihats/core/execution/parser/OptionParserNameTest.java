@@ -58,7 +58,6 @@ public class OptionParserNameTest {
     public void createOptionName_negative() {
         List<String> names = List.of("-", "", "--", "- -", "- ", "--a b-c",
                 "--blubb ", " --k", "*", "a", "a-", "a  b", "abc");
-        List<Exception> exceptions = new ArrayList<>();
         for (String s : names) {
             assertThrows(IllegalArgumentException.class, () -> AbstractOptionParser.OptionParserName.of(s));
         }

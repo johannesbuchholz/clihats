@@ -149,18 +149,13 @@ public class PositionalTest {
     public void shouldFail_creatingArgumentWithNegativePosition() {
         // given
         // when
-        IllegalArgumentException actualException = null;
         int illegalPosition = -999;
-        try {
-            Command.forName("run")
-                    .withInstruction(args -> {})
-                    .withParsers(OperandParser.at(illegalPosition));
-        } catch (IllegalArgumentException e) {
-            actualException = e;
-        }
-
+        IllegalArgumentException actualException = assertThrows(IllegalArgumentException.class, () ->
+                Command.forName("run")
+                        .withInstruction(args -> {
+                        })
+                        .withParsers(OperandParser.at(illegalPosition)));
         // then
-        assertNotNull(actualException);
         assertTrue(actualException.getMessage().contains(String.valueOf(illegalPosition)));
     }
 
@@ -176,15 +171,8 @@ public class PositionalTest {
         String[] args = {};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));
@@ -204,15 +192,8 @@ public class PositionalTest {
         String[] args = {firstArg};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));
@@ -234,15 +215,8 @@ public class PositionalTest {
         String[] args = {"anyways"};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
         // then
-        assertNotNull(actualException);
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(ValueMappingException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));

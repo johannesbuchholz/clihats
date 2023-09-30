@@ -46,7 +46,6 @@ public class InputArgumentTest {
                 exceptions.add(e);
             }
         }
-
         assertTrue(exceptions.isEmpty());
     }
 

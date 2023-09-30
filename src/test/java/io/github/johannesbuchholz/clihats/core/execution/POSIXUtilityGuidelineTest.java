@@ -132,11 +132,8 @@ public class POSIXUtilityGuidelineTest {
         // when
         List<CommandExecutionException> exceptions = new ArrayList<>();
         for (String arg : invalidArgs) {
-            try {
-                command.execute(new String[] {arg, argValue, argValue});
-            } catch (CommandExecutionException e) {
-                exceptions.add(e);
-            }
+            CommandExecutionException e = assertThrows(CommandExecutionException.class, () -> command.execute(new String[]{arg, argValue, argValue}));
+            exceptions.add(e);
         }
 
         //then
@@ -175,17 +172,10 @@ public class POSIXUtilityGuidelineTest {
         String[] invalidArguments = new String[] {"-v42"};
 
         // when
-        CommandExecutionException expectedException = null;
-        try {
-            command.execute(invalidArguments);
-        } catch (CommandExecutionException e) {
-            expectedException = e;
-        }
-
         // then
-        assertNotNull(expectedException);
-        assertTrue(expectedException.getMessage().contains(valued.toString()));
-        assertEquals(MissingValueException.class, expectedException.getCause().getClass());
+        CliException actualException = assertThrows(CommandExecutionException.class, () ->  command.execute(invalidArguments));
+        assertTrue(actualException.getMessage().contains(valued.toString()));
+        assertEquals(MissingValueException.class, actualException.getCause().getClass());
     }
 
     @Test
@@ -199,17 +189,10 @@ public class POSIXUtilityGuidelineTest {
         String[] invalidArguments = new String[] {"-v"};
 
         // when
-        CommandExecutionException expectedException = null;
-        try {
-            command.execute(invalidArguments);
-        } catch (CommandExecutionException e) {
-            expectedException = e;
-        }
-
         // then
-        assertNotNull(expectedException);
-        assertTrue(expectedException.getMessage().contains(valued.toString()));
-        assertEquals(MissingValueException.class, expectedException.getCause().getClass());
+        CliException actualException = assertThrows(CommandExecutionException.class, () ->  command.execute(invalidArguments));
+        assertTrue(actualException.getMessage().contains(valued.toString()));
+        assertEquals(MissingValueException.class, actualException.getCause().getClass());
     }
 
     @Test
@@ -309,17 +292,10 @@ public class POSIXUtilityGuidelineTest {
         String[] args = new String[] {"--", "-v", "-w", "42"};
 
         // when
-        CommandExecutionException expectedException = null;
-        try {
-            command.execute(args);
-        } catch (CommandExecutionException e) {
-            expectedException = e;
-        }
-
         // then
-        assertNotNull(expectedException);
-        assertTrue(expectedException.getMessage().contains("-w"));
-        assertTrue(expectedException.getMessage().contains("42"));
+        CliException actualException = assertThrows(CommandExecutionException.class, () ->  command.execute(args));
+        assertTrue(actualException.getMessage().contains("-w"));
+        assertTrue(actualException.getMessage().contains("42"));
     }
 
     @Test
