@@ -70,13 +70,10 @@ if [[ ${commit} ]]; then
   git diff-index HEAD --quiet --exit-code || (echo "Git working tree is not clean. Exiting..." && exit 1)
 
   mvn test --quiet
-  # Only change version in docs for non-prerelease version
-  if ! [[ ${prerelease} ]]; then
-    sed "s/^.*:version:.*$/:version: ${version}/" doc.adoc -i
-    mvn generate-resources --quiet
-    cp target/generated-docs/doc.html doc.html
-    git add doc.html
-  fi
+  sed "s/^.*:version:.*$/:version: ${version}/" doc.adoc -i
+  mvn generate-resources --quiet
+  cp target/generated-docs/doc.html doc.html
+  git add doc.html
 
   mvn versions:set -DnewVersion="${version}" --quiet
 
