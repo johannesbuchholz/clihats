@@ -133,8 +133,8 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
         if (required)
             indicators.add("required");
         return new ParserHelpContent(
-                primaryNames.stream().map(OptionParserName::getValue).sorted().collect(Collectors.toList()),
-                secondaryNames.stream().map(OptionParserName::getValue).sorted().collect(Collectors.toList()),
+                primaryNames.stream().sorted().map(OptionParserName::getValue).collect(Collectors.toList()),
+                secondaryNames.stream().sorted().map(OptionParserName::getValue).collect(Collectors.toList()),
                 indicators,
                 description,
                 getSynopsisSnippet(primaryNames, secondaryNames)
@@ -144,9 +144,9 @@ public class ValuedOptionParser<T> extends AbstractOptionParser<T> {
     private String getSynopsisSnippet(List<OptionParserName> primaryNames, List<OptionParserName> secondaryNames) {
         String synopsisSnippet;
         if (!primaryNames.isEmpty()) {
-            synopsisSnippet = "-" + primaryNames.stream().map(OptionParserName::getValueWithoutPrefix).sorted().collect(Collectors.joining());
+            synopsisSnippet = "-" + primaryNames.stream().sorted().map(OptionParserName::getValueWithoutPrefix).collect(Collectors.joining());
         } else {
-            synopsisSnippet = secondaryNames.stream().map(OptionParserName::getValue).sorted().collect(Collectors.joining("|"));
+            synopsisSnippet = secondaryNames.stream().sorted().map(OptionParserName::getValue).collect(Collectors.joining("|"));
         }
         synopsisSnippet += " <value>";
         if (!required)

@@ -45,7 +45,7 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
         }
     }
 
-    public static class OptionParserName {
+    public static class OptionParserName implements Comparable<OptionParserName> {
 
         private final String value;
         private final boolean isPOSIXConformOptionName;
@@ -107,6 +107,16 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
             return "OptionParserName{value=" + value + "}";
         }
 
+        @Override
+        public int compareTo(OptionParserName o) {
+            if (o == null)
+                return -1;
+            int compare = Boolean.compare(o.isPOSIXConformOptionName, isPOSIXConformOptionName);
+            if (compare == 0)
+                return value.compareTo(o.getValue());
+            return compare;
+        }
+
     }
 
     public static class OptionParserId implements ParserId {
@@ -116,7 +126,7 @@ public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> 
 
         OptionParserId(Set<OptionParserName> names) {
             this.names = new HashSet<>(Objects.requireNonNull(names));
-            value = names.stream().map(OptionParserName::getValue).sorted().collect(Collectors.joining(","));
+            value = names.stream().sorted().map(OptionParserName::getValue).collect(Collectors.joining(","));
         }
 
         @Override

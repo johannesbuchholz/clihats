@@ -12,6 +12,35 @@ import static org.junit.Assert.*;
 public class OptionParserNameTest {
 
     @Test
+    public void optionNameSorting_posixConformFirst() {
+        AbstractOptionParser.OptionParserName posixConform = AbstractOptionParser.OptionParserName.of("-z");
+        AbstractOptionParser.OptionParserName other = AbstractOptionParser.OptionParserName.of("--abc");
+        assertTrue(posixConform.compareTo(other) < 0);
+    }
+
+    @Test
+    public void optionNameSorting_bothNonConformByValue() {
+        AbstractOptionParser.OptionParserName name1 = AbstractOptionParser.OptionParserName.of("--abc");
+        AbstractOptionParser.OptionParserName name2 = AbstractOptionParser.OptionParserName.of("--xyz");
+        assertTrue(name1.compareTo(name2) < 0);
+    }
+
+    @Test
+    public void optionNameSorting_bothPosixConformValue() {
+        AbstractOptionParser.OptionParserName name1 = AbstractOptionParser.OptionParserName.of("-a");
+        AbstractOptionParser.OptionParserName name2 = AbstractOptionParser.OptionParserName.of("-z");
+        assertTrue(name1.compareTo(name2) < 0);
+    }
+
+    @Test
+    public void optionNameSorting_nullLast() {
+        AbstractOptionParser.OptionParserName posixConform = AbstractOptionParser.OptionParserName.of("-a");
+        AbstractOptionParser.OptionParserName nonConform = AbstractOptionParser.OptionParserName.of("--abc");
+        assertTrue(posixConform.compareTo(null) < 0);
+        assertTrue(nonConform.compareTo(null) < 0);
+    }
+
+    @Test
     public void createOptionName_positive() {
         List<String> names = List.of("-a", "--abcd", "-a-b-c", "--blubb", "--k", "---");
         List<Exception> exceptions = new ArrayList<>();
