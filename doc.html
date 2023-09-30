@@ -5,6 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
+<meta name="author" content="johannesbuchholz@outlook.com">
 <title>Welcome to CliHats</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,99 +436,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<style>
-/*! Stylesheet for CodeRay to loosely match GitHub themes | MIT License */
-pre.CodeRay{background:#f7f7f8}
-.CodeRay .line-numbers{border-right:1px solid;opacity:.35;padding:0 .5em 0 0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
-.CodeRay span.line-numbers{display:inline-block;margin-right:.75em}
-.CodeRay .line-numbers strong{color:#000}
-table.CodeRay{border-collapse:separate;border:0;margin-bottom:0;background:none}
-table.CodeRay td{vertical-align:top;line-height:inherit}
-table.CodeRay td.line-numbers{text-align:right}
-table.CodeRay td.code{padding:0 0 0 .75em}
-.CodeRay .debug{color:#fff!important;background:navy!important}
-.CodeRay .annotation{color:#007}
-.CodeRay .attribute-name{color:navy}
-.CodeRay .attribute-value{color:#700}
-.CodeRay .binary{color:#509}
-.CodeRay .comment{color:#998;font-style:italic}
-.CodeRay .char{color:#04d}
-.CodeRay .char .content{color:#04d}
-.CodeRay .char .delimiter{color:#039}
-.CodeRay .class{color:#458;font-weight:bold}
-.CodeRay .complex{color:#a08}
-.CodeRay .constant,.CodeRay .predefined-constant{color:teal}
-.CodeRay .color{color:#099}
-.CodeRay .class-variable{color:#369}
-.CodeRay .decorator{color:#b0b}
-.CodeRay .definition{color:#099}
-.CodeRay .delimiter{color:#000}
-.CodeRay .doc{color:#970}
-.CodeRay .doctype{color:#34b}
-.CodeRay .doc-string{color:#d42}
-.CodeRay .escape{color:#666}
-.CodeRay .entity{color:#800}
-.CodeRay .error{color:#808}
-.CodeRay .exception{color:inherit}
-.CodeRay .filename{color:#099}
-.CodeRay .function{color:#900;font-weight:bold}
-.CodeRay .global-variable{color:teal}
-.CodeRay .hex{color:#058}
-.CodeRay .integer,.CodeRay .float{color:#099}
-.CodeRay .include{color:#555}
-.CodeRay .inline{color:#000}
-.CodeRay .inline .inline{background:#ccc}
-.CodeRay .inline .inline .inline{background:#bbb}
-.CodeRay .inline .inline-delimiter{color:#d14}
-.CodeRay .inline-delimiter{color:#d14}
-.CodeRay .important{color:#555;font-weight:bold}
-.CodeRay .interpreted{color:#b2b}
-.CodeRay .instance-variable{color:teal}
-.CodeRay .label{color:#970}
-.CodeRay .local-variable{color:#963}
-.CodeRay .octal{color:#40e}
-.CodeRay .predefined{color:#369}
-.CodeRay .preprocessor{color:#579}
-.CodeRay .pseudo-class{color:#555}
-.CodeRay .directive{font-weight:bold}
-.CodeRay .type{font-weight:bold}
-.CodeRay .predefined-type{color:inherit}
-.CodeRay .reserved,.CodeRay .keyword{color:#000;font-weight:bold}
-.CodeRay .key{color:#808}
-.CodeRay .key .delimiter{color:#606}
-.CodeRay .key .char{color:#80f}
-.CodeRay .value{color:#088}
-.CodeRay .regexp .delimiter{color:#808}
-.CodeRay .regexp .content{color:#808}
-.CodeRay .regexp .modifier{color:#808}
-.CodeRay .regexp .char{color:#d14}
-.CodeRay .regexp .function{color:#404;font-weight:bold}
-.CodeRay .string{color:#d20}
-.CodeRay .string .string .string{background:#ffd0d0}
-.CodeRay .string .content{color:#d14}
-.CodeRay .string .char{color:#d14}
-.CodeRay .string .delimiter{color:#d14}
-.CodeRay .shell{color:#d14}
-.CodeRay .shell .delimiter{color:#d14}
-.CodeRay .symbol{color:#990073}
-.CodeRay .symbol .content{color:#a60}
-.CodeRay .symbol .delimiter{color:#630}
-.CodeRay .tag{color:teal}
-.CodeRay .tag-special{color:#d70}
-.CodeRay .variable{color:#036}
-.CodeRay .insert{background:#afa}
-.CodeRay .delete{background:#faa}
-.CodeRay .change{color:#aaf;background:#007}
-.CodeRay .head{color:#f8f;background:#505}
-.CodeRay .insert .insert{color:#080}
-.CodeRay .delete .delete{color:#800}
-.CodeRay .change .change{color:#66f}
-.CodeRay .head .head{color:#f4f}
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
 <h1>Welcome to CliHats</h1>
+<div class="details">
+<span id="author" class="author">johannesbuchholz@outlook.com</span><br>
+<span id="revdate">Version 0.0.1</span>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -537,7 +454,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <li><a href="#_gradle">Gradle</a></li>
 </ul>
 </li>
-<li><a href="#_quickstart">Quickstart</a></li>
+<li><a href="#_hello_world_clihats">Hello World CliHats</a></li>
 <li><a href="#_core_concept">Core concept</a>
 <ul class="sectlevel2">
 <li><a href="#_commandlineinterface">@CommandLineInterface</a></li>
@@ -575,13 +492,12 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><img src="https://img.shields.io/maven-central/v/io.github.johannesbuchholz/clihats" alt="Maven Central"></span></p>
+<p>CliHats is a java library that lets you easily expose functionality of your java code to the command line. Building a command-line interface becomes as simple as putting on a hat.</p>
 </div>
-<div class="paragraph">
-<p>CliHats is a java library that lets you easily expose aspects of your java code to the command line. The command-line interface becomes a hat you simply put on your program.</p>
-</div>
-<div class="ulist">
+<div class="openblock">
 <div class="title">CliHats offers</div>
+<div class="content">
+<div class="ulist">
 <ul>
 <li>
 <p>Declarative and functional API</p>
@@ -599,6 +515,8 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="_get_clihats">Get CliHats</h2>
 <div class="sectionbody">
@@ -609,11 +527,11 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h3 id="_maven">Maven</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
-    <span class="tag">&lt;groupId&gt;</span>io.github.johannesbuchholz<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>clihats<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>0.0.1<span class="tag">&lt;/version&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span></code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="xml"><span style="color:#070;font-weight:bold">&lt;dependency&gt;</span>
+    <span style="color:#070;font-weight:bold">&lt;groupId&gt;</span>io.github.johannesbuchholz<span style="color:#070;font-weight:bold">&lt;/groupId&gt;</span>
+    <span style="color:#070;font-weight:bold">&lt;artifactId&gt;</span>clihats<span style="color:#070;font-weight:bold">&lt;/artifactId&gt;</span>
+    <span style="color:#070;font-weight:bold">&lt;version&gt;</span>0.0.1<span style="color:#070;font-weight:bold">&lt;/version&gt;</span>
+<span style="color:#070;font-weight:bold">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
 </div>
@@ -621,7 +539,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h3 id="_gradle">Gradle</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="groovy">implementation <span class="string"><span class="delimiter">'</span><span class="content">io.github.johannesbuchholz:clihats:0.0.1</span><span class="delimiter">'</span></span></code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="groovy">implementation <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">io.github.johannesbuchholz:clihats:0.0.1</span><span style="color:#710">'</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -629,156 +547,95 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="groovy">annotationProcessor <span class="string"><span class="delimiter">'</span><span class="content">io.github.johannesbuchholz:clihats:0.0.1</span><span class="delimiter">'</span></span></code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="groovy">annotationProcessor <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">io.github.johannesbuchholz:clihats:0.0.1</span><span style="color:#710">'</span></span></code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_quickstart">Quickstart</h2>
+<h2 id="_hello_world_clihats">Hello World CliHats</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this example we will use CliHats to make multiple existing methods available through a command-line interface.</p>
+<p>In this example we use CliHats to expose multiple existing methods to the command line.</p>
 </div>
 <div class="paragraph">
 <p>Assume the below "Hello, World!" example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="java"><span class="comment">/**
+<pre class="CodeRay highlight nowrap"><code data-lang="java"><span style="color:#777">/**
  * A simple &quot;Hello, World!&quot; program to demonstrate the capabilities of CliHats.
  */</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloWorldCliHats</span> {
+<span style="color:#007">@CommandLineInterface</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">HelloWorldCliHats</span> {
 
-    <span class="comment">/**
-     * Simply prints &quot;Hello, World!&quot;
-     */</span>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> sayHello() {
-        <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello, World!</span><span class="delimiter">&quot;</span></span>);
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+        CliHats.get(HelloWorldCliHats.class).execute(args); <i class="conum" data-value="2"></i><b>(2)</b>
     }
 
-    <span class="comment">/**
+    <span style="color:#777">/**
+     * Simply prints &quot;Hello, World!&quot;
+     */</span>
+    <span style="color:#007">@Command</span> <i class="conum" data-value="3"></i><b>(3)</b>
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> sayHello() {
+        <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, World!</span><span style="color:#710">&quot;</span></span>);
+    }
+
+    <span style="color:#777">/**
      * Prints a greeting to the specified name.
      * @param name the name to greet.
      * @param polite if true, additionally prints &quot;Nice to meet you!&quot;.
      */</span>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> sayHelloToPerson(
+    <span style="color:#007">@Command</span>
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> sayHelloToPerson(
+            <span style="color:#007">@Option</span>(necessity = OptionNecessity.REQUIRED) <i class="conum" data-value="4"></i><b>(4)</b>
+            <span style="color:#0a8;font-weight:bold">String</span> name,
+            <span style="color:#007">@Option</span>(flagValue = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">true</span><span style="color:#710">&quot;</span></span>, defaultValue = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">false</span><span style="color:#710">&quot;</span></span>) <i class="conum" data-value="5"></i><b>(5)</b>
+            <span style="color:#0a8;font-weight:bold">Boolean</span> polite
     ) {
-        <span class="predefined-type">System</span>.out.printf(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello, %s!</span><span class="char">\n</span><span class="delimiter">&quot;</span></span>, name);
-        <span class="keyword">if</span> (polite)
-            <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Nice to meet you!</span><span class="delimiter">&quot;</span></span>);
+        <span style="color:#0a8;font-weight:bold">System</span>.out.printf(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, %s!</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>, name);
+        <span style="color:#080;font-weight:bold">if</span> (polite)
+            <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Nice to meet you!</span><span style="color:#710">&quot;</span></span>);
     }
 
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>We declare a command-line interface by annotating our class with <code>@CommandLineInterface</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight nowrap"><code>@CommandLineInterface
-public class HelloWorldCliHats {
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Next, we add the first command to our command-line interface by annotating the method <code>sayHello</code> with <code>@Command</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight nowrap"><code>@Command
-public static void sayHello() {
-    System.out.println(&quot;Hello, World!&quot;);
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>By default, CliHats will automatically group commands to the first command-line interface it finds in the upwards package tree. In our case this is <code>HelloWorldCliHats</code>.</p>
-</div>
-<div class="paragraph">
-<p>We proceed in a similar fashion with the second method <code>sayHelloToPerson</code>. This time, we need CliHats to also set method parameters. We accomplish this by adding <code>@Option</code> to each parameter.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight nowrap"><code>@Command
-public static void sayHelloToPerson(
-        @Option(necessity = OptionNecessity.REQUIRED) String name,
-        @Option(flagValue = &quot;true&quot;, defaultValue = &quot;false&quot;) Boolean polite
-) {
-    System.out.printf(&quot;Hello, %s!\n&quot;, name);
-    if (polite)
-        System.out.println(&quot;Nice to meet you!&quot;);
-}</code></pre>
-</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The annotation <code>@CommandLineInterface</code> declares the class as a command-line interface.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The received entry point arguments are passed to the command-line interface we just declared.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The annotation <code>@Command</code> binds <code>sayHello</code> to the first command-line interface in the upwards package tree. In this case this is <code>HelloWorldCliHats</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>This parameter is required and must be supplied on each invocation of possessing command.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The second parameter is a flag-option. The required <code>Boolean</code> type is automatically mapped from the specified input values.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Finally, it is left to add a java entrypoint to our program.</p>
-</div>
-<div class="paragraph">
-<p>In order to let CliHats choose commands and parse options, we need to pass the received String arguments to the command-line interface we want to invoke.<br>
-For this, we load our previously declared command-line interface with <code>CliHats.get(HelloWorldCliHats.class)</code> and run it by calling <code>execute</code> passing the given arguments.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight nowrap"><code>public static void main(String[] args) {
-    CliHats.get(HelloWorldCliHats.class).execute(new String[]{&quot;say-hello-to-person&quot;, &quot;-p&quot;});
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The complete class definition now looks like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="java"><span class="comment">/**
- * A simple &quot;Hello, World!&quot; program to demonstrate the capabilities of CliHats.
- */</span>
-<span class="annotation">@CommandLineInterface</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloWorldCliHats</span> {
-
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
-        CliHats.get(HelloWorldCliHats.class).execute(<span class="keyword">new</span> <span class="predefined-type">String</span><span class="type">[]</span>{<span class="string"><span class="delimiter">&quot;</span><span class="content">say-hello-to-person</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">-p</span><span class="delimiter">&quot;</span></span>});
-    }
-
-    <span class="comment">/**
-     * Simply prints &quot;Hello, World!&quot;
-     */</span>
-    <span class="annotation">@Command</span>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> sayHello() {
-        <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello, World!</span><span class="delimiter">&quot;</span></span>);
-    }
-
-    <span class="comment">/**
-     * Prints a greeting to the specified name.
-     * @param name the name to greet.
-     * @param polite if true, additionally prints &quot;Nice to meet you!&quot;.
-     */</span>
-    <span class="annotation">@Command</span>
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> sayHelloToPerson(
-            <span class="annotation">@Option</span>(necessity = OptionNecessity.REQUIRED) <span class="predefined-type">String</span> name,
-            <span class="annotation">@Option</span>(flagValue = <span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span>, defaultValue = <span class="string"><span class="delimiter">&quot;</span><span class="content">false</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">Boolean</span> polite
-    ) {
-        <span class="predefined-type">System</span>.out.printf(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello, %s!</span><span class="char">\n</span><span class="delimiter">&quot;</span></span>, name);
-        <span class="keyword">if</span> (polite)
-            <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Nice to meet you!</span><span class="delimiter">&quot;</span></span>);
-    }
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Executing the above program without arguments results in a message similar to the following:</p>
+<p>Executing the above program without arguments results in a printed message similar to the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="nowrap">Help for hello-world-cli-hats
-A simple "Hello, World!" program to demonstrate the capabilities of Clihats.
+A simple "Hello, World!" program to demonstrate the capabilities of CliHats.
 
 Commands:
-say-hello           Simply prints "Hello, World!".
+say-hello           Simply prints "Hello, World!"
 say-hello-to-person Prints a greeting to the specified name.</pre>
 </div>
 </div>
@@ -788,11 +645,15 @@ say-hello-to-person Prints a greeting to the specified name.</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="nowrap">Help for say-hello-to-person
+
+Synopsis:
+say-hello-to-person -n &lt;value&gt; [-p]
+
 Prints a greeting to the specified name.
 
-Options:
--n --name   (required) The name to greet.
--p --polite (flag)     If true, additionally prints "Nice to meet you!".</pre>
+Parameters:
+-n --name   (required) the name to greet.
+-p --polite (flag)     if true, additionally prints "Nice to meet you!".</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -809,13 +670,11 @@ Nice to meet you!</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">Error running hello-world-cli-hats: Exception during invocation of command say-hello-to-person: Invalid input arguments:
-&gt; Missing required arguments:
-    -n</pre>
+<pre class="nowrap">Error running hello-world-cli-hats: Exception during invocation of command say-hello-to-person: Invalid input arguments: Missing required argument Option -n,--name</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The above program is an example mostly using default behaviour. CliHats leaves enough room for custom configuration such as parameter names and aliases, value mapping, default values and exception handling.</p>
+<p>The above program is an example mostly using default behaviour. CliHats leaves enough room for custom configuration like parameter names and aliases, value mapping, default values and exception handling.</p>
 </div>
 </div>
 </div>
@@ -823,13 +682,13 @@ Nice to meet you!</pre>
 <h2 id="_core_concept">Core concept</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The general concept follows a rather functional style in which a command-line interface is represented by a set of methods. Each method models one task like printing a program version, loading data from a file or sending a web-request. A task may require additional input like a filename, a web-address or credentials. These are provided by the user via options.</p>
+<p>CliHats implementation is divided into two packages: <code>core</code> and <code>processor</code>. The core-package contains the general domain specific classes for commands and options. The processor-package supplies an annotation processor which ultimately creates the command-line interface represented by annotations present in your "client code". For this, the processor creates code which instantiating objects from the core-package during runtime to resemble the desired command-line interface.</p>
 </div>
 <div class="paragraph">
-<p>Using CliHats, a command-line interface consists of one <code>Commander</code>. The commander possesses a collection of <code>Command</code> objects. Each command is responsible for one task represented by an <code>Instruction</code> and a list of <code>AbstractOptionParser</code> objects. Option parsers extract parameters from the command-line arguments and make them available to the command being executed.</p>
+<p>In general, CliHats represents a command-line interface by a set of methods. Each method models one task like printing a program version, loading data from a file or sending a web-request. A task may require additional input like a filename, a web-address or credentials. These inputs must be provided by the user via options.</p>
 </div>
 <div class="paragraph">
-<p>Although CliHats offers these structures as public classes which may be constructed and called "by hand", CliHats also comes with an annotation processor, automatically creating commanders, commands and option parsers based on annotations. One may fall back to manually defining a commander when more control over the configuration is required.</p>
+<p>Using CliHats, one command-line interface consists of one <code>Commander</code>. The commander possesses a collection of <code>Command</code> objects. Each command is responsible for one task represented by an <code>Instruction</code> and a list of <code>AbstractArgumentParser</code> objects. Argument parsers extract parameters from the command-line arguments and make them available to the command being executed.</p>
 </div>
 <div class="paragraph">
 <p>As an example, the generated Commander of the above "Hello, World!" setup looks like this:</p>
@@ -841,13 +700,13 @@ Nice to meet you!</pre>
         .withCommands(
                 Command.forName(&quot;say-hello&quot;)
                         .withInstruction(args -&gt; HelloWorldCliHats.sayHello())
-                        .withDescription(&quot;Simply prints \&quot;Hello, World!\&quot;.&quot;),
+                        .withDescription(&quot;Simply prints \&quot;Hello, World!\&quot;&quot;),
                 Command.forName(&quot;say-hello-to-person&quot;)
                         .withInstruction(args -&gt; HelloWorldCliHats.sayHelloToPerson((String) args[0], (Boolean) args[1]))
                         .withDescription(&quot;Prints a greeting to the specified name.&quot;)
                         .withParsers(
-                                OptionParsers.valued(&quot;-n&quot;).withAliases(&quot;--name&quot;).isRequired(true).withDescription(&quot;the name to greet.&quot;),
-                                OptionParsers.flag(&quot;-p&quot;).withAliases(&quot;--polite&quot;).withFlagValue(&quot;true&quot;).withDefault(&quot;false&quot;).withMapper(new BooleanMapper()).withDescription(&quot;if true, additionally prints \&quot;Nice to meet you!\&quot;.&quot;))))</code></pre>
+                                ArgumentParsers.valuedOption(&quot;-n&quot;, &quot;--name&quot;).withRequired(true).withDescription(&quot;the name to greet.&quot;),
+                                ArgumentParsers.flagOption(&quot;-p&quot;, &quot;--polite&quot;).withFlagValue(&quot;true&quot;).withDefault(&quot;false&quot;).withMapper(new BooleanMapper()).withDescription(&quot;if true, additionally prints \&quot;Nice to meet you!\&quot;.&quot;)))));</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -874,72 +733,79 @@ Nice to meet you!</pre>
 <div class="sect2">
 <h3 id="_option">@Option</h3>
 <div class="paragraph">
-<p>A method parameter annotated with <code>@Option</code> defines an option. Options only take effect on methods annotated with <code>@Command</code>. It is not required to declare annotate all method parameter. Non-option parameters are set to <code>null</code> whenever the respective command is invoked by CliHats.</p>
+<p>The annotation <code>@Option</code> instructs CliHats to pass arguments from the command line to the annotated method parameter. The Option-annotation only takes effect on methods annotated with <code>@Command</code>. It is not required to declare annotate all method parameter. Parameters without the Option-annotation are set to <code>null</code> whenever the respective command is invoked by CliHats.</p>
 </div>
 <div class="paragraph">
-<p>If a command is invoked by CliHats, each registered option parser scans the available input arguments and provides a value to its respective method parameter.</p>
+<p>Invoking a command through CliHats, each registered option parser scans the available command-line arguments and provides, potentially maps found values and passes them to its respective method parameter.</p>
 </div>
 <div class="paragraph">
-<p>Currently, there are three different option types available: valued options, flag options and positional options.</p>
+<p>CliHats'  parsing of command-line arguments follows to the <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html">POSIX Utility-Guidelines</a>. Hence, CliHats internally differentiates command-line arguments into "options", "operands" and potential "values" of options and operands. Each method parameter annotated with <code>@Option</code> lets CliHats create one argument parser. The respective parser type depends on the specified annotation parameters. CliHats offers three types of parsers:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Positional option</dt>
+<dt class="hdlist1">Valued option parser</dt>
 <dd>
-<p>Positional options extract user defined values from a specific index. For example, the command <code>mkdir ./tmp</code> takes <code>./tmp</code> as a positional argument from index 0. These parsers are invoked last.<br>
-A positional options is created if the parameter <code>position</code> is set to a non-negative zero-based index.</p>
+<p>Valued option parsers extract named user defined values like <code>--name "John"</code> or <code>--numbers=1,2,3,4</code>.<br>
+This is the default type.</p>
 </dd>
-<dt class="hdlist1">Flag option</dt>
+<dt class="hdlist1">Flag option parser</dt>
 <dd>
-<p>Flag options are named switches providing one of two predefined values. Think of something like <code>--dry-run</code> or <code>--verbose</code>.<br>
-A flag option is assumed if the parameter <code>flagValue</code> is set to a non-empty string.</p>
+<p>Flag option are named switches providing one of two predefined values. Think of something like <code>--dry-run</code> or <code>--verbose</code>.<br>
+A flag option parser is assumed if the parameter <code>flagValue</code> is set to a non-empty String.</p>
 </dd>
-<dt class="hdlist1">Valued option</dt>
+<dt class="hdlist1">Operand parser</dt>
 <dd>
-<p>Valued options extract named user defined values like <code>--name "John"</code> or <code>--numbers=1,2,3,4</code>.<br>
-A valued option is created if parameter <code>flagValue</code> and <code>position</code> is not set.</p>
+<p>Operand parsers extract values from a specific index. Operand values should be supplied last among the command-line arguments. For example, the command <code>mkdir ./tmp</code> takes <code>./tmp</code> as a positional argument from index 0.<br>
+An operand is created if the parameter <code>position</code> is set to a non-negative zero-based index.</p>
 </dd>
 </dl>
 </div>
 <div class="sect3">
 <h4 id="_option_names_and_aliases">Option names and aliases</h4>
 <div class="paragraph">
-<p>Valued and flag options may be named individually via parameter <code>name</code>. This parameter takes an array of String values, where the first entry denotes the name. All following names are used as aliases.</p>
+<p>Valued and flag option parsers may be named configured to watch out individual names via parameter <code>name</code>. This parameter takes an array of String values and declares which values should be taken from the command-line arguments.<br>
+Option names must conform to the following rules:<br>
+* Names must start with <code>-</code>.<br>
+* Names must not contain any space characters.<br>
+* Names must be unique among all option names of a command.</p>
 </div>
 <div class="paragraph">
-<p>If <code>name</code> is not set, the option name is automatically set to <code>-</code> plus the first character of the parameter name. In that case, the alias name is also automatically set to the hyphenated parameter name prefixed with <code>--</code>.</p>
+<p>POSIX compliant option names consist of only one character and may be grouped behind one <code>-</code>.</p>
 </div>
 <div class="paragraph">
-<p>Positional options are not callable by their name and therefore only possess a name for internal identification and help pages.</p>
+<p>If <code>name</code> is not set, the option name is automatically set to <code>-</code> plus the first character of the method parameter name. In that case, an alias name is also automatically set to the hyphenated parameter name prefixed with <code>--</code>.</p>
+</div>
+<div class="paragraph">
+<p>For operand parsers, the <code>name</code> parameter must remain empty.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_option_necessity">Option necessity</h4>
 <div class="paragraph">
-<p>Each option possesses a <code>necessity</code> determining CliHats behaviour if the respective option is missing.</p>
+<p>Each targeted method parameter possesses a <code>necessity</code> determining CliHats behaviour if the respective parser could not find a value.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>OPTIONAL</code></dt>
 <dd>
-<p>The default for each Option. Results in the parameter value <code>null</code> if the option is not present.</p>
+<p>The default for each parser. Results in the parameter value <code>null</code> if the respective value has not been supplied.</p>
 </dd>
 <dt class="hdlist1"><code>REQUIRED</code></dt>
 <dd>
-<p>If set, missing the respective option aborts the execution with an error message.</p>
+<p>If set, a missing value aborts the execution with an error message.</p>
 </dd>
 <dt class="hdlist1"><code>PROMPT</code></dt>
 <dd>
-<p>A missing option with this necessity lets CliHats ask for manual user input over the command line.</p>
+<p>Lets CliHats ask for manual user input over the command line in case of a missing value.</p>
 </dd>
 <dt class="hdlist1"><code>MASKED_PROMPT</code></dt>
 <dd>
-<p>A missing option with this necessity lets CliHats ask for manual user input over the command line. Hides typed characters.</p>
+<p>Provides the same behaviour as <code>PROMPT</code> but hides typed characters.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
-<p>CliHats tries to obtain a console by calling <code>System.console()</code> when using <code>PROMT</code> or <code>MASKED_PROMT</code>, which may fail if there is no console available to the running JVM.</p>
+<p>Using <code>PROMT</code> or <code>MASKED_PROMT</code>, CliHats tries to obtain a console by calling <code>System.console()</code>, which may fail if there is no console available to the running JVM.</p>
 </div>
 </div>
 <div class="sect3">
@@ -948,13 +814,10 @@ A valued option is created if parameter <code>flagValue</code> and <code>positio
 <p>By default, option parsers provide their values as <code>java.lang.String</code>. If a command method requires other parameter types, a mapper can be specified via the <code>mapper</code> parameter.</p>
 </div>
 <div class="paragraph">
-<p>CliHats is able to recognize a number of commonly used types and will automatically configure a suiting mapper. Currently, CliHats automatically configures mappers for these types:</p>
+<p>CliHats is able to recognize a number of commonly used types and will automatically configure a suiting mapper. Currently, CliHats automatically configures mappers for these parameter types:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><code>Path</code></p>
-</li>
 <li>
 <p><code>Boolean</code></p>
 </li>
@@ -968,13 +831,16 @@ A valued option is created if parameter <code>flagValue</code> and <code>positio
 <p><code>Float</code></p>
 </li>
 <li>
-<p><code>LocalDate</code></p>
+<p><code>java.math.BigDecimal</code></p>
 </li>
 <li>
-<p><code>LocalDateTime</code></p>
+<p><code>java.nio.file.Path</code></p>
 </li>
 <li>
-<p><code>BigDecimal</code></p>
+<p><code>java.time.LocalDate</code></p>
+</li>
+<li>
+<p><code>java.time.LocalDateTime</code></p>
 </li>
 </ul>
 </div>
@@ -982,27 +848,29 @@ A valued option is created if parameter <code>flagValue</code> and <code>positio
 <p>Explicitly declaring <code>mapper</code> overrides automatic mapper-deduction.</p>
 </div>
 <div class="paragraph">
-<p>It is noteworthy that a missing non-required option skips value mapping and the respective parameter is directly set to <code>null</code>.</p>
+<p>It is noteworthy that a missing non-required option skips value mapping and the respective method parameter is directly set to <code>null</code>.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_default_values">Default values</h4>
 <div class="paragraph">
-<p>If an option is missing, their respective parameter is set to <code>null</code>. However, it is possible to declare a custom default value by setting parameter <code>defaultValue</code>. The provided default value is returned whenever the respective option is not set and behaves as if the user had provided that value. In particular, this means that value mapping applies.</p>
+<p>Default values are only relevant for parsers with optional necessity.</p>
 </div>
 <div class="paragraph">
-<p>For flag options, the parameter <code>flagValue</code> behaves as a primary default value that applies if the respective flag is present. The respective flag value always undergoes value mapping.</p>
+<p>If a value is missing from the provided command-line arguments, their respective method parameter is set to <code>null</code>. However, it is possible to declare a custom default value by setting the annotation parameter <code>defaultValue</code>. In case of a missing command-line value, the default value is supplied and behaves as if the user had provided that value. In particular, this means that value mapping also applies to default values.</p>
 </div>
 <div class="paragraph">
-<p>Default values are only relevant for non-required options.</p>
+<p>For flag options, the parameter <code>flagValue</code> behaves as a primary default value that applies if the respective flag is present. The specified flag value always undergoes value mapping.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_configuring_help_pages">Configuring help pages</h3>
 <div class="paragraph">
-<p>There are two ways to define the content of help pages: Either add javadoc comments to a command method or provide a description by setting parameter <code>description</code>. Using the parameter overrides description from javadoc.<br>
-When generating help pages from javadoc, a command-annotated method may also contain <code>@param</code> tags to conveniently provide descriptions for the command&#8217;s options.</p>
+<p>There are two ways to define the content of help pages: Either through javadoc comments or through parameter <code>description</code>. Using the description-parameter takes precedence over javadoc.</p>
+</div>
+<div class="paragraph">
+<p>Javadoc <code>@param</code> tags may be used to conveniently provide descriptions for options of a command.</p>
 </div>
 <div class="paragraph">
 <p>Analogously, use javadoc or the parameter <code>description</code> when defining help pages for a command-line interface declaration.</p>
@@ -1059,7 +927,7 @@ When generating help pages from javadoc, a command-annotated method may also con
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 Be aware that CliHats handles user inputs from command-line arguments and from console input as <code>java.lang.String</code>. There are discussions about how to handle sensitive data like passwords regarding immutability of String objects and them remaining accessible in memory until garbage collection is performed. There are arguments to use <code>char[]</code> for password handling in order to minimize the duration in which sensitive data remains in memory by emptying said array. Using <code>java.lang.String</code>, we do not deem the risk too high since a command-line interface is expected to run for several seconds only.
@@ -1093,18 +961,18 @@ First define a public mapper class extending <code>AbstractValueMapper</code>.</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">InputStreamMapper</span> <span class="directive">extends</span> AbstractValueMapper&lt;<span class="predefined-type">InputStream</span>&gt; {
+<pre class="CodeRay highlight nowrap"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">InputStreamMapper</span> <span style="color:#088;font-weight:bold">extends</span> AbstractValueMapper&lt;<span style="color:#0a8;font-weight:bold">InputStream</span>&gt; {
 
-        <span class="annotation">@Override</span>
-        <span class="directive">public</span> <span class="predefined-type">InputStream</span> map(<span class="predefined-type">String</span> filePath) {
+        <span style="color:#007">@Override</span>
+        <span style="color:#088;font-weight:bold">public</span> <span style="color:#0a8;font-weight:bold">InputStream</span> map(<span style="color:#0a8;font-weight:bold">String</span> filePath) {
             Path p = Path.of(filePath);
-            <span class="keyword">if</span> (!Files.isRegularFile(p)) {
-                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">IllegalArgumentException</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Path does not point to a regular file </span><span class="delimiter">&quot;</span></span> + p);
+            <span style="color:#080;font-weight:bold">if</span> (!Files.isRegularFile(p)) {
+                <span style="color:#080;font-weight:bold">throw</span> <span style="color:#080;font-weight:bold">new</span> <span style="color:#C00;font-weight:bold">IllegalArgumentException</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Path does not point to a regular file </span><span style="color:#710">&quot;</span></span> + p);
             }
-            <span class="keyword">try</span> {
-                <span class="keyword">return</span> Files.newInputStream(p);
-            } <span class="keyword">catch</span> (<span class="exception">IOException</span> e) {
-                <span class="keyword">throw</span> <span class="keyword">new</span> UncheckedIOException(<span class="string"><span class="delimiter">&quot;</span><span class="content">Could not create input stream: </span><span class="delimiter">&quot;</span></span> + e.getMessage(), e);
+            <span style="color:#080;font-weight:bold">try</span> {
+                <span style="color:#080;font-weight:bold">return</span> Files.newInputStream(p);
+            } <span style="color:#080;font-weight:bold">catch</span> (<span style="color:#C00;font-weight:bold">IOException</span> e) {
+                <span style="color:#080;font-weight:bold">throw</span> <span style="color:#080;font-weight:bold">new</span> UncheckedIOException(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Could not create input stream: </span><span style="color:#710">&quot;</span></span> + e.getMessage(), e);
             }
         }
 
@@ -1122,6 +990,9 @@ First define a public mapper class extending <code>AbstractValueMapper</code>.</
 <div class="paragraph">
 <p>Make sure to close the opened InputStream when processing is done.</p>
 </div>
+<div class="paragraph">
+<p>Alternatively, pass a <code>java.nio.file.Path</code> object to the command method and handle the file processing in your code.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_receive_a_list_of_string">Receive a list of String</h3>
@@ -1133,14 +1004,14 @@ First define a public mapper class extending <code>AbstractValueMapper</code>.</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="java"><span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">ListMapper</span> <span class="directive">extends</span> AbstractValueMapper&lt;<span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt;&gt; {
+<pre class="CodeRay highlight nowrap"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">ListMapper</span> <span style="color:#088;font-weight:bold">extends</span> AbstractValueMapper&lt;<span style="color:#0a8;font-weight:bold">List</span>&lt;<span style="color:#0a8;font-weight:bold">String</span>&gt;&gt; {
 
-        <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> separator = <span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>;
+        <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#0a8;font-weight:bold">String</span> separator = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">,</span><span style="color:#710">&quot;</span></span>;
 
-        <span class="annotation">@Override</span>
-        <span class="directive">public</span> <span class="predefined-type">List</span>&lt;<span class="predefined-type">String</span>&gt; map(<span class="predefined-type">String</span> str) {
-            <span class="keyword">return</span> <span class="predefined-type">Arrays</span>.stream(str.split(separator))
-                    .map(<span class="predefined-type">String</span>::trim)
+        <span style="color:#007">@Override</span>
+        <span style="color:#088;font-weight:bold">public</span> <span style="color:#0a8;font-weight:bold">List</span>&lt;<span style="color:#0a8;font-weight:bold">String</span>&gt; map(<span style="color:#0a8;font-weight:bold">String</span> str) {
+            <span style="color:#080;font-weight:bold">return</span> <span style="color:#0a8;font-weight:bold">Arrays</span>.stream(str.split(separator))
+                    .map(<span style="color:#0a8;font-weight:bold">String</span>::trim)
                     .filter(s -&gt; !s.isEmpty())
                     .collect(Collectors.toList());
         }
@@ -1181,7 +1052,7 @@ First define a public mapper class extending <code>AbstractValueMapper</code>.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-15 04:05:44 +0200
+Last updated 2023-09-30 22:54:20 +0200
 </div>
 </div>
 </body>
