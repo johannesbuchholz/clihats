@@ -3,7 +3,7 @@
 :hardbreaks-option:
 :icons: font
 :prewrap!:
-:version: 0.0.1
+:version: 0.1.0-6-9bb25824-SNAPSHOT
 
 = Welcome to CliHats
 johannesbuchholz@outlook.com
