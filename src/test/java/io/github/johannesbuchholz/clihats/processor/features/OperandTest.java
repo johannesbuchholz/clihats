@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class PositionalTest {
+public class OperandTest {
 
     @Test
     public void testPosition_positionsAreParsedIndependentlyFromOthers() {
@@ -23,9 +23,9 @@ public class PositionalTest {
 
         for (String[] argArray : args) {
             // when
-            CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, argArray);
+            CliTestInvoker.testGeneratedCli(Cli3.class, argArray);
             // then
-            GlobalTestResult expected = GlobalTestResult.constructSuccess("position-parser", "positional1", "my-value1", "my-value2", new MyClass("positional0"), "some-default");
+            GlobalTestResult expected = GlobalTestResult.constructSuccess("position-parser", "positional0", "my-value1", "my-value2", new MyClass("positional1"), "some-default");
             assertEquals(expected, GlobalTestResult.waitForResult());
         }
     }
@@ -39,9 +39,9 @@ public class PositionalTest {
 
         for (String[] argArray : args) {
             // when
-            CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, argArray);
+            CliTestInvoker.testGeneratedCli(Cli3.class, argArray);
             // then
-            GlobalTestResult expected = GlobalTestResult.constructSuccess("position-parser-with-default", "positional1", "my-value1", "my-value2", new MyClass("positional0"), "some-default");
+            GlobalTestResult expected = GlobalTestResult.constructSuccess("position-parser-with-default", "positional0", "my-value1", "my-value2", new MyClass("positional1"), "some-default");
             assertEquals(expected, GlobalTestResult.waitForResult());
         }
     }

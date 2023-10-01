@@ -16,7 +16,7 @@ public class CustomExceptionTest {
         String value = "value";
         String[] args = {"throwing-command", "-a", value};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingCustomException.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingCustomException.class, args);
         // then
         String expectedErrorMessage = CliTestingCustomException.CUSTOM_EXCEPTION_MESSAGE + value;
         Throwable actualException = GlobalTestResult.waitForResult().getException();
@@ -32,7 +32,7 @@ public class CustomExceptionTest {
         String value = "value";
         String[] args = {"throwing-command-with-cause", "-a", value};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingCustomException.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingCustomException.class, args);
         // then
         String expectedErrorMessage = CliTestingCustomException.CUSTOM_EXCEPTION_MESSAGE + value;
         UnsupportedOperationException expectedRootCause = new UnsupportedOperationException(expectedErrorMessage);

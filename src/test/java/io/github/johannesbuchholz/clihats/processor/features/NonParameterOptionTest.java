@@ -14,7 +14,7 @@ public class NonParameterOptionTest {
         // given
         String[] args = {"parser-with-non-option-parameters"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("parser-with-non-option-parameters", null, null, null, null, null, null, null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -25,7 +25,7 @@ public class NonParameterOptionTest {
         // given
         String[] args = {"parser-with-non-option-parameters", "-f", "42", "-o", "12345.6789"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("parser-with-non-option-parameters", null, 42, null, null, 12345.6789, true, null);
         assertEquals(expected, GlobalTestResult.waitForResult());

@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
 import io.github.johannesbuchholz.clihats.core.execution.ParserId;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractOptionParser<T> extends AbstractArgumentParser<T> {
+public abstract class AbstractOptionParser<T> implements ArgumentParser<T> {
 
     final Set<OptionParserName> names;
     final OptionParserId id;

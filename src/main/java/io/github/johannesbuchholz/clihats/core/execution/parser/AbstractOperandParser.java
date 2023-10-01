@@ -1,23 +1,23 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.ParserId;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
 
 import java.util.Objects;
 import java.util.Optional;
 
-public abstract class AbstractOperandParser<T> extends AbstractArgumentParser<T> {
+public abstract class AbstractOperandParser<T> implements ArgumentParser<T> {
 
     final OperandParserId id;
-    final int position;
+    final int index;
 
-    protected AbstractOperandParser(int position) {
-        this.position = position;
-        id = new OperandParserId(position);
+    protected AbstractOperandParser(int index) {
+        this.index = index;
+        id = new OperandParserId(index);
     }
 
-    public abstract int getPosition();
+    public abstract int getIndex();
 
     @Override
     public ParserId getId() {
@@ -26,7 +26,7 @@ public abstract class AbstractOperandParser<T> extends AbstractArgumentParser<T>
 
     @Override
     public String toString() {
-        return "Operand " + position;
+        return "Operand " + index;
     }
 
     T mapWithThrows(ValueMapper<T> mapper, String stringValue) throws ValueMappingException {

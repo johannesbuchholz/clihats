@@ -18,7 +18,7 @@ public class OptionParserNameTest {
         // given
         String[] args = {"name-parser", "--nr", "my-value"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("name-parser", null, "my-default", "my-value", null, null, null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -29,7 +29,7 @@ public class OptionParserNameTest {
         // given
         String[] args = {"name-parser", "--nr", "my-value", "--nnd", "given-value"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("name-parser", "given-value", "my-default", "my-value", null, null, null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -40,7 +40,7 @@ public class OptionParserNameTest {
         // given
         String[] args = {"name-parser", "--nd", "value-instead-of-default", "--nr", "my-value"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("name-parser", null, "value-instead-of-default", "my-value", null, null, null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -51,7 +51,7 @@ public class OptionParserNameTest {
         // given
         String[] args = {"name-parser"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult globalTestResult = GlobalTestResult.waitForResult();
         Throwable encounteredException = globalTestResult.getException();
@@ -76,7 +76,7 @@ public class OptionParserNameTest {
 
         for (String[] argArray : args) {
             // when
-            CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, argArray);
+            CliTestInvoker.testGeneratedCli(Cli3.class, argArray);
             // then
             GlobalTestResult expected = GlobalTestResult.constructSuccess("name-parser", null, "my-default", "my-value", "alias-value", null, null);
             assertEquals(expected, GlobalTestResult.waitForResult());
@@ -88,7 +88,7 @@ public class OptionParserNameTest {
         // given
         String[] args = {"name-parser", "--nm", "mapper-value", "--nr", "my-value"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("name-parser", null, "my-default", "my-value", null, new MyClass("mapper-value"), null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -99,7 +99,7 @@ public class OptionParserNameTest {
         // given
         String[] args = {"name-parser", "--nml", "mapper-value-one, mapper-value-two", "--nr", "my-value"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess(
                 "name-parser", null, "my-default", "my-value", null, null, List.of(new MyClass("mapper-value-one"), new MyClass("mapper-value-two"))

@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
  *     to the specified {@link Instruction}.
  * </p>
  * @see Commander
- * @see AbstractArgumentParser
+ * @see ArgumentParser
  */
 public class Command {
 
     public static final int COMMAND_DESCRIPTION_WIDTH = 80;
 
     private final Instruction instruction;
-    private final List<AbstractArgumentParser<?>> parsers;
+    private final List<ArgumentParser<?>> parsers;
     private final String description;
 
     private final String name;
@@ -51,10 +51,10 @@ public class Command {
         return new Command(name, Instruction.empty(), List.of(), "");
     }
 
-    private static List<AbstractArgumentParser<?>> validate(List<AbstractArgumentParser<?>> parsers) {
-        List<AbstractArgumentParser<?>> processedParsers = new ArrayList<>(parsers.size());
+    private static List<ArgumentParser<?>> validate(List<ArgumentParser<?>> parsers) {
+        List<ArgumentParser<?>> processedParsers = new ArrayList<>(parsers.size());
         List<String> conflictsMessages = new ArrayList<>();
-        for (AbstractArgumentParser<?> parser : parsers) {
+        for (ArgumentParser<?> parser : parsers) {
             processedParsers.forEach(coherent ->
                     coherent.getId().hasCommonParts(parser.getId()).ifPresent(commonPart -> {
                         conflictsMessages.add(String.format("Conflicts on parsers %s and %s: %s", parser, coherent, commonPart));
@@ -69,7 +69,7 @@ public class Command {
         return parsers;
     }
 
-    private Command(String name, Instruction instruction, List<AbstractArgumentParser<?>> parsers, String description) {
+    private Command(String name, Instruction instruction, List<ArgumentParser<?>> parsers, String description) {
         this.name = name;
         this.instruction = instruction;
         this.parsers = parsers;
@@ -85,9 +85,9 @@ public class Command {
      * @param parsers the parsers to set.
      * @return a new Command with the specified parsers.
      * @throws NullPointerException if the specified array is null.
-     * @see AbstractArgumentParser
+     * @see ArgumentParser
      */
-    public Command withParsers(AbstractArgumentParser<?>... parsers) {
+    public Command withParsers(ArgumentParser<?>... parsers) {
         return new Command(name, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
     }
 
@@ -155,8 +155,8 @@ public class Command {
         TextMatrix matrixHeader = TextMatrix.empty()
                 .row(COMMAND_DESCRIPTION_WIDTH, "Help for " + normalizedName);
         List<ParserHelpContent> helpContentList = parsers.stream()
-                .sorted(Comparator.comparing(AbstractArgumentParser::getId))
-                .map(AbstractArgumentParser::getHelpContent)
+                .sorted(Comparator.comparing(ArgumentParser::getId))
+                .map(ArgumentParser::getHelpContent)
                 .collect(Collectors.toList());
         // synopsis
         String synopsis = normalizedName + " " + helpContentList.stream().map(ParserHelpContent::getSynopsisSnippet).collect(Collectors.joining(" "));
@@ -175,7 +175,7 @@ public class Command {
         if (!helpContentList.isEmpty()) {
             matrixHeader
                     .row()
-                    .row(COMMAND_DESCRIPTION_WIDTH, "Parameters:");
+                    .row(COMMAND_DESCRIPTION_WIDTH, "Arguments:");
             helpContentList.stream()
                     .map(ParserHelpContent::asTextCells)
                     .forEach(matrixParsers::row);

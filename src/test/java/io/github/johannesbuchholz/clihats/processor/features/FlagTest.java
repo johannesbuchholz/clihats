@@ -15,7 +15,7 @@ public class FlagTest {
         // given
         String[] args = {"flag-parser"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("flag-parser", null, "my-default", null, null, null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -26,7 +26,7 @@ public class FlagTest {
         // given
         String[] args = {"flag-parser", "--fnd"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("flag-parser", "value", "my-default", null, null, null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -37,7 +37,7 @@ public class FlagTest {
         // given
         String[] args = {"flag-parser", "--fd"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("flag-parser", null, "my-default", "my-value", null, null);
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -52,7 +52,7 @@ public class FlagTest {
                 {"flag-parser", "--fa3"}};
         for (String[] argArray : args) {
             // when
-            CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, argArray);
+            CliTestInvoker.testGeneratedCli(Cli3.class, argArray);
             // then
             GlobalTestResult expected = GlobalTestResult.constructSuccess("flag-parser", null, "my-default", null, "value", null);
             assertEquals(expected, GlobalTestResult.waitForResult());
@@ -64,7 +64,7 @@ public class FlagTest {
         // given
         String[] args = {"flag-parser", "--fm"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(Cli3.class, args);
+        CliTestInvoker.testGeneratedCli(Cli3.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("flag-parser", null, "my-default", null, null, new MyClass("some-value"));
         assertEquals(expected, GlobalTestResult.waitForResult());

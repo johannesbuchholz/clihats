@@ -1,17 +1,17 @@
 package io.github.johannesbuchholz.clihats.processor.model;
 
-import io.github.johannesbuchholz.clihats.processor.annotations.Option;
+import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import java.util.List;
 
 /**
- * Holds values extracted from an {@link Option} annotation.
+ * Holds values extracted from an {@link Argument} annotation.
  */
-public class OptionAnnotationDto {
+public class ArgumentDto {
 
-    public static final String POSITION_FIELD_NAME = "position";
+    public static final String TYPE_FIELD_NAME = "type";
     public static final String NAME_FIELD_NAME = "name";
     public static final String FLAG_FIELD_NAME = "flagValue";
     public static final String DEFAULT_FIELD_NAME = "defaultValue";
@@ -19,7 +19,7 @@ public class OptionAnnotationDto {
     public static final String NECESSITY_FIELD_NAME = "necessity";
     public static final String DESCRIPTION_FIELD_NAME = "description";
 
-    private final Integer position;
+    private final VariableElement type;
     private final List<String> name;
     private final String flagValue;
     private final String defaultValue;
@@ -27,8 +27,8 @@ public class OptionAnnotationDto {
     private final VariableElement necessity;
     private final String description;
 
-    public OptionAnnotationDto(Integer position, List<String> name, String flagValue, String defaultValue, TypeElement mapper, VariableElement necessity, String description) {
-        this.position = position;
+    public ArgumentDto(VariableElement type, List<String> name, String flagValue, String defaultValue, TypeElement mapper, VariableElement necessity, String description) {
+        this.type = type;
         this.name = name;
         this.flagValue = flagValue;
         this.defaultValue = defaultValue;
@@ -37,8 +37,8 @@ public class OptionAnnotationDto {
         this.description = description;
     }
 
-    public Integer getPosition() {
-        return position;
+    public VariableElement getType() {
+        return type;
     }
 
     public List<String> getName() {

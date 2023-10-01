@@ -22,15 +22,15 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
     private final Supplier<String> defaultSupplier;
     private final String displayName;
 
-    protected static OperandParser<String> at(int position) {
-        if (position < 0) {
-            throw new IllegalArgumentException("position needs to be non-negative but was " + position);
+    protected static OperandParser<String> at(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("index needs to be non-negative but was " + index);
         }
-        return new OperandParser<>(position, () -> null, false, stringValue -> stringValue, "", null);
+        return new OperandParser<>(index, () -> null, false, stringValue -> stringValue, "", null);
     }
 
-    private OperandParser(int position, Supplier<String> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description, String displayName) {
-        super(position);
+    private OperandParser(int index, Supplier<String> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description, String displayName) {
+        super(index);
         this.valueMapper = valueMapper;
         this.description =description;
         this.required = required;
@@ -42,39 +42,39 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
      * Returns a new PositionalArgument with this objects position and the given mapper.
      */
     public <X> OperandParser<X> withMapper(ValueMapper<X> mapper) {
-        return new OperandParser<>(position, defaultSupplier, required, Objects.requireNonNull(mapper), description, displayName);
+        return new OperandParser<>(index, defaultSupplier, required, Objects.requireNonNull(mapper), description, displayName);
     }
 
     public OperandParser<T> withDescription(String description) {
-        return new OperandParser<>(position, defaultSupplier, required, valueMapper,  description, displayName);
+        return new OperandParser<>(index, defaultSupplier, required, valueMapper,  description, displayName);
     }
 
     public OperandParser<T> withRequired(boolean required) {
-        return new OperandParser<>(position, defaultSupplier, required, valueMapper, description, displayName);
+        return new OperandParser<>(index, defaultSupplier, required, valueMapper, description, displayName);
     }
 
     public OperandParser<T> withDefault(String defaultValue) {
-        return new OperandParser<>(position, () -> defaultValue, required, valueMapper, description, displayName);
+        return new OperandParser<>(index, () -> defaultValue, required, valueMapper, description, displayName);
     }
 
     public OperandParser<T> withDefault(Supplier<String> defaultSupplier) {
-        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, displayName);
+        return new OperandParser<>(index, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, displayName);
     }
 
     public OperandParser<T> withDisplayName(String displayName) {
-        return new OperandParser<>(position, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, displayName);
+        return new OperandParser<>(index, Objects.requireNonNull(defaultSupplier), required, valueMapper, description, displayName);
     }
 
     @Override
-    public int getPosition() {
-        return position;
+    public int getIndex() {
+        return index;
     }
 
     @Override
     public ArgumentParsingResult<T> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException {
         if (inputArgs.length < index)
             throw new IllegalArgumentException("Index " + index + " is out of bounds for argument array of length " + inputArgs.length);
-        if (position == index) {
+        if (this.index == index) {
             InputArgument inputArgument = Objects.requireNonNull(inputArgs[index], "Argument at index " + index + " is null");
             inputArgs[index] = null;
             return ArgumentParsingResult.of(mapWithThrows(valueMapper, inputArgument.getValue()));
@@ -100,7 +100,7 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
     @Override
     public ParserHelpContent getHelpContent() {
         List<String> additionalInfo = new ArrayList<>();
-        String displayNameToShow = Objects.requireNonNullElseGet(displayName, () -> "OPERAND" + position);
+        String displayNameToShow = Objects.requireNonNullElseGet(displayName, () -> "OPERAND" + index);
         String synopsisSnippet = displayNameToShow;
         if (required) {
             additionalInfo.add("required");

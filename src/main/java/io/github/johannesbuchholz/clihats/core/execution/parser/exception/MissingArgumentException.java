@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser.exception;
 
-import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 
 /**
@@ -8,7 +8,7 @@ import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsi
  */
 public class MissingArgumentException extends ArgumentParsingException {
 
-    public MissingArgumentException(AbstractArgumentParser<?> failingParser) {
+    public MissingArgumentException(ArgumentParser<?> failingParser) {
         super("Missing required argument "+ failingParser);
     }
 

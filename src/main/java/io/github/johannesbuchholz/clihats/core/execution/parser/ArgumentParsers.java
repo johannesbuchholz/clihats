@@ -13,6 +13,10 @@ public class ArgumentParsers {
         return OperandParser.at(position);
     }
 
+    public static ArrayOperandParser<String> arrayOperand(int position) {
+        return ArrayOperandParser.at(position);
+    }
+
     public static FlagOptionParser<String> flagOption(String name, String... names) {
         return FlagOptionParser.forName(name, names);
     }

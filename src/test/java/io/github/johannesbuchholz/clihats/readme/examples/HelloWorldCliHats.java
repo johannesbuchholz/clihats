@@ -1,10 +1,11 @@
 package io.github.johannesbuchholz.clihats.readme.examples;
 
+import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 import io.github.johannesbuchholz.clihats.processor.annotations.Command;
 import io.github.johannesbuchholz.clihats.processor.annotations.CommandLineInterface;
-import io.github.johannesbuchholz.clihats.processor.annotations.Option;
-import io.github.johannesbuchholz.clihats.processor.annotations.OptionNecessity;
 import io.github.johannesbuchholz.clihats.processor.execution.CliHats;
+
+import static io.github.johannesbuchholz.clihats.processor.annotations.Argument.Necessity.REQUIRED;
 
 // tag::example-class[]
 /**
@@ -18,7 +19,7 @@ public class HelloWorldCliHats {
     }
 
     /**
-     * Simply prints "Hello, World!"
+     * Simply prints "Hello, World!".
      */
     @Command // <3>
     public static void sayHello() {
@@ -27,15 +28,13 @@ public class HelloWorldCliHats {
 
     /**
      * Prints a greeting to the specified name.
-     * @param name the name to greet.
-     * @param polite if true, additionally prints "Nice to meet you!".
+     * @param name The name to greet.
+     * @param polite If true, additionally prints "Nice to meet you!".
      */
     @Command
     public static void sayHelloToPerson(
-            @Option(necessity = OptionNecessity.REQUIRED) // <4>
-            String name,
-            @Option(flagValue = "true", defaultValue = "false") // <5>
-            Boolean polite
+            @Argument(necessity = REQUIRED) String name, // <4>
+            @Argument(flagValue = "true", defaultValue = "false") Boolean polite // <5>
     ) {
         System.out.printf("Hello, %s!\n", name);
         if (polite)

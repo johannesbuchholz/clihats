@@ -40,7 +40,7 @@ public class TestResult {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TestResult that = (TestResult) o;
-        return Arrays.equals(receivedArgs, that.receivedArgs);
+        return Arrays.deepEquals(receivedArgs, that.receivedArgs);
     }
 
     @Override

@@ -7,14 +7,14 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class CommandAndOptionNamingTest {
+public class CommandAndArgumentNamingTest {
 
     @Test
     public void call_CommandWithoutName() {
         // given
         String[] args = {"method-without-command-name", "-a", "42"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingNaming.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingNaming.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("method-without-command-name", "42");
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -25,7 +25,7 @@ public class CommandAndOptionNamingTest {
         // given
         String[] args = {"command-with-name", "-v", "69"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingNaming.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingNaming.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("command-with-name", "69");
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -36,7 +36,7 @@ public class CommandAndOptionNamingTest {
         // given
         String[] args = {"command-with-name", "--valued-without-name", "69"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingNaming.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingNaming.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("command-with-name", "69");
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -47,7 +47,7 @@ public class CommandAndOptionNamingTest {
         // given
         String[] args = {"command-with-name-2", "-f"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingNaming.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingNaming.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("command-with-name-2", "flag-value");
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -58,7 +58,7 @@ public class CommandAndOptionNamingTest {
         // given
         String[] args = {"command-with-name-2", "--flag-without-name"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingNaming.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingNaming.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("command-with-name-2", "flag-value");
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -69,7 +69,7 @@ public class CommandAndOptionNamingTest {
         // given
         String[] args = {"all-together", "--flag-without-name", "-v", "42"};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliTestingNaming.class, args);
+        CliTestInvoker.testGeneratedCli(CliTestingNaming.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("all-together", "42", "flag-value");
         assertEquals(expected, GlobalTestResult.waitForResult());

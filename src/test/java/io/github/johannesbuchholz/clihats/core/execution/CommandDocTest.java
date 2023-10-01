@@ -26,7 +26,7 @@ public class CommandDocTest {
                 "Synopsis:\n" +
                 "run [-a <value>]\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-a";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
@@ -51,7 +51,7 @@ public class CommandDocTest {
                 "This is a lengthy Description that should be wrapped into a new line. Hopefully\n" +
                 "this works out fine: A new line for this command. Yeah!\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-a";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
@@ -74,7 +74,7 @@ public class CommandDocTest {
                 "Synopsis:\n" +
                 "run [-a <value>]\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-a Some meaningful argument. Defaults to 'null' if missing.";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
@@ -98,7 +98,7 @@ public class CommandDocTest {
                 "Synopsis:\n" +
                 "run -a <value>\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-a (required) Some meaningful argument. Defaults to 'null' if missing.";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
@@ -123,7 +123,7 @@ public class CommandDocTest {
                 "Synopsis:\n" +
                 "run -a <value>\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-a (required) Some meaningful argument. Defaults to 'null' if missing.";
         assertEquals(stripTrailingLinewise(expectedDoc), stripTrailingLinewise(actualDoc));
     }
@@ -146,7 +146,7 @@ public class CommandDocTest {
                 "Synopsis:\n" +
                 "run [-a <value>]\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-a --abc           Some meaningful argument. Defaults to 'null' if missing.\n" +
                 "   --abcdefg\n" +
                 "   --another-alias";
@@ -180,7 +180,7 @@ public class CommandDocTest {
                 "emptiness of space and time as long as this documentation string is taking to\n" +
                 "consume all that is left.\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-a --abc         (required) Some meaningful argument. Defaults to 'null' if missing.\n" +
                 "-p --POOP                   Poopdipoop. Another Description. Not too long.\n" +
                 "   --poop\n" +
@@ -218,7 +218,7 @@ public class CommandDocTest {
                 "\n" +
                 "Some text to have anything at all.\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-f       --flag-in-the-wind (flag)     Changes as the wind blows.\n" +
                 "-p       --poop                        Hope this does not backfire...\n" +
                 "OPERAND0                    (required) First operand\n" +
@@ -253,7 +253,7 @@ public class CommandDocTest {
                 "\n" +
                 "Some description. Not too long but it is there. Here you go!\n" +
                 "\n" +
-                "Parameters:\n" +
+                "Arguments:\n" +
                 "-A --flag      (flag)     So many names for this flag.\n" +
                 "-f\n" +
                 "-g\n" +

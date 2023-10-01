@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class NameTest {
+public class ValuedTest {
 
     /*
 
@@ -215,6 +215,7 @@ public class NameTest {
         assertEquals(expected, testResult);
     }
 
+
     /*
 
     FAILURE TESTS
@@ -235,6 +236,52 @@ public class NameTest {
         String[] args = {};
 
         // when
+        // then
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(name));
+    }
+
+    @Test
+    public void shouldFail_requiredArgumentMissesAlthoughDefaultValueIsSet() {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name = "-a";
+        String defaultValue = "default-value";
+        String[] args = {};
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(ValuedOptionParser
+                        .forName(name, name)
+                        .withRequired(true)
+                        .withDefault(defaultValue));
+
+        // when
+        // then
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(name));
+    }
+
+    @Test
+    public void shouldFail_requiredArgumentMissesAlthoughDefaultSupplierIsSet() {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name = "-a";
+        String defaultValue = "default-value";
+        String[] args = {};
+        // when
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(ValuedOptionParser
+                        .forName(name, name)
+                        .withRequired(true)
+                        .withDefault(() -> defaultValue));
+
         // then
         CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());

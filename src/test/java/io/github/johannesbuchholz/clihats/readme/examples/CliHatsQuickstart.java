@@ -1,9 +1,8 @@
 package io.github.johannesbuchholz.clihats.readme.examples;
 
+import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 import io.github.johannesbuchholz.clihats.processor.annotations.Command;
 import io.github.johannesbuchholz.clihats.processor.annotations.CommandLineInterface;
-import io.github.johannesbuchholz.clihats.processor.annotations.Option;
-import io.github.johannesbuchholz.clihats.processor.annotations.OptionNecessity;
 import io.github.johannesbuchholz.clihats.processor.execution.CliHats;
 
 /**
@@ -17,13 +16,13 @@ public class CliHatsQuickstart {
     }
 
     /**
-     * Prints "Hello {name}" multiple times.
+     * For some name, prints "Hello, {name}!" multiple times.
      * @param name The name to greet.
-     * @param times The number of greetings.
+     * @param count The number of greetings.
      */
     @Command
-    public static void sayHello(@Option String name, @Option(position = 0, necessity = OptionNecessity.REQUIRED) Integer times) {
-        for (int i = 0; i < times; i++)
+    public static void sayHello(@Argument String name, @Argument(type = Argument.Type.OPERAND, necessity = Argument.Necessity.REQUIRED) Integer count) {
+        for (int i = 0; i < count; i++)
             System.out.println("Hello, " + name + "!");
     }
 

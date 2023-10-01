@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
-import io.github.johannesbuchholz.clihats.core.execution.AbstractArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.ArgsParser;
+import io.github.johannesbuchholz.clihats.core.execution.ArgumentParser;
 import io.github.johannesbuchholz.clihats.core.execution.ArgumentParsingResult;
 import io.github.johannesbuchholz.clihats.core.execution.InputArgument;
 import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
@@ -16,11 +16,11 @@ public class CliArgsParser implements ArgsParser {
     private final List<ParserToken<AbstractOptionParser<?>>> optionParsers;
     private final List<ParserToken<AbstractOperandParser<?>>> operandParsers;
 
-    public CliArgsParser(List<AbstractArgumentParser<?>> abstractParsers) {
+    public CliArgsParser(List<ArgumentParser<?>> abstractParsers) {
         List<ParserToken<AbstractOptionParser<?>>> optionParsers = new ArrayList<>();
         List<ParserToken<AbstractOperandParser<?>>> operandParsers = new ArrayList<>();
         int targetPosition = 0;
-        for (AbstractArgumentParser<?> abstractParser : abstractParsers) {
+        for (ArgumentParser<?> abstractParser : abstractParsers) {
             if (abstractParser instanceof AbstractOptionParser) {
                 optionParsers.add(new ParserToken<>(targetPosition, (AbstractOptionParser<?>) abstractParser));
             } else if (abstractParser instanceof AbstractOperandParser) {
@@ -124,10 +124,10 @@ public class CliArgsParser implements ArgsParser {
     }
 
     /**
-     * Stores one {@link AbstractArgumentParser} and the argument position that parser parses into.
+     * Stores one {@link ArgumentParser} and the argument position that parser parses into.
      * @param <T> the stored parser type
      */
-    private static class ParserToken<T extends AbstractArgumentParser<?>> {
+    private static class ParserToken<T extends ArgumentParser<?>> {
         private final int targetPosition;
         private final T parser;
 

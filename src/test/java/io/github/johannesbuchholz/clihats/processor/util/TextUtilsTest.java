@@ -21,14 +21,30 @@ public class TextUtilsTest {
     @Test
     public void hyphenStringTest() {
         List<String> originals = List.of(
-                "myHyphenString", "", "a b", "xY", "-", "---", "simple", "Big", "MyOtherString", "some-value", "HereWeAre-YeeHaa", "separated Words", "myLongerWordWith1Number"
+                "myHyphenString", "", "a b", "xY", "-", "---", "simple", "Big", "MyOtherString With Space", "some-value", "HereWeAre-YeeHaa", "Separated Words", "more separated words", "myLongerWordWith1Number"
         );
         List<String> expected = List.of(
-                "my-hyphen-string", "", "ab", "x-y", "-", "---", "simple", "big", "my-other-string", "some-value", "here-we-are-yee-haa", "separated-words", "my-longer-word-with-1-number"
+                "my-hyphen-string", "", "ab", "x-y", "-", "---", "simple", "big", "my-other-string-with-space", "some-value", "here-we-are-yee-haa", "separated-words", "moreseparatedwords", "my-longer-word-with-1-number"
         );
 
         List<String> results = originals.stream()
                 .map(TextUtils::toHyphenString)
+                .collect(Collectors.toList());
+
+        assertEquals(expected, results);
+    }
+
+    @Test
+    public void toUppercaseStringTest() {
+        List<String> originals = List.of(
+                "myHyphenString", "", "a b", "xY", "-", "---", "simple", "Big", "MyOtherString With Space", "some-value", "HereWeAre-YeeHaa", "Separated Words", "more separated words", "myLongerWordWith1Number"
+        );
+        List<String> expected = List.of(
+                "MY_HYPHEN_STRING", "", "AB", "X_Y", "-", "---", "SIMPLE", "BIG", "MY_OTHER_STRING_WITH_SPACE", "SOME-VALUE", "HERE_WE_ARE-_YEE_HAA", "SEPARATED_WORDS", "MORESEPARATEDWORDS", "MY_LONGER_WORD_WITH_1_NUMBER"
+        );
+
+        List<String> results = originals.stream()
+                .map(TextUtils::toUpperCaseString)
                 .collect(Collectors.toList());
 
         assertEquals(expected, results);

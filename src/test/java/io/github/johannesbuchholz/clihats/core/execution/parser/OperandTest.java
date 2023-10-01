@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class PositionalTest {
+public class OperandTest {
 
     /*
 
@@ -163,7 +163,8 @@ public class PositionalTest {
     public void shouldFail_missingRequiredArgument() {
         // given
         TestResult testResult = TestResult.newEmpty();
-        OperandParser<String> requiredParser = OperandParser.at(0)
+        int index = 0;
+        OperandParser<String> requiredParser = OperandParser.at(index)
                 .withRequired(true);
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
@@ -176,11 +177,57 @@ public class PositionalTest {
         assertEquals(InvalidInputArgumentException.class, actualException.getClass());
         assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
         assertTrue(actualException.getMessage().contains(c.getName()));
-        assertTrue(actualException.getMessage().contains("0"));
+        assertTrue(actualException.getMessage().contains(String.valueOf(index)));
     }
 
     @Test
-    public void shouldFail_missingSecondPositionalParser() {
+    public void shouldFail_requiredArgumentMissesAlthoughDefaultValueIsSet() {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        int index = 0;
+        String defaultValue = "default-value";
+        String[] args = {};
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(OperandParser
+                        .at(index)
+                        .withRequired(true)
+                        .withDefault(defaultValue));
+
+        // when
+        // then
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(String.valueOf(index)));
+    }
+
+    @Test
+    public void shouldFail_requiredArgumentMissesAlthoughDefaultSupplierValueIsSet() {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        int index = 0;
+        String defaultValue = "default-value";
+        String[] args = {};
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(OperandParser
+                        .at(index)
+                        .withRequired(true)
+                        .withDefault(() -> defaultValue));
+
+        // when
+        // then
+        CommandExecutionException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(MissingArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(String.valueOf(index)));
+    }
+
+    @Test
+    public void shouldFail_missingSecondOperandParser() {
         // given
         TestResult testResult = TestResult.newEmpty();
         OperandParser<String> requiredParser1 = OperandParser.at(0).withRequired(true);

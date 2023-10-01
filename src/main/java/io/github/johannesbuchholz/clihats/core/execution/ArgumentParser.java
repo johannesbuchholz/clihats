@@ -3,21 +3,19 @@ package io.github.johannesbuchholz.clihats.core.execution;
 import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
 import io.github.johannesbuchholz.clihats.core.execution.parser.exception.MissingArgumentException;
 
-import java.util.Objects;
-
 /**
  * Extending classes are able to parse a value from a list of options.
  * @param <T> The type this parser returns.
  */
-public abstract class AbstractArgumentParser<T> {
+public interface ArgumentParser<T> {
 
     /**
      * @return The unique displayable name of this parser.
      * @apiNote Parsers possessing the same id value should be considered equal.
      */
-    public abstract ParserId getId();
+    ParserId getId();
 
-    public abstract ParserHelpContent getHelpContent();
+    ParserHelpContent getHelpContent();
 
     /**
      * Parses the argument from the specified index.
@@ -31,25 +29,12 @@ public abstract class AbstractArgumentParser<T> {
      * @throws MissingArgumentException If an unexpected exception occurred during parsing. Callers may discard this parser for future parsing attempts.
      * @apiNote The parser is expected to remove potentially used arguments from the specified array, even when throwing.
      */
-    public abstract ArgumentParsingResult<T> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException;
+    ArgumentParsingResult<T> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException;
 
     /**
      * @return The default value of this parser if any.
      * @throws MissingArgumentException If an unexpected exception occurred during parsing. Callers may discard this parser for future parsing attempts.
      */
-    public abstract ArgumentParsingResult<T> defaultValue() throws ArgumentParsingException;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AbstractArgumentParser<?> that = (AbstractArgumentParser<?>) o;
-        return this.getId().equals(that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
+    ArgumentParsingResult<T> defaultValue() throws ArgumentParsingException;
 
 }

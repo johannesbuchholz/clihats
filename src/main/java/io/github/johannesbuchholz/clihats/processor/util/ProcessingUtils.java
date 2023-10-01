@@ -2,7 +2,9 @@ package io.github.johannesbuchholz.clihats.processor.util;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -127,4 +129,15 @@ public class ProcessingUtils {
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Given type element %s does not belong to any value of %s", enumElement, enumTypes)));
     }
 
+    /**
+     * Works for array types and declared types.
+     */
+    public static boolean hasGenericTypeParameter(TypeMirror type) {
+        if (type.getKind() == TypeKind.DECLARED) {
+            return !((DeclaredType) type).getTypeArguments().isEmpty();
+        } else if (type.getKind() == TypeKind.ARRAY) {
+            return hasGenericTypeParameter(((ArrayType) type).getComponentType());
+        }
+        return false;
+    }
 }
