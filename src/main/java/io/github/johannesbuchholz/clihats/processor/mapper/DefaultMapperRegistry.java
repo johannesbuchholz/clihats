@@ -1,9 +1,10 @@
 package io.github.johannesbuchholz.clihats.processor.mapper;
 
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
+import io.github.johannesbuchholz.clihats.core.execution.parser.ValueMapper;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
 import io.github.johannesbuchholz.clihats.processor.mapper.defaults.*;
 
+import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import java.math.BigDecimal;
@@ -25,17 +26,19 @@ public class DefaultMapperRegistry {
             Map.entry(Float.class.getCanonicalName(), FloatMapper.class),
             Map.entry(LocalDate.class.getCanonicalName(), LocalDateMapper.class),
             Map.entry(LocalDateTime.class.getCanonicalName(), LocalDateTimeMapper.class),
-            Map.entry(BigDecimal.class.getCanonicalName(), BigDecimalMapper.class)
+            Map.entry(BigDecimal.class.getCanonicalName(), BigDecimalMapper.class),
+            Map.entry(String.class.getCanonicalName(), AbstractValueMapper.IdentityMapper.class)
     );
 
     /**
      * Returns the type representing an implementation of {@link ValueMapper} mapping to the given type.
      */
     public static TypeElement getForType(TypeElement typeElement, Elements elements) {
-        String key = typeElement.getQualifiedName().toString();
+        Name qualifiedName = typeElement.getQualifiedName();
+        String key = qualifiedName.toString();
         if (!DEFAULT_MAPPERS_BY_TARGET_TYPE_NAME.containsKey(key))
             throw new ConfigurationException("Could not find default mapper for target class %s: available target classes are %s",
-                    typeElement.getQualifiedName(), DEFAULT_MAPPERS_BY_TARGET_TYPE_NAME.keySet().stream().toString()
+                    qualifiedName, DEFAULT_MAPPERS_BY_TARGET_TYPE_NAME.keySet().stream().toString()
             );
         return elements.getTypeElement(DEFAULT_MAPPERS_BY_TARGET_TYPE_NAME.get(key).getCanonicalName());
     }

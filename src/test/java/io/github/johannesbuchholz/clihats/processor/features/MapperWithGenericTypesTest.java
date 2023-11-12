@@ -19,7 +19,7 @@ public class MapperWithGenericTypesTest {
         String s = "longerstringvalue";
         String[] args = {"run-nested-lists", "-c", s};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliWithCustomMapper.class, args);
+        CliTestInvoker.testGeneratedCli(CliWithCustomMapper.class, args);
         // then
         GlobalTestResult expected = GlobalTestResult.constructSuccess("run-nested-lists", List.of(List.of(new CliWithCustomMapper.MyCustomClass(s))));
         assertEquals(expected, GlobalTestResult.waitForResult());
@@ -31,7 +31,7 @@ public class MapperWithGenericTypesTest {
         String s = "longerstringvalue";
         String[] args = {"run-nested-arrays", "-m", s};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliWithCustomMapper.class, args);
+        CliTestInvoker.testGeneratedCli(CliWithCustomMapper.class, args);
         // then
         Object[] expectedArgs = new Object[] { new CliWithCustomMapper.MyCustomClass[][] {{ new CliWithCustomMapper.MyCustomClass(s) }} };
         Object[] actualArgs = GlobalTestResult.waitForResult().getArgs();
@@ -45,7 +45,7 @@ public class MapperWithGenericTypesTest {
         String s = "longerstringvalue";
         String[] args = {"run-crazy", "-c", s};
         // when
-        CliTestInvoker.testGeneratedCliWithThrows(CliWithCustomMapper.class, args);
+        CliTestInvoker.testGeneratedCli(CliWithCustomMapper.class, args);
         // then
         String sExample = "some-other-string";
         CliWithCustomMapper.MyCustomClass exampleInputObject = new CliWithCustomMapper.MyCustomClass(sExample);

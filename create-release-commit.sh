@@ -3,17 +3,17 @@
 set -e
 
 print_usage() {
-  echo "Usage of conventional-commit-version"
-  echo "Prints a version obtained from this project's git commit subjects. Expects conventional commit messages."
+  echo "Usage of $0"
+  echo "Prints a version obtained from this project's git commit messages. Expects messages to conform to 'conventional commits'."
   echo "Options:"
-  echo "  -p    Appends the current nanosecond precision timestamp as the 'prerelease' section."
+  echo "  -p    Appends a suffix as the 'prerelease' section containing a commit offset and commit hash."
   echo "  -c    Inserts the new version to all relevant files. Commits these file changes to git."
   echo "        Only applicable if the current git working tree is clean."
   echo "  -t    Adds the computed version as git tag. Only applies if 'c' is set."
 }
 
 get_version() {
-  major_regex="BREAKING\wCHANGE|\!:"
+  major_regex="(BREAKING[-\s]CHANGE:|^.*\!:)"
   minor_regex="^(feat).*:"
   patch_regex="^(fix|perf).*:"
 
@@ -25,9 +25,9 @@ get_version() {
   patch=$(echo "${previous_version}" | cut -d "." -f3)
 
   log_since_offset=$(git log -n "${commit_offset}" --format=%s)
-  major_steps=$(echo "$log_since_offset" | grep -E "${major_regex}" | wc -l)
-  minor_steps=$(echo "$log_since_offset" | grep -E "${minor_regex}" | wc -l)
-  patch_steps=$(echo "$log_since_offset" | grep -E "${patch_regex}" | wc -l)
+  major_steps=$(echo "$log_since_offset" | grep -Ec "${major_regex}")
+  minor_steps=$(echo "$log_since_offset" | grep -Ec "${minor_regex}")
+  patch_steps=$(echo "$log_since_offset" | grep -Ec "${patch_regex}")
   version_suffix="${commit_offset}-$(git rev-parse --short=8 HEAD)-SNAPSHOT"
 
   if [[ ${major_steps} -gt 0 ]]; then
@@ -42,7 +42,7 @@ get_version() {
   fi
 
   if [[ ${prerelease} ]]; then
-    echo "${major}.${minor}.$(( patch+1 ))-${version_suffix}"
+    echo "${major}.${minor}.${patch}-${version_suffix}"
   else
     echo "${major}.${minor}.${patch}"
   fi
@@ -70,13 +70,10 @@ if [[ ${commit} ]]; then
   git diff-index HEAD --quiet --exit-code || (echo "Git working tree is not clean. Exiting..." && exit 1)
 
   mvn test --quiet
-  # Only change version in docs for non-prerelease version
-  if ! [[ ${prerelease} ]]; then
-    sed "s/^.*:version:.*$/:version: ${version}/" doc.adoc -i
-    mvn generate-resources --quiet
-    cp target/generated-docs/doc.html doc.html
-    git add doc.html
-  fi
+  sed "s/^.*:version:.*$/:version: ${version}/" doc.adoc -i
+  mvn generate-resources --quiet
+  cp target/generated-docs/doc.html doc.html
+  git add doc.html
 
   mvn versions:set -DnewVersion="${version}" --quiet
 

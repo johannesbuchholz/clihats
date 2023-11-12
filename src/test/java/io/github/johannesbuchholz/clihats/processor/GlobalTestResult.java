@@ -41,7 +41,6 @@ public class GlobalTestResult {
     }
 
     public static void setSuccess(String commandName, Object... args) {
-        System.out.println("New test result: " + commandName + ", " + Arrays.toString(args));
         latestResult = constructSuccess(commandName, args);
         resultLatch.countDown();
     }
@@ -83,7 +82,7 @@ public class GlobalTestResult {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GlobalTestResult that = (GlobalTestResult) o;
-        return text.equals(that.text) && Objects.equals(exception, that.exception) && Arrays.equals(args, that.args);
+        return text.equals(that.text) && Objects.equals(exception, that.exception) && Arrays.deepEquals(args, that.args);
     }
 
     @Override
@@ -98,7 +97,7 @@ public class GlobalTestResult {
         return "GlobalTestResult{" + "\n" +
                 "text='" + text + "\n" +
                 ", exception=" + exception + "\n" +
-                ", args=" + Arrays.toString(args) + "\n" +
+                ", args=" + Arrays.deepToString(args) + "\n" +
                 '}';
     }
 }

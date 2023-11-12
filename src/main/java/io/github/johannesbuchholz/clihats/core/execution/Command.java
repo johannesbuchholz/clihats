@@ -1,15 +1,14 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.CommandCreationException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.ClientCodeExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.ParsingException;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.ClientCodeExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.CliArgsParser;
+import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Wraps a particular action together with a list of options.
@@ -18,53 +17,65 @@ import java.util.stream.Stream;
  *     to the specified {@link Instruction}.
  * </p>
  * @see Commander
- * @see AbstractOptionParser
+ * @see ArgumentParser
  */
-public class Command implements Documented {
+public class Command {
 
     public static final int COMMAND_DESCRIPTION_WIDTH = 80;
 
     private final Instruction instruction;
-    private final List<AbstractOptionParser<?>> parsers;
+    private final List<ArgumentParser<?>> parsers;
     private final String description;
 
-    private final String[] nameIdentifier;
-    private final InputParser inputParser;
+    private final String name;
+    private final ArgsParser argsParser;
 
     /**
-     * A new Command with the specified name. The name will be used to identify this Command and may contain
+     * A new Command with the specified name. The name will be used to identify this Command and may not contain
      * whitespaces. Example of valid names:
      * <ul>
      *     <li>"run-everything"</li>
-     *     <li>"get first"</li>
-     *     <li>"get all"</li>
+     *     <li>"get_first"</li>
+     *     <li>"get#all"</li>
      * </ul>
      * The returned command does not possess any parsers and executes the empty Instruction received from
      * {@link Instruction#empty()}.
      * @param name the name of the new Command
      * @return a new command with the specified name.
-     * @throws CommandCreationException if the Command could not be created.
+     * @throws IllegalArgumentException if the command could not be created.
      * @throws NullPointerException if the specified name is null.
      */
-    public static Command forName(String name) throws CommandCreationException {
-        return new Command(nameIdentifierFrom(Objects.requireNonNull(name)), Instruction.empty(), List.of(), "");
+    public static Command forName(String name) {
+        if (name == null || name.isEmpty() || name.chars().anyMatch(Character::isSpaceChar))
+            throw new IllegalArgumentException("Command name must not contain a space character but is '" + name + "'");
+        return new Command(name, Instruction.empty(), List.of(), "");
     }
 
-    /**
-     * "a bc d efg" becomes [a, bc, d, efg]
-     */
-    private static String[] nameIdentifierFrom(String rawName) {
-        return rawName.trim().split("\\s+");
+    private static List<ArgumentParser<?>> validate(List<ArgumentParser<?>> parsers) {
+        List<ArgumentParser<?>> processedParsers = new ArrayList<>(parsers.size());
+        List<String> conflictsMessages = new ArrayList<>();
+        for (ArgumentParser<?> parser : parsers) {
+            processedParsers.forEach(coherent ->
+                    coherent.getId().hasCommonParts(parser.getId()).ifPresent(commonPart -> {
+                        conflictsMessages.add(String.format("Conflicts on parsers %s and %s: %s", parser, coherent, commonPart));
+                    }));
+            processedParsers.add(parser);
+        }
+        if (!conflictsMessages.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Invalid parsers:\n%s",
+                    conflictsMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n")))
+            );
+        }
+        return parsers;
     }
 
-    private Command(String[] nameIdentifier, Instruction instruction, List<AbstractOptionParser<?>> parsers, String description) throws CommandCreationException {
-        this.nameIdentifier = nameIdentifier;
+    private Command(String name, Instruction instruction, List<ArgumentParser<?>> parsers, String description) {
+        this.name = name;
         this.instruction = instruction;
         this.parsers = parsers;
         this.description = description;
 
-        checkForInternalParserConflicts(parsers);
-        inputParser = new InputParser(parsers);
+        argsParser = new CliArgsParser(validate(parsers));
     }
 
     // builder likes
@@ -74,10 +85,10 @@ public class Command implements Documented {
      * @param parsers the parsers to set.
      * @return a new Command with the specified parsers.
      * @throws NullPointerException if the specified array is null.
-     * @see AbstractOptionParser
+     * @see ArgumentParser
      */
-    public Command withParsers(AbstractOptionParser<?>... parsers) {
-        return new Command(nameIdentifier, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
+    public Command withParsers(ArgumentParser<?>... parsers) {
+        return new Command(name, instruction, Arrays.asList(Objects.requireNonNull(parsers)), description);
     }
 
     /**
@@ -87,7 +98,7 @@ public class Command implements Documented {
      * @throws NullPointerException if the specified description is null.
      */
     public Command withDescription(String description) {
-        return new Command(nameIdentifier, instruction, parsers, Objects.requireNonNullElse(description, "").trim());
+        return new Command(name, instruction, parsers, Objects.requireNonNullElse(description, "").trim());
     }
 
     /**
@@ -98,7 +109,7 @@ public class Command implements Documented {
      * @see Instruction
      */
     public Command withInstruction(Instruction instruction) {
-        return new Command(nameIdentifier, Objects.requireNonNull(instruction), parsers, description);
+        return new Command(name, Objects.requireNonNull(instruction), parsers, description);
     }
 
     // functionality
@@ -109,131 +120,76 @@ public class Command implements Documented {
      * @throws CommandExecutionException if parsing of arguments or execution fails.
      */
     public void execute(String[] inputArgs) throws CommandExecutionException {
-        ParsingResult parsingResult = inputParser.parse(inputArgs);
-        if (!parsingResult.isValid()) {
-            throw new ParsingException(this, parsingResult);
+        InputArgument[] args = Arrays.stream(inputArgs).map(InputArgument::of).toArray(InputArgument[]::new);
+        Object[] parsedValues;
+        try {
+            parsedValues = argsParser.parse(args);
+        } catch (ArgumentParsingException e) {
+            throw new InvalidInputArgumentException(this, e);
         }
         try {
-            instruction.execute(parsingResult.getValues());
+            instruction.execute(parsedValues);
         } catch (Exception e) {
             throw new ClientCodeExecutionException(this, e);
         }
     }
 
-    /**
-     * The normalized name-words of this command:
-     * <p>
-     *      Example: " my     command-name  "  becomes ["my", "command-name"]
-     * </p>
-     */
-    public String[] getNameIdentifier() {
-        return nameIdentifier;
-    }
-
-    /**
-     * Returns the normalized name identifier received from {@link #getNameIdentifier()} as a String by joining with one
-     * single whitespace.
-     * <p>
-     *     This method is used to provide a human readable representation of this command.
-     * </p>
-     */
-    public String getNormalizedName() {
-        return TextUtils.trimAndConcat(nameIdentifier);
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
         return description;
     }
 
-    protected List<String> conflictsWith(List<String> preservedIdentifiers) {
-        return Stream.concat(
-                // check names of this
-                Arrays.stream(nameIdentifier)
-                        .filter(preservedIdentifiers::contains)
-                        .map(namePart -> String.format("Command %s contains name part %s conflicting with preserved identifiers", this, namePart)),
-                // check names of parsers
-                parsers.stream()
-                        .filter(p -> Arrays.stream(p.getNames()).anyMatch(preservedIdentifiers::contains))
-                        .map(p -> String.format("Parser %s in command %s conflicts with preserved identifiers", p, this))
-        ).collect(Collectors.toList());
-    }
-
-    protected List<String> conflictsWith(Command other) {
-        List<String> conflictMessages = new LinkedList<>();
-        if (this == other || this.equals(other)) {
-            conflictMessages.add(String.format("Command %s is registered multiple times", this));
+    protected Optional<String> conflictsWith(Command other) {
+        String conflictMessage = null;
+        if (this.equals(other)) {
+            conflictMessage = String.format("Command %s is registered multiple times", this);
         }
-        conflictMessages.addAll(conflictsWithParsersOf(other));
-        return conflictMessages;
+        return Optional.ofNullable(conflictMessage);
     }
 
     private String generateHelpString() {
-        String normalizedName = getNormalizedName();
+        String normalizedName = getName();
         TextMatrix matrixHeader = TextMatrix.empty()
                 .row(COMMAND_DESCRIPTION_WIDTH, "Help for " + normalizedName);
+        List<ParserHelpContent> helpContentList = parsers.stream()
+                .sorted(Comparator.comparing(ArgumentParser::getId))
+                .map(ArgumentParser::getHelpContent)
+                .collect(Collectors.toList());
+        // synopsis
+        String synopsis = normalizedName + " " + helpContentList.stream().map(ParserHelpContent::getSynopsisSnippet).collect(Collectors.joining(" "));
+        matrixHeader
+                .row()
+                .row("Synopsis:")
+                .row(synopsis);
+        // description
         if (!description.isEmpty()) {
             matrixHeader
+                    .row()
                     .row(COMMAND_DESCRIPTION_WIDTH, description);
         }
         // add option description
         TextMatrix matrixParsers = TextMatrix.empty();
-        if (!parsers.isEmpty()) {
+        if (!helpContentList.isEmpty()) {
             matrixHeader
                     .row()
-                    .row(COMMAND_DESCRIPTION_WIDTH, "Options:");
-            parsers.stream()
-                    .sorted(Comparator.comparing(AbstractOptionParser::getPrimaryName))
-                    .map(p -> p.getHelpContent().asTextCells())
+                    .row(COMMAND_DESCRIPTION_WIDTH, "Arguments:");
+            helpContentList.stream()
+                    .map(ParserHelpContent::asTextCells)
                     .forEach(matrixParsers::row);
         }
         return matrixHeader + "\n" + matrixParsers.removeEmptyCols().resizeColumnWidths();
     }
 
-    private void checkForInternalParserConflicts(List<AbstractOptionParser<?>> parsers) throws CommandCreationException {
-        List<AbstractOptionParser<?>> processedParsers = new ArrayList<>(parsers.size());
-        List<String> conflictsMessages = new LinkedList<>();
-        for (AbstractOptionParser<?> parser : parsers) {
-            processedParsers.stream()
-                    .flatMap(coherent -> coherent.conflictsWith(parser).stream())
-                    .forEach(conflictsMessages::add);
-            processedParsers.add(parser);
-        }
-        if (!conflictsMessages.isEmpty()) {
-            throw new CommandCreationException("Can not add parser to %s:\n%s",
-                    this, conflictsMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n"))
-            );
-        }
-    }
-
-    /**
-     * Returns a list of messages. One for each conflicting parser of this command with any parsers o of the specified command.
-     * To prevent ambiguous command calls, a conflict arises whenever the other command possesses argument parsers with
-     * names equals to any name part of this command.
-     */
-    private List<String> conflictsWithParsersOf(Command other) {
-        return other.parsers.stream()
-                .map(this::conflictsWith)
-                .flatMap(List::stream)
-                .map(conflictMsg -> String.format("Command %s conflicts with parsers of command %s: %s", this, other, conflictMsg))
-                .collect(Collectors.toList());
-    }
-
-    private List<String> conflictsWith(AbstractOptionParser<?> parser) {
-        List<String> nameParts = Arrays.asList(nameIdentifier);
-        return Arrays.stream(parser.getNames())
-                .filter(nameParts::contains)
-                .map(name -> String.format("Name conflict with parser %s on name %s", parser, name))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public String getDoc() {
         return generateHelpString();
     }
 
     @Override
     public String toString() {
-        return String.format("%s{name=%s}", this.getClass().getSimpleName(), getNormalizedName());
+        return String.format("%s{name=%s}", this.getClass().getSimpleName(), getName());
     }
 
     @Override
@@ -241,12 +197,12 @@ public class Command implements Documented {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Command command = (Command) o;
-        return Arrays.equals(nameIdentifier, command.nameIdentifier);
+        return Objects.equals(name, command.name);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(nameIdentifier);
+        return Objects.hash(name);
     }
 
 }

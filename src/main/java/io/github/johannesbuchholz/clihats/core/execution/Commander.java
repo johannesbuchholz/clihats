@@ -1,17 +1,12 @@
 package io.github.johannesbuchholz.clihats.core.execution;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.CommanderCreationException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CliHelpCallException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommanderExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.UnknownCommandException;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextCell;
-import io.github.johannesbuchholz.clihats.core.execution.text.TextMatrix;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
+import io.github.johannesbuchholz.clihats.core.execution.exception.*;
+import io.github.johannesbuchholz.clihats.core.text.TextCell;
+import io.github.johannesbuchholz.clihats.core.text.TextMatrix;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A collection of commands. This class is responsible for invoking and passing arguments to particular commands.
@@ -22,21 +17,14 @@ import java.util.stream.Stream;
  *
  * @see Command
  */
-public class Commander implements Documented {
+public class Commander {
 
     private static final int COMMANDER_DESCRIPTION_WIDTH = 100;
     private static final int COMMAND_NAME_WIDTH = 24;
     private static final int COMMAND_DESCRIPTION_WIDTH = 76;
-    private final List<String> helpArgs = List.of("--help");
     private final String cliName;
-    private final Map<String, Command> commands;
+    private final Map<String, Command> commandsByName;
     private final String description;
-
-    private Commander(String cliName, Map<String, Command> commands, String description) {
-        this.cliName = cliName;
-        this.commands = commands;
-        this.description = description;
-    }
 
     /**
      * Creates a new Commander with the specified name.
@@ -48,20 +36,10 @@ public class Commander implements Documented {
         return new Commander(Objects.requireNonNull(name).trim(), Map.of(), "");
     }
 
-    private static Map<String, Command> generateCommandMap(Command[] commands) {
-        Map<String, Command> map = new HashMap<>(commands.length);
-        for (Command c : commands) {
-            if (c == null) {
-                throw new IllegalArgumentException("Encountered null");
-            }
-            String key = c.getNormalizedName();
-            if (map.containsKey(key)) {
-                throw new IllegalArgumentException("Encountered multiple commands with identical name identifier: " + Arrays.toString(c.getNameIdentifier()));
-            } else {
-                map.put(key, c);
-            }
-        }
-        return map;
+    private Commander(String cliName, Map<String, Command> commandsByName, String description) {
+        this.cliName = cliName;
+        this.commandsByName = commandsByName;
+        this.description = description;
     }
 
     /**
@@ -73,7 +51,9 @@ public class Commander implements Documented {
      */
     public Commander withCommands(Command... commands) throws CommanderCreationException {
         checkForCommandConflicts(commands);
-        return new Commander(cliName, generateCommandMap(commands), description);
+        Map<String, Command> commandMap = Arrays.stream(commands)
+                .collect(Collectors.toUnmodifiableMap(Command::getName, Function.identity()));
+        return new Commander(cliName, commandMap, description);
     }
 
     /**
@@ -84,7 +64,7 @@ public class Commander implements Documented {
      * @throws CommanderCreationException if the commander could not be created.
      */
     public Commander withDescription(String description) {
-        return new Commander(cliName, commands, Objects.requireNonNull(description).trim());
+        return new Commander(cliName, commandsByName, Objects.requireNonNull(description).trim());
     }
 
     /**
@@ -95,61 +75,50 @@ public class Commander implements Documented {
      * @throws CliHelpCallException        if the user input requests help.
      */
     public void execute(String[] inputArgs) throws CommanderExecutionException, CliHelpCallException {
-        CommandSearchResult commandSearchResult = findCommand(inputArgs);
-        if (isHelpCall(inputArgs)) {
-            throwHelpException(commandSearchResult);
-        } else if (commandSearchResult.isEmpty()) {
-            throw new UnknownCommandException(this, inputArgs);
+        Optional<Command> commandSearchResult;
+        if (inputArgs.length > 0) {
+            commandSearchResult = getCommand(inputArgs[0]);
+        } else {
+            commandSearchResult = Optional.empty();
         }
+        if (isHelpCall(inputArgs)) {
+            String actualHelpString;
+            if (commandSearchResult.isEmpty())
+                actualHelpString = getDoc();
+            else
+                actualHelpString = commandSearchResult.get().getDoc();
+            throw new CliHelpCallException(actualHelpString);
+        }
+        if (commandSearchResult.isEmpty())
+            throw new UnknownCommandException(this, inputArgs[0]);
 
         try {
-            commandSearchResult.foundCommand.execute(Arrays.copyOfRange(inputArgs, commandSearchResult.offset, inputArgs.length));
+            commandSearchResult.get().execute(Arrays.copyOfRange(inputArgs, 1, inputArgs.length));
         } catch (CommandExecutionException e) {
             throw new CommanderExecutionException(this, e);
         }
     }
 
-    /**
-     * true, iff the last input argument is among {@link #helpArgs}
-     */
     private boolean isHelpCall(String[] inputArgs) {
-        return inputArgs.length == 0 || helpArgs.contains(inputArgs[inputArgs.length - 1]);
+        return inputArgs.length == 0 || Arrays.stream(inputArgs).anyMatch(InputArgument::isHelpArgument);
     }
 
     private void checkForCommandConflicts(Command... commands) throws CommanderCreationException {
         List<Command> processedCommands = new ArrayList<>(commands.length);
         List<String> conflictMessages = new LinkedList<>();
         for (Command command : commands) {
-            Stream.concat(
-                    processedCommands.stream().flatMap(coherent -> coherent.conflictsWith(command).stream()),
-                    command.conflictsWith(helpArgs).stream()
-            ).forEach(conflictMessages::add);
+            processedCommands.forEach(coherent -> coherent.conflictsWith(command).ifPresent(conflictMessages::add));
             processedCommands.add(command);
         }
         if (!conflictMessages.isEmpty()) {
-            throw new CommanderCreationException("Detected conflicts among commands:\n%s",
-                    conflictMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n"))
+            throw new CommanderCreationException(String.format("Detected conflicts among commands:\n%s",
+                    conflictMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n")))
             );
         }
     }
 
-    private CommandSearchResult findCommand(String[] inputArgs) {
-        Command foundCommand = null;
-        int pointer = 0;
-        while (foundCommand == null && pointer < inputArgs.length) {
-            String nameCandidate = TextUtils.trimAndConcat(Arrays.copyOfRange(inputArgs, 0, ++pointer));
-            foundCommand = commands.get(nameCandidate);
-        }
-        return new CommandSearchResult(foundCommand, pointer);
-    }
-
-    private void throwHelpException(CommandSearchResult commandSearchResult) throws CliHelpCallException {
-        String actualHelpString;
-        if (commandSearchResult.isEmpty())
-            actualHelpString = getDoc();
-        else
-            actualHelpString = commandSearchResult.foundCommand.getDoc();
-        throw new CliHelpCallException(actualHelpString);
+    private Optional<Command> getCommand(String commandName) {
+       return Optional.ofNullable(commandsByName.get(commandName));
     }
 
     private String generateHelpString() {
@@ -162,12 +131,12 @@ public class Commander implements Documented {
         matrixHeader.row();
         // add commands
         TextMatrix matrixCommands = TextMatrix.empty();
-        if (!commands.isEmpty()) {
+        if (!commandsByName.isEmpty()) {
             matrixHeader.row(TextCell.getNew("Commands:"));
-            commands.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(entry -> matrixCommands
-                            .row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, entry.getKey(), entry.getValue().getDescription())
+            commandsByName.values().stream()
+                    .sorted(Comparator.comparing(Command::getName))
+                    .forEach(command ->
+                            matrixCommands.row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, command.getName(), command.getDescription())
                     );
         }
         return matrixHeader + "\n" +
@@ -181,7 +150,6 @@ public class Commander implements Documented {
         return cliName;
     }
 
-    @Override
     public String getDoc() {
         return generateHelpString();
     }
@@ -192,22 +160,7 @@ public class Commander implements Documented {
     @Override
     public String toString() {
         return String.format("%s={name=%s, commands=%s}",
-                this.getClass().getSimpleName(), cliName, commands.keySet().stream().sorted().collect(Collectors.toList()));
+                this.getClass().getSimpleName(), cliName, commandsByName.keySet().stream().sorted().collect(Collectors.toList()));
     }
 
-    private static class CommandSearchResult {
-
-        private final Command foundCommand;
-        private final int offset;
-
-        public CommandSearchResult(Command foundCommand, int offset) {
-            this.foundCommand = foundCommand;
-            this.offset = offset;
-        }
-
-        public boolean isEmpty() {
-            return foundCommand == null;
-        }
-
-    }
 }

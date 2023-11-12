@@ -1,11 +1,12 @@
 package io.github.johannesbuchholz.clihats.core.execution.parser;
 
 import io.github.johannesbuchholz.clihats.core.TestResult;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CommandExecutionException;
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.ParsingException;
+import io.github.johannesbuchholz.clihats.core.execution.CliException;
 import io.github.johannesbuchholz.clihats.core.execution.Command;
-import io.github.johannesbuchholz.clihats.core.execution.ParsingResult;
-import io.github.johannesbuchholz.clihats.core.execution.ValueMapper;
+import io.github.johannesbuchholz.clihats.core.execution.exception.CommandExecutionException;
+import io.github.johannesbuchholz.clihats.core.execution.exception.InvalidInputArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.UnknownArgumentException;
+import io.github.johannesbuchholz.clihats.core.execution.parser.exception.ValueMappingException;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -40,6 +41,25 @@ public class FlagTest {
     }
 
     @Test
+    public void shouldExecute_usingSecondPrimaryName() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name1 = "-a";
+        String name2 = "-b";
+        Command c = Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(FlagOptionParser.forName(name1, name2));
+        String[] args = {name2};
+
+        // when
+        c.execute(args);
+
+        // then
+        TestResult expected = TestResult.newExpected("");
+        assertEquals(expected, testResult);
+    }
+
+    @Test
     public void shouldExecute_returnInputArgUsingAlias() throws CommandExecutionException {
         // given
         TestResult testResult = TestResult.newEmpty();
@@ -48,8 +68,7 @@ public class FlagTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(FlagOptionParser
-                        .forName(name)
-                        .withAliases(alias)
+                        .forName(name, alias)
                 );
         String[] args = {alias};
 
@@ -189,33 +208,29 @@ public class FlagTest {
         assertEquals(expected, testResult);
     }
 
+    @Test
+    public void shouldExecute_duplicateNames() throws CommandExecutionException {
+        // given
+        TestResult testResult = TestResult.newEmpty();
+        String name = "-a";
+        String[] args = {name};
+        // when
+        Command.forName("run")
+                .withInstruction(testResult.getTestInstruction())
+                .withParsers(FlagOptionParser
+                        .forName(name, name))
+                        .execute(args);
+
+        // then
+        TestResult expected = TestResult.newExpected("");
+        assertEquals(expected, testResult);
+    }
+
     /*
 
     FAILURE TESTS
 
      */
-
-    @Test
-    public void shouldFail_wrongAliasNaming() {
-        // given
-        String name = "-a";
-        // when
-        IllegalArgumentException illegalArgumentException = null;
-        try {
-            Command.forName("run")
-                    .withInstruction(args -> {})
-                    .withParsers(FlagOptionParser
-                            .forName(name)
-                            .withAliases(name)
-                    );
-        } catch (IllegalArgumentException e) {
-            illegalArgumentException = e;
-        }
-
-        // then
-        assertNotNull(illegalArgumentException);
-        assertTrue(illegalArgumentException.getMessage().contains(name));
-    }
 
     @Test
     public void shouldFail_unknownArgument() {
@@ -225,26 +240,16 @@ public class FlagTest {
         Command c = Command.forName("run")
                 .withInstruction(testResult.getTestInstruction())
                 .withParsers(FlagOptionParser.forName(name));
-        String unknownArg = "unknown";
+        String unknownArg = "-unknown";
         String[] args = {unknownArg};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putUnknown(unknownArg);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CliException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(UnknownArgumentException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(unknownArg));
     }
 
     @Test
@@ -264,22 +269,12 @@ public class FlagTest {
         String[] args = {name};
 
         // when
-        CommandExecutionException actualException = null;
-        try {
-            c.execute(args);
-        } catch (CommandExecutionException e) {
-            actualException = e;
-        }
-
-        // and expected
-        ParsingResult.Builder parsingResultBuilder = ParsingResult.builder(1);
-        parsingResultBuilder.putError(expectedThrow);
-        String expectedMessage = new ParsingException(c, parsingResultBuilder.build()).getMessage();
-
         // then
-        assertNotNull(actualException);
-        assertEquals(ParsingException.class, actualException.getClass());
-        assertEquals(expectedMessage, actualException.getMessage());
+        CliException actualException = assertThrows(CommandExecutionException.class, () -> c.execute(args));
+        assertEquals(InvalidInputArgumentException.class, actualException.getClass());
+        assertEquals(ValueMappingException.class, actualException.getCause().getClass());
+        assertTrue(actualException.getMessage().contains(c.getName()));
+        assertTrue(actualException.getMessage().contains(name));
     }
 
 }

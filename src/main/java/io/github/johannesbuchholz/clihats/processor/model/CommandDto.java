@@ -1,7 +1,7 @@
 package io.github.johannesbuchholz.clihats.processor.model;
 
 import io.github.johannesbuchholz.clihats.processor.annotations.Command;
-import io.github.johannesbuchholz.clihats.util.ProcessingUtils;
+import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;

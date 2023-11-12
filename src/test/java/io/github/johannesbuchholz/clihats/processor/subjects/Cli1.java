@@ -1,10 +1,9 @@
 package io.github.johannesbuchholz.clihats.processor.subjects;
 
 import io.github.johannesbuchholz.clihats.processor.GlobalTestResult;
+import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 import io.github.johannesbuchholz.clihats.processor.annotations.Command;
 import io.github.johannesbuchholz.clihats.processor.annotations.CommandLineInterface;
-import io.github.johannesbuchholz.clihats.processor.annotations.Option;
-import io.github.johannesbuchholz.clihats.processor.annotations.OptionNecessity;
 import io.github.johannesbuchholz.clihats.processor.execution.CliHats;
 
 import java.nio.file.Path;
@@ -22,17 +21,17 @@ public class Cli1 {
      */
     @Command(name = "command1", cli = Cli1.class)
     public static void myMethod1(
-            @Option(position = 0) String arg1,
-            @Option(name = {"-a2", "-aa2"}) Integer arg2,
-            @Option(name = "-a3", defaultValue = "/my/default/path") Path arg3
+            @Argument(type = Argument.Type.OPERAND) String arg1,
+            @Argument(name = {"--a2", "--aa2"}) Integer arg2,
+            @Argument(name = "--a3", defaultValue = "/my/default/path") Path arg3
     ) {
         GlobalTestResult.setSuccess("command1", arg1, arg2, arg3);
     }
 
     @Command(name = "command2", cli = Cli1.class)
     public static void myMethod2(
-            @Option(name = "-r", necessity = OptionNecessity.REQUIRED) String r,
-            @Option(name = "-opt", flagValue = "Option-On", description = "This is a lengthy description for a string argument.") String arg1
+            @Argument(name = "-r", necessity = Argument.Necessity.REQUIRED) String r,
+            @Argument(name = "--opt", flagValue = "Option-On", description = "This is a lengthy description for a string argument.") String arg1
     ) {
         GlobalTestResult.setSuccess("command2", r, arg1);
     }
@@ -52,10 +51,10 @@ public class Cli1 {
      */
     @Command
     public static void runWithJavadoc(
-            @Option String stringArg,
-            @Option(description = "this will appear in the option description") String descriptionParam,
+            @Argument String stringArg,
+            @Argument(description = "this will appear in the option description") String descriptionParam,
             String otherArg,
-            @Option String z
+            @Argument String z
     ) {
         GlobalTestResult.setSuccess("run-wth-javadoc", stringArg, descriptionParam, otherArg, z);
     }

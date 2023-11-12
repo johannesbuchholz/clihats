@@ -6,8 +6,8 @@ import io.github.johannesbuchholz.clihats.processor.model.CommanderDto;
 import io.github.johannesbuchholz.clihats.processor.model.ExtendedSnippetCodeData;
 import io.github.johannesbuchholz.clihats.processor.model.ProgramCodeData;
 import io.github.johannesbuchholz.clihats.processor.model.SnippetCodeData;
-import io.github.johannesbuchholz.clihats.util.ProcessingUtils;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
+import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
+import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
 
 import javax.annotation.processing.Generated;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -36,8 +36,6 @@ public class CommanderProviderCodeGenerator {
             "\n" +
             "%s\n" +
             "\n" +
-            "%s\n" +
-            "\n" +
             "}";
     private static final String GENERATED_FIELD_NAME = "commanderByCliName";
     private static final String MAP_TYPE_STRING = "Map<String, Commander>";
@@ -61,27 +59,20 @@ public class CommanderProviderCodeGenerator {
         Set<String> imports = MANDATORY_IMPORTS;
         imports.addAll(fieldCodeData.getImportPackages());
 
-        String packageName = AbstractCommanderProvider.class.getPackage().getName();
+        String packageName = AbstractCommanderProvider.getImplementationPackageName();
 
         String classFileContent = String.format(
                 CLASS_CODE_TEMPLATE,
                 packageName,
                 generateImportStringLines(imports, packageName),
                 generateClassAnnotationCode(),
-                AbstractCommanderProvider.IMPL_CLASS_NAME,
+                AbstractCommanderProvider.getImplementationSimpleName(),
                 AbstractCommanderProvider.class.getSimpleName(),
-                TextUtils.indentEveryLine(generateStaticInitializer()),
                 TextUtils.indentEveryLine(fieldCodeData.getCodeSnippet()),
                 TextUtils.indentEveryLine(generateGetterCode())
         );
 
-        return new ProgramCodeData(classFileContent, packageName + "." + AbstractCommanderProvider.IMPL_CLASS_NAME);
-    }
-
-    private String generateStaticInitializer() {
-        return String.format("static {\n%s\n}",
-                LINE_INDENT + String.format("new %s().%s();",
-                        AbstractCommanderProvider.IMPL_CLASS_NAME, AbstractCommanderProvider.IMPL_REGISTER_METHOD_NAME));
+        return new ProgramCodeData(classFileContent, AbstractCommanderProvider.getImplementationQualifiedName());
     }
 
     private SnippetCodeData generateFieldCode(Map<String, ExtendedSnippetCodeData> commanderCodeSnippets) {
@@ -112,17 +103,18 @@ public class CommanderProviderCodeGenerator {
 
     private String generateGetterCode() {
         return "@Override\n" +
-                "public " + MAP_TYPE_STRING + " " + AbstractCommanderProvider.IMPL_ABSTRACT_METHOD_NAME + "() {\n" +
+                "public " + MAP_TYPE_STRING + " " + AbstractCommanderProvider.getAbstractMethodName() + "() {\n" +
                 LINE_INDENT + "return " + GENERATED_FIELD_NAME + ";\n" +
                 "}";
     }
 
     private String generateClassAnnotationCode() {
-        return String.format("@Generated(value = \"%s\", date = \"%s\", comments = \"Processor version %s\")",
-                CommandLineInterfaceProcessor.class.getCanonicalName(),
-                DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
-                CommandLineInterfaceProcessor.IMPLEMENTATION_VERSION
-        );
+        return "@Generated(" + NEW_LINE_INDENT_DOUBLE +
+                "value = \"" + CommandLineInterfaceProcessor.class.getCanonicalName() + "\"," + NEW_LINE_INDENT_DOUBLE +
+                "date = \"" + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "\"," + NEW_LINE_INDENT_DOUBLE +
+                "comments = \"" + "Implementation version " + CommandLineInterfaceProcessor.IMPLEMENTATION_VERSION +
+                ", " + "Java " + CommandLineInterfaceProcessor.JAVA_VERSION + " (" + CommandLineInterfaceProcessor.JAVA_VENDOR + ")" + "\"\n" +
+                ")";
     }
 
     private String generateImportStringLines(Set<String> imports, String packageName) {

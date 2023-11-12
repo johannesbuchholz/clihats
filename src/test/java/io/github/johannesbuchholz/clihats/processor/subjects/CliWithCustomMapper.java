@@ -1,9 +1,9 @@
 package io.github.johannesbuchholz.clihats.processor.subjects;
 
 import io.github.johannesbuchholz.clihats.processor.GlobalTestResult;
+import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 import io.github.johannesbuchholz.clihats.processor.annotations.Command;
 import io.github.johannesbuchholz.clihats.processor.annotations.CommandLineInterface;
-import io.github.johannesbuchholz.clihats.processor.annotations.Option;
 import io.github.johannesbuchholz.clihats.processor.mapper.AbstractValueMapper;
 
 import java.util.Arrays;
@@ -63,21 +63,21 @@ public class CliWithCustomMapper {
 
     @Command
     public static void runNestedLists(
-            @Option(mapper = MyCustomMapper.class) List<List<MyCustomClass>> customClass
+            @Argument(mapper = MyCustomMapper.class) List<List<MyCustomClass>> customClass
     ) {
         GlobalTestResult.setSuccess("run-nested-lists", customClass);
     }
 
     @Command
     public static void runNestedArrays(
-            @Option(mapper = StringArrayMapper.class) MyCustomClass[][] myCustomClasses
+            @Argument(mapper = StringArrayMapper.class) MyCustomClass[][] myCustomClasses
     ) {
         GlobalTestResult.setSuccess("run-nested-arrays", (Object) myCustomClasses);
     }
 
     @Command
     public static void runCrazy(
-            @Option(mapper = CrazyMapper.class) Function<MyCustomClass, Function<MyCustomClass[][], List<String>>> crazyStuff
+            @Argument(mapper = CrazyMapper.class) Function<MyCustomClass, Function<MyCustomClass[][], List<String>>> crazyStuff
     ) {
         GlobalTestResult.setSuccess("run-crazy", crazyStuff);
     }

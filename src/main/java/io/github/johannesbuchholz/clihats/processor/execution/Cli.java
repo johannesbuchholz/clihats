@@ -1,6 +1,6 @@
 package io.github.johannesbuchholz.clihats.processor.execution;
 
-import io.github.johannesbuchholz.clihats.core.exceptions.execution.CliException;
+import io.github.johannesbuchholz.clihats.core.execution.CliException;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
 import io.github.johannesbuchholz.clihats.processor.exceptions.CliExceptionHandler;
 
@@ -9,11 +9,7 @@ public class Cli {
     private final CliExceptionHandler cliExceptionHandler = new CliExceptionHandler();
     private final Commander commander;
 
-    public static Cli getNew(Commander commander) {
-        return new Cli(commander);
-    }
-
-    private Cli(Commander commander) {
+    Cli(Commander commander) {
         this.commander = commander;
     }
 

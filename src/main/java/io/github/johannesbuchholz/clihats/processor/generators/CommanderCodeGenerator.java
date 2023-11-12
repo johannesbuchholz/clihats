@@ -6,8 +6,8 @@ import io.github.johannesbuchholz.clihats.processor.model.CommandDto;
 import io.github.johannesbuchholz.clihats.processor.model.CommanderDto;
 import io.github.johannesbuchholz.clihats.processor.model.ExtendedSnippetCodeData;
 import io.github.johannesbuchholz.clihats.processor.model.SnippetCodeData;
-import io.github.johannesbuchholz.clihats.util.ProcessingUtils;
-import io.github.johannesbuchholz.clihats.util.TextUtils;
+import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
+import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import java.util.*;
