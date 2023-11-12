@@ -13,7 +13,7 @@ print_usage() {
 }
 
 get_version() {
-  major_regex="BREAKING\wCHANGE|\!:"
+  major_regex="(BREAKING[-\s]CHANGE:|^.*\!:)"
   minor_regex="^(feat).*:"
   patch_regex="^(fix|perf).*:"
 
