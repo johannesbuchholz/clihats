@@ -5,7 +5,6 @@ import io.github.johannesbuchholz.clihats.processor.annotations.Command;
 import io.github.johannesbuchholz.clihats.processor.annotations.CommandLineInterface;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ProcessingException;
 import io.github.johannesbuchholz.clihats.processor.generators.CommanderProviderCodeGenerator;
-import io.github.johannesbuchholz.clihats.processor.logging.Logging;
 import io.github.johannesbuchholz.clihats.processor.mapper.AbstractValueMapper;
 import io.github.johannesbuchholz.clihats.processor.model.CommandDto;
 import io.github.johannesbuchholz.clihats.processor.model.CommanderDto;
@@ -14,6 +13,8 @@ import io.github.johannesbuchholz.clihats.processor.util.CliAutoDetector;
 import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
 import io.github.johannesbuchholz.clihats.processor.util.visitors.ArrayOfTypeAnnotationValueVisitor;
 import io.github.johannesbuchholz.clihats.processor.util.visitors.SimpleValueAnnotationValueVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -34,7 +35,9 @@ import java.util.stream.Stream;
 @SupportedAnnotationTypes("io.github.johannesbuchholz.clihats.processor.annotations.CommandLineInterface")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class CommandLineInterfaceProcessor extends AbstractProcessor {
-
+    
+    private static final Logger log = LoggerFactory.getLogger(CommandLineInterfaceProcessor.class);
+    
     public static final String IMPLEMENTATION_VERSION = CommandLineInterfaceProcessor.class.getPackage().getImplementationVersion();
     public static final String JAVA_VERSION = System.getProperty("java.version");
     public static final String JAVA_VENDOR = System.getProperty("java.vendor");
@@ -94,7 +97,7 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
         } catch (IOException e) {
             throw new ProcessingException(e, "Could not write to source file {}: {}", programCodeData.getQualifiedClassName(), e);
         }
-        Logging.getCliHatsLogger().info("Wrote generated classes to {}", builderFile.toUri());
+        log.info("Wrote generated classes to {}", builderFile.toUri());
     }
 
     /**
@@ -106,8 +109,8 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
         Map<TypeElement, List<CommandDto>> commandDtosByAnnotatedCli = roundEnvironment.getElementsAnnotatedWith(cliAnnotation).stream()
                 .collect(Collectors.toMap(element -> (TypeElement) element, element -> new ArrayList<>()));
 
-        if (Logging.getCliHatsLogger().isDebugEnabled())
-            commandDtosByAnnotatedCli.keySet().forEach(annotatedCli -> Logging.getCliHatsLogger().debug("Found command-line interface: {}", annotatedCli));
+        if (log.isDebugEnabled())
+            commandDtosByAnnotatedCli.keySet().forEach(annotatedCli -> log.debug("Found command-line interface: {}", annotatedCli));
 
         // match annotated command-methods with declared cli or mark for auto-detection
         List<CommandDto> commandDtosForAutoDetection = new ArrayList<>();
@@ -115,7 +118,7 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
         commandAnnotatedMethods.stream()
                 .map(element -> ((ExecutableElement) element))
                 .map(this::mapToCommandDto)
-                .peek(commandDto -> Logging.getCliHatsLogger().debug("Found command: {}", commandDto))
+                .peek(commandDto -> log.debug("Found command: {}", commandDto))
                 .forEach(commandDto -> {
                     List<TypeElement> clisOfCommand = commandDto.getCli();
                     if (clisOfCommand.isEmpty())
@@ -125,7 +128,7 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
                                 .forEach(cliOfCommand -> Optional.ofNullable(commandDtosByAnnotatedCli.get(cliOfCommand))
                                         .ifPresentOrElse(
                                                 listOfCommands -> listOfCommands.add(commandDto),
-                                                () -> Logging.getCliHatsLogger().warn("Could not match command {} to desired command-line interface: {} is not a command-line interface", commandDto, cliOfCommand.getQualifiedName())));
+                                                () -> log.warn("Could not match command {} to desired command-line interface: {} is not a command-line interface", commandDto, cliOfCommand.getQualifiedName())));
                 });
 
         // auto detection
@@ -136,22 +139,22 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
         commandDtosByAutodetectedCli.forEach((type, dtos) ->
                 commandDtosByAnnotatedCli.merge(type, dtos, (l1, l2) -> Stream.of(l1, l2).flatMap(List::stream).collect(Collectors.toList())));
 
-        if (Logging.getCliHatsLogger().isDebugEnabled())
-            commandDtosByAnnotatedCli.forEach((key, value) -> Logging.getCliHatsLogger().debug("Collected commands for cli {}: {}", key, value));
+        if (log.isDebugEnabled())
+            commandDtosByAnnotatedCli.forEach((key, value) -> log.debug("Collected commands for cli {}: {}", key, value));
 
         // log unmatched command-methods
         commandAnnotatedMethods.stream()
                 .filter(annotatedMethod -> commandDtosByAnnotatedCli.values().stream()
                         .flatMap(List::stream)
                         .noneMatch(dtoWithCli -> dtoWithCli.getAnnotatedMethod().equals(annotatedMethod)))
-                .forEach(unmatchedCommandDto -> Logging.getCliHatsLogger().warn("Found command not associated to any cli: {} enclosed by {}", unmatchedCommandDto, unmatchedCommandDto.getEnclosingElement()));
+                .forEach(unmatchedCommandDto -> log.warn("Found command not associated to any cli: {} enclosed by {}", unmatchedCommandDto, unmatchedCommandDto.getEnclosingElement()));
 
         // create commander dtos
         return commandDtosByAnnotatedCli.entrySet().stream()
                 .map(entry -> mapToCommanderDto(entry.getKey(), entry.getValue()))
                 .peek(commanderDto -> {
                     if (commanderDto.getCommandDtoList().isEmpty())
-                        Logging.getCliHatsLogger().warn("Interface {} does not possess any commands", commanderDto.getAnnotatedInterface().getQualifiedName());
+                        log.warn("Interface {} does not possess any commands", commanderDto.getAnnotatedInterface().getQualifiedName());
                 })
                 .collect(Collectors.toList());
     }

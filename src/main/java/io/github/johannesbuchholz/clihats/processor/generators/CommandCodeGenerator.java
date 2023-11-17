@@ -6,7 +6,6 @@ import io.github.johannesbuchholz.clihats.processor.CommandLineInterfaceProcesso
 import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ArgumentConfigurationException;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
-import io.github.johannesbuchholz.clihats.processor.logging.Logging;
 import io.github.johannesbuchholz.clihats.processor.model.ArgumentDto;
 import io.github.johannesbuchholz.clihats.processor.model.CommandDto;
 import io.github.johannesbuchholz.clihats.processor.model.ExtendedSnippetCodeData;
@@ -18,6 +17,8 @@ import io.github.johannesbuchholz.clihats.processor.util.visitors.ArrayOfSimpleA
 import io.github.johannesbuchholz.clihats.processor.util.visitors.EnumAnnotationValueVisitor;
 import io.github.johannesbuchholz.clihats.processor.util.visitors.SimpleValueAnnotationValueVisitor;
 import io.github.johannesbuchholz.clihats.processor.util.visitors.TypeAnnotationValueVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 public class CommandCodeGenerator {
 
+    private static final Logger log = LoggerFactory.getLogger(CommandCodeGenerator.class);
     private static final String INSTRUCTION_PARAMETER_NAME = "args";
 
     private final ProcessingEnvironment processingEnvironment;
@@ -88,7 +90,7 @@ public class CommandCodeGenerator {
                         processingEnvironment));
         argumentDto
                 .map(dto -> determineDubiousConfiguration(dto, processingEnvironment))
-                .ifPresent(dubiousMessages -> dubiousMessages.forEach(msg -> Logging.getCliHatsLogger().warn("Dubious argument configuration at {}: {}", methodParameter, msg)));
+                .ifPresent(dubiousMessages -> dubiousMessages.forEach(msg -> log.warn("Dubious argument configuration at {}: {}", methodParameter, msg)));
         return argumentDto.orElse(null);
     }
 

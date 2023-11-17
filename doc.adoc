@@ -329,11 +329,5 @@ Then, declare an option using the above mapper.
 @Argument(mapper = ListMapper.class) List<String> list
 ----
 
-== Build configuration
-CliHats uses an annotation processor to automatically create Commander, Command and Option objects and registers a `Cli` object to the `CliHats` class. Generating the required source code may be configured.
-
-=== Logging
-During compilation, CliHats uses Slf4j with the simple provider and one single logger instance named `CliHats`. You may configure the log level used during processing by adding the JVM argument
-----
--Dorg.slf4j.simpleLogger.log.CliHats=<YOUR DESIRED LOG LEVEL>
-----
+== Logging
+During compilation, CliHats uses the Slf4j-API. In order to receive log-outputs, you may link a suiting Slf4j-Provider in your project dependencies. For more details see the official https://www.slf4j.org/manual.html#swapping[documentation].

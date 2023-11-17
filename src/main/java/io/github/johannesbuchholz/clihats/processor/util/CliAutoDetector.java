@@ -1,8 +1,9 @@
 package io.github.johannesbuchholz.clihats.processor.util;
 
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
-import io.github.johannesbuchholz.clihats.processor.logging.Logging;
 import io.github.johannesbuchholz.clihats.processor.model.CommandDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
@@ -11,6 +12,8 @@ import javax.lang.model.element.TypeElement;
 import java.util.*;
 
 public class CliAutoDetector {
+
+    private static final Logger log = LoggerFactory.getLogger(CliAutoDetector.class);
 
     private final Collection<TypeElement> annotatedInterfaces;
 
@@ -64,7 +67,7 @@ public class CliAutoDetector {
                 commandDtoByCli.get(matchingCli).add(commandDto);
             else
                 commandDtoByCli.put(matchingCli, new LinkedList<>(List.of(commandDto)));
-            Logging.getCliHatsLogger().debug("Cli auto detection: {} -> {}", commandDto, matchingCli);
+            log.debug("Cli auto detection: {} -> {}", commandDto, matchingCli);
         }
         return commandDtoByCli;
     }
