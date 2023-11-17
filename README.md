@@ -83,5 +83,19 @@ This is especially true, if the methods posses relatively simple signatures with
 ## Get CliHats
 CliHats is available on [Maven Central](https://mvnrepository.com/artifact/io.github.johannesbuchholz/clihats).
 
+### Maven
+```xml
+<dependency>
+    <groupId>io.github.johannesbuchholz</groupId>
+    <artifactId>clihats</artifactId>
+    <version>1.0.1-2-296fee82-SNAPSHOT</version>
+</dependency>
+```
+
+### Gradle
+```groovy
+implementation group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.0.1-2-296fee82-SNAPSHOT'
+```
+
 ## Documentation
 The [documentation](https://johannesbuchholz.github.io/clihats/doc.html) contains a quickstart example and details on how to use and configure CliHats to your needs. 

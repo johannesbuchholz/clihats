@@ -71,13 +71,15 @@ if [[ ${commit} ]]; then
 
   mvn test --quiet
   sed "s/^.*:version:.*$/:version: ${version}/" doc.adoc -i
+  sed "s/<version>.*<\/version>$/<version>${version}<\/version>/" README.md -i
+  sed "s/version: '.*'$/version: '${version}'/" README.md -i
   mvn generate-resources --quiet
   cp target/generated-docs/doc.html doc.html
   git add doc.html
 
   mvn versions:set -DnewVersion="${version}" --quiet
 
-  git add pom.xml doc.adoc
+  git add pom.xml doc.adoc README.md
   git commit -m "chore: Release ${version}"
   if [[ ${tag} ]]; then
     git tag -a "${version}" -m "Release ${version}"
