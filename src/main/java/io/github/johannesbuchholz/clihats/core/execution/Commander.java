@@ -111,7 +111,7 @@ public class Commander {
             processedCommands.add(command);
         }
         if (!conflictMessages.isEmpty()) {
-            throw new CommanderCreationException(String.format("Detected conflicts among commands:\n%s",
+            throw new CommanderCreationException(this, String.format("Detected conflicts among commands:\n%s",
                     conflictMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n")))
             );
         }

@@ -1,5 +1,6 @@
 package io.github.johannesbuchholz.clihats.processor.model;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,11 +27,19 @@ public class SnippetCodeData {
     }
 
     public Set<String> getImportPackages() {
-        return importPackages;
+        return Collections.unmodifiableSet(importPackages);
     }
 
     public String getCodeSnippet() {
         return codeSnippet;
+    }
+
+    public boolean isEmpty() {
+        return codeSnippet.isEmpty();
+    }
+
+    public boolean hasContent() {
+        return !isEmpty();
     }
 
     @Override

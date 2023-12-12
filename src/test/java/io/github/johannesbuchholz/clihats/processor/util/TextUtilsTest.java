@@ -11,6 +11,22 @@ import static org.junit.Assert.assertNotNull;
 public class TextUtilsTest {
 
     @Test
+    public void testLineIndent_correctIndentOnEveryLine() {
+        String s = "abc\nxyz";
+        String expected = "    abc\n    xyz";
+        String actual = TextUtils.indentEveryLine(s);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testLineIndent_doNotIndentEmpty() {
+        String s = "";
+        String expected = "";
+        String actual = TextUtils.indentEveryLine(s);
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testNormalization() {
         String s = "this      is a \t str or \n string \t\t\n\t with many \t\r  \r\n\r   \n strange characters.\n    Indeed  . ";
         String e = "this is a str or string with many strange characters. Indeed .";

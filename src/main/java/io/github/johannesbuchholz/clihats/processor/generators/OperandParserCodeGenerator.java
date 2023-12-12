@@ -1,29 +1,25 @@
 package io.github.johannesbuchholz.clihats.processor.generators;
 
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
-import io.github.johannesbuchholz.clihats.processor.exceptions.ArgumentConfigurationException;
-import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
 import io.github.johannesbuchholz.clihats.processor.model.ArgumentDto;
 import io.github.johannesbuchholz.clihats.processor.model.SnippetCodeData;
+import io.github.johannesbuchholz.clihats.processor.model.TargetParameter;
 import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
 import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
 
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.VariableElement;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class OperandParserCodeGenerator extends AbstractArgumentParserCodeGenerator {
 
-    final int operandIndex;
+    private final int operandIndex;
+    private final List<String> names;
 
-    public OperandParserCodeGenerator(ArgumentDto argumentInputs, VariableElement targetVariableElement, int operandIndex, ProcessingEnvironment processingEnvironment) throws ConfigurationException, ArgumentConfigurationException {
-        super(
-                argumentInputs,
-                targetVariableElement,
-                deduceMapperTypeAndVerify(argumentInputs.getMapper(), targetVariableElement.asType(), processingEnvironment),
-                processingEnvironment);
+    public OperandParserCodeGenerator(ArgumentDto argumentInputs, TargetParameter targetParameter, int operandIndex) {
+        super(argumentInputs.getNecessity(), argumentInputs.getDescription(), argumentInputs.getDefaultValue(), argumentInputs.getMapper(), targetParameter);
         this.operandIndex = operandIndex;
+        this.names = argumentInputs.getName();
     }
 
     @Override
@@ -49,12 +45,21 @@ public class OperandParserCodeGenerator extends AbstractArgumentParserCodeGenera
         );
     }
 
+    private SnippetCodeData generateMapperCode() {
+        SnippetCodeData valueMapperCode = generateValueMapperCode(targetParameter.getTypeElement());
+        if (valueMapperCode.isEmpty())
+            return SnippetCodeData.empty();
+        return SnippetCodeData.from(
+                String.format(".withMapper(%s)", valueMapperCode.getCodeSnippet()),
+                valueMapperCode.getImportPackages());
+    }
+
     String generateName() {
         String name;
-        if (!argumentInputs.getName().isEmpty()) {
-            name = argumentInputs.getName().get(0);
+        if (!names.isEmpty()) {
+            name = names.get(0);
         } else {
-            name = targetVariableElement.getSimpleName().toString();
+            name = targetParameter.getName();
         }
         return ".withDisplayName(" + TextUtils.quote(TextUtils.toUpperCaseString(name)) + ")";
     }

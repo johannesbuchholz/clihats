@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.processor.features;
+package io.github.johannesbuchholz.clihats.core;
 
 import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;

@@ -6,8 +6,6 @@ import io.github.johannesbuchholz.clihats.core.execution.Command;
 import io.github.johannesbuchholz.clihats.core.execution.Commander;
 import io.github.johannesbuchholz.clihats.core.execution.exception.*;
 import io.github.johannesbuchholz.clihats.core.execution.parser.ArgumentParsers;
-import io.github.johannesbuchholz.clihats.processor.mapper.defaults.BooleanMapper;
-import io.github.johannesbuchholz.clihats.processor.mapper.defaults.LocalDateMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -120,8 +118,8 @@ public class CommanderTest {
                                 .withParsers(
                                         ArgumentParsers.operand(0),
                                         ArgumentParsers.operand(1),
-                                        ArgumentParsers.flagOption("-f", "--flag").withFlagValue("true").withMapper(new BooleanMapper()),
-                                        ArgumentParsers.valuedOption("-t", "--time").withMapper(new LocalDateMapper())
+                                        ArgumentParsers.flagOption("-f", "--flag").withFlagValue("true").withMapper(Boolean::parseBoolean),
+                                        ArgumentParsers.valuedOption("-t", "--time").withMapper(LocalDate::parse)
                                 ));
     }
 

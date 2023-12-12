@@ -25,7 +25,7 @@ public class TestResult {
     private TestResult() {
     }
 
-    private synchronized void receiveArgs(Object[] args) {
+    private void receiveArgs(Object[] args) {
         if (receivedArgs != null)
             throw new IllegalStateException(String.format("Trying to receive args %s when args were already present: %s" , Arrays.toString(args), Arrays.toString(receivedArgs)));
         receivedArgs = Objects.requireNonNull(args);

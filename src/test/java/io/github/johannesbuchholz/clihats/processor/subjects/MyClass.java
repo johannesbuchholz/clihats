@@ -1,4 +1,4 @@
-package io.github.johannesbuchholz.clihats.processor.subjects.misc;
+package io.github.johannesbuchholz.clihats.processor.subjects;
 
 import java.util.Objects;
 

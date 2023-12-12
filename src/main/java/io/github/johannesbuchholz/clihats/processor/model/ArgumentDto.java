@@ -3,7 +3,6 @@ package io.github.johannesbuchholz.clihats.processor.model;
 import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import java.util.List;
 
 /**
@@ -19,15 +18,15 @@ public class ArgumentDto {
     public static final String NECESSITY_FIELD_NAME = "necessity";
     public static final String DESCRIPTION_FIELD_NAME = "description";
 
-    private final VariableElement type;
+    private final Argument.Type type;
     private final List<String> name;
     private final String flagValue;
     private final String defaultValue;
     private final TypeElement mapper;
-    private final VariableElement necessity;
+    private final Argument.Necessity necessity;
     private final String description;
 
-    public ArgumentDto(VariableElement type, List<String> name, String flagValue, String defaultValue, TypeElement mapper, VariableElement necessity, String description) {
+    public ArgumentDto(Argument.Type type, List<String> name, String flagValue, String defaultValue, TypeElement mapper, Argument.Necessity necessity, String description) {
         this.type = type;
         this.name = name;
         this.flagValue = flagValue;
@@ -37,7 +36,7 @@ public class ArgumentDto {
         this.description = description;
     }
 
-    public VariableElement getType() {
+    public Argument.Type getType() {
         return type;
     }
 
@@ -57,7 +56,7 @@ public class ArgumentDto {
         return mapper;
     }
 
-    public VariableElement getNecessity() {
+    public Argument.Necessity getNecessity() {
         return necessity;
     }
 

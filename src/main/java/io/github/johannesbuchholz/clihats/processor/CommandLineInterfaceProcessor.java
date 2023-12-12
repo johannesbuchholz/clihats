@@ -47,6 +47,8 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
     public static TypeElement optionAnnotationType;
     public static TypeElement abstractValueMapperType;
     public static TypeElement identityMapperType;
+    public static TypeElement enumType;
+    public static TypeElement stringType;
 
     private void initStaticFields() {
         cliAnnotationType = processingEnv.getElementUtils().getTypeElement(CommandLineInterface.class.getCanonicalName());
@@ -54,6 +56,8 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
         optionAnnotationType = processingEnv.getElementUtils().getTypeElement(Argument.class.getCanonicalName());
         abstractValueMapperType = processingEnv.getElementUtils().getTypeElement(AbstractValueMapper.class.getCanonicalName());
         identityMapperType = processingEnv.getElementUtils().getTypeElement(AbstractValueMapper.IdentityMapper.class.getCanonicalName());
+        enumType = processingEnv.getElementUtils().getTypeElement(Enum.class.getCanonicalName());
+        stringType = processingEnv.getElementUtils().getTypeElement(String.class.getCanonicalName());
     }
 
     @Override

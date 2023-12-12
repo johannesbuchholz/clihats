@@ -10,6 +10,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CliAutoDetector {
 
@@ -35,7 +36,9 @@ public class CliAutoDetector {
     public Map<TypeElement, List<CommandDto>> groupByCli(List<CommandDto> commandDtosForAutoDetection, ProcessingEnvironment processingEnv) {
         if (commandDtosForAutoDetection.isEmpty())
             return Map.of();
-        Map<PackageElement, List<TypeElement>> cliByPackage = PackageGrouper.createFor(annotatedInterfaces).group(processingEnv.getElementUtils());
+        Map<PackageElement, List<TypeElement>> cliByPackage = annotatedInterfaces.stream()
+                .collect(Collectors.groupingBy(te -> processingEnv.getElementUtils().getPackageOf(te)));
+        log.debug("Cli elements by package: {}", cliByPackage);
 
         Map<TypeElement, List<CommandDto>> commandDtoByCli = new HashMap<>(annotatedInterfaces.size());
         for (CommandDto commandDto : commandDtosForAutoDetection) {
@@ -44,7 +47,7 @@ public class CliAutoDetector {
             PackageElement currentPackage;
             while (matchingClis.isEmpty() && packageElements.length > 0) {
                 currentPackage = processingEnv.getElementUtils().getPackageElement(String.join(".", packageElements));
-                matchingClis.addAll(Objects.requireNonNullElse(cliByPackage.get(currentPackage), List.of()));
+                matchingClis.addAll(cliByPackage.getOrDefault(currentPackage, List.of()));
                 packageElements = Arrays.copyOf(packageElements, packageElements.length - 1);
             }
             TypeElement matchingCli;
@@ -67,7 +70,7 @@ public class CliAutoDetector {
                 commandDtoByCli.get(matchingCli).add(commandDto);
             else
                 commandDtoByCli.put(matchingCli, new LinkedList<>(List.of(commandDto)));
-            log.debug("Cli auto detection: {} -> {}", commandDto, matchingCli);
+            log.debug("Command automatically assigned to cli: {} -> {}", commandDto.getName(), matchingCli);
         }
         return commandDtoByCli;
     }

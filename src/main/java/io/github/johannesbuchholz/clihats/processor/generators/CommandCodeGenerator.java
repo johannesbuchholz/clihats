@@ -6,10 +6,7 @@ import io.github.johannesbuchholz.clihats.processor.CommandLineInterfaceProcesso
 import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ArgumentConfigurationException;
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
-import io.github.johannesbuchholz.clihats.processor.model.ArgumentDto;
-import io.github.johannesbuchholz.clihats.processor.model.CommandDto;
-import io.github.johannesbuchholz.clihats.processor.model.ExtendedSnippetCodeData;
-import io.github.johannesbuchholz.clihats.processor.model.SnippetCodeData;
+import io.github.johannesbuchholz.clihats.processor.model.*;
 import io.github.johannesbuchholz.clihats.processor.util.JavadocUtils;
 import io.github.johannesbuchholz.clihats.processor.util.ProcessingUtils;
 import io.github.johannesbuchholz.clihats.processor.util.TextUtils;
@@ -41,10 +38,7 @@ public class CommandCodeGenerator {
 
     private final String originIdentifier;
 
-    /*
-    Might contain null entries. A null entry corresponds to a method parameter that is not annotated with @Argument.
-     */
-    private final List<ArgumentParserCodeGenerator> argumentParserCodeGenerators;
+    private final List<ParameterCodeGeneratorPair> parameterCodeGeneratorPairs;
 
     public CommandCodeGenerator(ProcessingEnvironment processingEnvironment, CommandDto commandDto) throws ConfigurationException {
         this.processingEnvironment = processingEnvironment;
@@ -53,54 +47,52 @@ public class CommandCodeGenerator {
         name = commandDto.getName();
         description = commandDto.getDescription();
 
-        List<ArgumentDto> argumentDtos = extractArgumentDtos(commandDto.getAnnotatedMethod(), processingEnvironment);
+        List<ParameterArgumentPair> parameterArgumentPairs = extractArgumentDtos(commandDto.getAnnotatedMethod(), processingEnvironment);
         originIdentifier = ProcessingUtils.generateOriginIdentifier(annotatedMethod);
-        validateMethod(originIdentifier, annotatedMethod, argumentDtos);
+        validateMethod(originIdentifier, annotatedMethod);
 
-        argumentParserCodeGenerators = gatherArgumentParserCodeGenerators(
-                argumentDtos,
-                annotatedMethod.getParameters(),
+        parameterCodeGeneratorPairs = gatherArgumentParserCodeGenerators(
+                parameterArgumentPairs,
                 originIdentifier,
                 processingEnvironment
         );
 
     }
 
-    private static List<ArgumentDto> extractArgumentDtos(ExecutableElement annotatedMethod, ProcessingEnvironment processingEnvironment) {
+    private static List<ParameterArgumentPair> extractArgumentDtos(ExecutableElement annotatedMethod, ProcessingEnvironment processingEnvironment) {
         String docComment = processingEnvironment.getElementUtils().getDocComment(annotatedMethod);
         final Map<String, String> paramDescriptionByName = new HashMap<>();
         if (docComment != null)
             paramDescriptionByName.putAll(JavadocUtils.extractParamDoc(docComment));
 
         return annotatedMethod.getParameters().stream()
-                .map(ve -> mapToArgumentDto(ve, paramDescriptionByName, processingEnvironment))
+                .map(ve -> extractArgumentDto(ve, paramDescriptionByName.getOrDefault(ve.getSimpleName().toString(), ""), processingEnvironment)
+                        .map(dto -> ParameterArgumentPair.pair(ve, dto))
+                        .orElse(ParameterArgumentPair.unmanagedParameter(ve)))
                 .collect(Collectors.toList());
     }
 
     /**
      * Returns {@code null} if the given method parameter does not possess an annotation of type {@link Argument}.
      */
-    private static ArgumentDto mapToArgumentDto(VariableElement methodParameter, Map<String, String> paramDescriptionByName, ProcessingEnvironment processingEnvironment) {
+    private static Optional<ArgumentDto> extractArgumentDto(VariableElement methodParameter, String paramJavaDoc, ProcessingEnvironment processingEnvironment) {
         Optional<ArgumentDto> argumentDto = methodParameter.getAnnotationMirrors().stream()
-                .filter(am -> processingEnvironment.getTypeUtils().isSameType(am.getAnnotationType(), CommandLineInterfaceProcessor.optionAnnotationType.asType()))
+                .filter(am -> am.getAnnotationType().equals(CommandLineInterfaceProcessor.optionAnnotationType.asType()))
                 .findFirst()
-                .map(annotationMirror -> mapToArgumentDto(
-                        annotationMirror,
-                        paramDescriptionByName.getOrDefault(methodParameter.getSimpleName().toString(), ""),
-                        processingEnvironment));
+                .map(annotationMirror -> extractArgumentDto(annotationMirror, paramJavaDoc, processingEnvironment));
         argumentDto
-                .map(dto -> determineDubiousConfiguration(dto, processingEnvironment))
+                .map(CommandCodeGenerator::determineDubiousConfiguration)
                 .ifPresent(dubiousMessages -> dubiousMessages.forEach(msg -> log.warn("Dubious argument configuration at {}: {}", methodParameter, msg)));
-        return argumentDto.orElse(null);
+        return argumentDto;
     }
 
-    private static List<String> determineDubiousConfiguration(ArgumentDto argumentDto, ProcessingEnvironment processingEnvironment) {
+    private static List<String> determineDubiousConfiguration(ArgumentDto argumentDto) {
         List<String> dubiousConfigurations = new ArrayList<>();
-        Argument.Type type = ProcessingUtils.getEnumFromTypeElement(EnumSet.allOf(Argument.Type.class), argumentDto.getType(), processingEnvironment);
+        Argument.Type type = argumentDto.getType();
         if (type != Argument.Type.OPTION && !argumentDto.getFlagValue().isEmpty())
             dubiousConfigurations.add("Encountered flag value on an argument that is not an option");
 
-        Argument.Necessity necessity = ProcessingUtils.getEnumFromTypeElement(EnumSet.allOf(Argument.Necessity.class), argumentDto.getNecessity(), processingEnvironment);
+        Argument.Necessity necessity = argumentDto.getNecessity();
         if (!argumentDto.getDefaultValue().isEmpty() && necessity != Argument.Necessity.OPTIONAL)
             dubiousConfigurations.add("Encountered non-empty default value while necessity is not optional");
         if (!argumentDto.getFlagValue().isEmpty()) {
@@ -110,36 +102,38 @@ public class CommandCodeGenerator {
         return dubiousConfigurations;
     }
 
-    private static ArgumentDto mapToArgumentDto(AnnotationMirror optionMirror, String javadocParamDescription, ProcessingEnvironment processingEnvironment) {
+    private static ArgumentDto extractArgumentDto(AnnotationMirror optionMirror, String javadocParamDescription, ProcessingEnvironment processingEnvironment) {
         Map<String, ? extends AnnotationValue> valuesByFieldName = processingEnvironment.getElementUtils().getElementValuesWithDefaults(optionMirror)
                 .entrySet().stream()
                 .collect(Collectors.toMap(entry -> entry.getKey().getSimpleName().toString(), Map.Entry::getValue));
-        return mapToArgumentDto(valuesByFieldName, javadocParamDescription, processingEnvironment);
+        return extractArgumentDto(valuesByFieldName, javadocParamDescription, processingEnvironment);
     }
 
-    private static ArgumentDto mapToArgumentDto(Map<String, ? extends AnnotationValue> valuesByFieldName, String javadocParamDescription, ProcessingEnvironment processingEnvironment) {
+    private static ArgumentDto extractArgumentDto(Map<String, ? extends AnnotationValue> valuesByFieldName, String javadocParamDescription, ProcessingEnvironment processingEnvironment) {
+        VariableElement typeVariableElement = valuesByFieldName.get(ArgumentDto.TYPE_FIELD_NAME).accept(new EnumAnnotationValueVisitor(), null);
+        List<String> name = valuesByFieldName.get(ArgumentDto.NAME_FIELD_NAME).accept(new ArrayOfSimpleAnnotationValueVisitor<>(String.class), null);
+        String flagValue = valuesByFieldName.get(ArgumentDto.FLAG_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null);
+        String defaultValue = valuesByFieldName.get(ArgumentDto.DEFAULT_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null);
+        TypeElement mapper = valuesByFieldName.get(ArgumentDto.MAPPER_FIELD_NAME).accept(new TypeAnnotationValueVisitor(), processingEnvironment.getTypeUtils());
+        VariableElement necessityVariableElement = valuesByFieldName.get(ArgumentDto.NECESSITY_FIELD_NAME).accept(new EnumAnnotationValueVisitor(), null);
         String descriptionFromAnnotation = valuesByFieldName.get(ArgumentDto.DESCRIPTION_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null);
         return new ArgumentDto(
-                valuesByFieldName.get(ArgumentDto.TYPE_FIELD_NAME).accept(new EnumAnnotationValueVisitor(), null),
-                valuesByFieldName.get(ArgumentDto.NAME_FIELD_NAME).accept(new ArrayOfSimpleAnnotationValueVisitor<>(String.class), null),
-                valuesByFieldName.get(ArgumentDto.FLAG_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null),
-                valuesByFieldName.get(ArgumentDto.DEFAULT_FIELD_NAME).accept(new SimpleValueAnnotationValueVisitor<>(String.class), null),
-                valuesByFieldName.get(ArgumentDto.MAPPER_FIELD_NAME).accept(new TypeAnnotationValueVisitor(), processingEnvironment.getTypeUtils()),
-                valuesByFieldName.get(ArgumentDto.NECESSITY_FIELD_NAME).accept(new EnumAnnotationValueVisitor(), null),
+                ProcessingUtils.getEnumFromTypeElement(Argument.Type.class, typeVariableElement, processingEnvironment),
+                name,
+                flagValue,
+                defaultValue,
+                mapper,
+                ProcessingUtils.getEnumFromTypeElement(Argument.Necessity.class, necessityVariableElement, processingEnvironment),
                 descriptionFromAnnotation.isEmpty() ? javadocParamDescription : descriptionFromAnnotation
         );
     }
 
-    private static void validateMethod(String originIdentifier, ExecutableElement annotatedMethod, List<ArgumentDto> options) throws ConfigurationException {
+    private static void validateMethod(String originIdentifier, ExecutableElement annotatedMethod) throws ConfigurationException {
         List<String> errorMessages = new ArrayList<>();
         if (annotatedMethod.getReturnType().getKind() != TypeKind.VOID)
             errorMessages.add("Method must have return type kind void but has return type kind " + annotatedMethod.getReturnType().getKind());
         if (!annotatedMethod.getModifiers().containsAll(List.of(Modifier.PUBLIC, Modifier.STATIC)))
             errorMessages.add("Annotated method is not public or not static: " + annotatedMethod.getModifiers());
-        if (annotatedMethod.getParameters().size() != options.size())
-            errorMessages.add("Method parameter count and declared option count differs: " +
-                    "parameters " + annotatedMethod.getParameters().size() + ", declared: " + options.size()
-            );
 
         List<VariableElement> primitiveParameters = annotatedMethod.getParameters().stream().filter(ve -> ve.asType().getKind().isPrimitive()).collect(Collectors.toList());
         if (!primitiveParameters.isEmpty())
@@ -157,42 +151,17 @@ public class CommandCodeGenerator {
             );
     }
 
-    private static List<ArgumentParserCodeGenerator> gatherArgumentParserCodeGenerators(List<ArgumentDto> options, List<? extends VariableElement> targetTypes, String originIdentifier, ProcessingEnvironment processingEnvironment) throws ConfigurationException {
-        List<ArgumentParserCodeGenerator> valuedOptionParserCodeGenerators = new ArrayList<>();
-        int operandsEncountered = 0;
-        for (int i = 0; i < options.size(); i++) {
-            ArgumentDto argumentDto = options.get(i);
-            if (argumentDto == null) {
-                valuedOptionParserCodeGenerators.add(null);
-                continue;
-            }
-            VariableElement targetVariableElement = targetTypes.get(i);
-            Argument.Type type = ProcessingUtils.getEnumFromTypeElement(EnumSet.allOf(Argument.Type.class), argumentDto.getType(), processingEnvironment);
-            ArgumentParserCodeGenerator parserCodeGenerator;
-            try {
-                switch (type) {
-                    case OPTION:
-                        if (argumentDto.getFlagValue().isEmpty()) {
-                            parserCodeGenerator = new ValuedOptionParserCodeGenerator(argumentDto, targetVariableElement, processingEnvironment);
-                        } else {
-                            parserCodeGenerator = new FlagOptionParserCodeGenerator(argumentDto, targetVariableElement, processingEnvironment);
-                        }
-                        break;
-                    case OPERAND:
-                        parserCodeGenerator = new OperandParserCodeGenerator(argumentDto, targetVariableElement, operandsEncountered++, processingEnvironment);
-                        break;
-                    case ARRAY_OPERAND:
-                        parserCodeGenerator = new ArrayOperandParserCodeGenerator(argumentDto, targetVariableElement, operandsEncountered++, processingEnvironment);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unknown argument type " + type);
-                }
-            } catch (ArgumentConfigurationException e) {
-                throw new ConfigurationException(String.format("Can not process argument at %s in %s: %s", targetVariableElement.getSimpleName(), originIdentifier, e.getMessage()), e);
-            }
-            valuedOptionParserCodeGenerators.add(parserCodeGenerator);
+    private static List<ParameterCodeGeneratorPair> gatherArgumentParserCodeGenerators(
+            List<ParameterArgumentPair> parameterArgumentPairs,
+            String originIdentifier,
+            ProcessingEnvironment processingEnvironment
+    ) throws ConfigurationException {
+        ArgumentParserCodeGeneratorFactory generatorFactory = ArgumentParserCodeGeneratorFactory.getNew(processingEnvironment);
+        try {
+            return generatorFactory.createParserCodeGenerators(parameterArgumentPairs);
+        } catch (ArgumentConfigurationException e) {
+            throw new ConfigurationException(String.format("Can not process argument at %s: %s", originIdentifier, e.getMessage()), e);
         }
-        return valuedOptionParserCodeGenerators;
     }
 
     /**
@@ -213,17 +182,17 @@ public class CommandCodeGenerator {
                     .append(CommanderProviderCodeGenerator.NEW_LINE_INDENT_DOUBLE).append(".withDescription(").append(TextUtils.quote(actualDescription)).append(")");
         if (isAnyArgumentParserCodeGeneratorPresent()) {
             commandCodeSb
-                    .append(CommanderProviderCodeGenerator.NEW_LINE_INDENT_DOUBLE).append(".withParsers(");
+                    .append(CommanderProviderCodeGenerator.NEW_LINE_INDENT_DOUBLE).append(".withParsers(")
+                    .append(CommanderProviderCodeGenerator.NEW_LINE_INDENT_DOUBLE);
             List<String> parserCodeStrings = new ArrayList<>();
-            argumentParserCodeGenerators.stream()
-                    .filter(Objects::nonNull)
-                    .forEach(codeGenerator -> {
-                        SnippetCodeData parserSnippetCodeData = codeGenerator.generateParserCode();
-                        imports.addAll(parserSnippetCodeData.getImportPackages());
-                        parserCodeStrings.add(TextUtils.indentEveryLine(parserSnippetCodeData.getCodeSnippet(), CommanderProviderCodeGenerator.LINE_INDENT_DOUBLE));
+            parameterCodeGeneratorPairs.stream()
+                    .filter(ParameterCodeGeneratorPair::isHasCodeGenerator)
+                    .map(pair -> pair.getArgumentParserCodeGenerator().generateParserCode())
+                    .forEach(snippet -> {
+                        imports.addAll(snippet.getImportPackages());
+                        parserCodeStrings.add(TextUtils.indentEveryLine(snippet.getCodeSnippet(), CommanderProviderCodeGenerator.LINE_INDENT_DOUBLE));
                     });
             commandCodeSb
-                    .append(CommanderProviderCodeGenerator.NEW_LINE_INDENT_DOUBLE)
                     .append(String.join("," + CommanderProviderCodeGenerator.NEW_LINE_INDENT_DOUBLE, parserCodeStrings))
                     .append(")");
         }
@@ -273,24 +242,21 @@ public class CommandCodeGenerator {
     }
 
     /**
-     * (String) args[0], (Integer) args[1], args[2]
+     * (String) args[0], (Integer) args[1], null
      */
     private SnippetCodeData getMethodCallParameters() {
-        List<SnippetCodeData> parameterCodeSnippets = annotatedMethod.getParameters().stream()
-                .map(variableElement -> mapToTypeString(variableElement.asType()))
-                .collect(Collectors.toList());
-
         Set<String> imports = new HashSet<>();
         List<String> parameterStrings = new ArrayList<>();
         String pattern = "(%s) " + INSTRUCTION_PARAMETER_NAME + "[%s]";
-        int optionParserIndex = 0;
-        for (int i = 0; i < parameterCodeSnippets.size(); i++) {
-            if (argumentParserCodeGenerators.get(i) == null) {
-                parameterStrings.add("null");
-            } else {
-                SnippetCodeData codeSnippet = parameterCodeSnippets.get(i);
-                parameterStrings.add(String.format(pattern, codeSnippet.getCodeSnippet(), optionParserIndex++));
+        int argIndex = 0;
+        for (ParameterCodeGeneratorPair pair : parameterCodeGeneratorPairs) {
+            if (pair.isHasCodeGenerator()) {
+                // here if method parameter has been annotated
+                SnippetCodeData codeSnippet = mapToTypeString(pair.getTargetParameter().asType());
+                parameterStrings.add(String.format(pattern, codeSnippet.getCodeSnippet(), argIndex++));
                 imports.addAll(codeSnippet.getImportPackages());
+            } else {
+                parameterStrings.add("null");
             }
         }
         return SnippetCodeData.from(String.join(", ", parameterStrings), imports);
@@ -318,7 +284,7 @@ public class CommandCodeGenerator {
         }
 
         // map current type
-        Element methodParameterAsElement = processingEnvironment.getTypeUtils().asElement(methodParameterType);
+        TypeElement methodParameterAsElement = (TypeElement) processingEnvironment.getTypeUtils().asElement(methodParameterType);
         if (methodParameterAsElement == null)
             throw new ConfigurationException("Can not process method parameter type '%s' on %s. The parameter does not seem to correspond to a DeclaredType or VariableElement. This might be an issue when using wildcards.", methodParameter, originIdentifier);
         Set<String> imports = new HashSet<>(ProcessingUtils.getPackageStrings(methodParameterAsElement));
@@ -353,7 +319,7 @@ public class CommandCodeGenerator {
     }
 
     private boolean isAnyArgumentParserCodeGeneratorPresent() {
-        return argumentParserCodeGenerators.stream().anyMatch(Objects::nonNull);
+        return !parameterCodeGeneratorPairs.isEmpty();
     }
 
 }

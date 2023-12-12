@@ -2,17 +2,69 @@ package io.github.johannesbuchholz.clihats.processor.features;
 
 import io.github.johannesbuchholz.clihats.core.execution.CliException;
 import io.github.johannesbuchholz.clihats.core.execution.exception.CliHelpCallException;
+import io.github.johannesbuchholz.clihats.processor.annotations.Argument;
+import io.github.johannesbuchholz.clihats.processor.annotations.Command;
+import io.github.johannesbuchholz.clihats.processor.annotations.CommandLineInterface;
 import io.github.johannesbuchholz.clihats.processor.execution.CliHats;
-import io.github.johannesbuchholz.clihats.processor.subjects.Cli1;
 import junit.framework.AssertionFailedError;
 import org.junit.Test;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+/**
+ * Does stuff for testing purposes. Actually it does nothing of value... This should
+ * appear in the description of the cli.
+ */
+@CommandLineInterface
 public class DocStringTest {
+
+    /**
+     * Some javadoc explaining this elaborated method.
+     *
+     * @param stringArg        description read from javadoc including this '@' symbol and including
+     *                         this linebreak. Because this is very long...
+     * @param descriptionParam description that is ignored due to explicit "description"-parameter
+     * @param otherArg         This parameter is not filled by clihats.
+     * @param z                this should be the last option in the help text.
+     * @throws RuntimeException if something goes wrong.
+     * @serialData abcdefg
+     * @see CliHats
+     * @since 2022
+     */
+    @Command
+    public static void runWithJavadoc(
+            @Argument String stringArg,
+            @Argument(description = "this will appear in the option description") String descriptionParam,
+            String otherArg,
+            @Argument String z
+    ) {
+       throw new IllegalStateException(String.format("This is never reached: run-wth-javadoc: %s", List.of(stringArg, descriptionParam, otherArg, z)));
+    }
+
+    /**
+     * This is the first method that is called by {@link DocStringTest}, when invoked with the right arguments.
+     * This is another line of text. One will never know.
+     */
+    @Command(name = "command1", cli = DocStringTest.class)
+    public static void myMethod1(
+            @Argument(type = Argument.Type.OPERAND) String arg1,
+            @Argument(name = {"--a2", "--aa2"}) Integer arg2,
+            @Argument(name = "--a3", defaultValue = "/my/default/path") Path arg3
+    ) {
+       throw new IllegalStateException(String.format("This is never reached: command1: %s", List.of(arg1, arg2, arg3)));
+    }
+
+    @Command(name = "command2", cli = DocStringTest.class)
+    public static void myMethod2(
+            @Argument(name = "-r", necessity = Argument.Necessity.REQUIRED) String r,
+            @Argument(name = "--opt", flagValue = "Option-On", description = "This is a lengthy description for a string argument.") String arg1
+    ) {
+       throw new IllegalStateException(String.format("This is never reached: command2: %s", List.of(r, arg1)));
+    }
 
     @Test
     public void testCommanderDescriptionByDocString() {
@@ -21,8 +73,8 @@ public class DocStringTest {
 
         // when
         // then
-        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(Cli1.class).executeWithThrows(args));
-        String expected = "Help for cli-1\n" +
+        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(DocStringTest.class).executeWithThrows(args));
+        String expected = "Help for doc-string-test\n" +
                 "Does stuff for testing purposes. Actually it does nothing of value... This should appear in the     \n" +
                 "description of the cli.";
         assertEquals(CliHelpCallException.class, actualException.getClass());
@@ -37,14 +89,14 @@ public class DocStringTest {
 
         // when
         // then
-        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(Cli1.class).executeWithThrows(args));
+        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(DocStringTest.class).executeWithThrows(args));
         String expected = "Help for command1                                                               \n" +
                 "\n" +
                 "Synopsis:\n" +
                 "command1 [--a2|--aa2 <value>] [--a3 <value>] [ARG_1]\n" +
                 "\n" +
-                "This is the first method that is called by {@link Cli1}, when invoked with the  \n" +
-                "right arguments. This is another line of text. One will never know.";
+                "This is the first method that is called by {@link DocStringTest}, when invoked  \n" +
+                "with the right arguments. This is another line of text. One will never know.    ";
         assertEquals(CliHelpCallException.class, actualException.getClass());
 
         assertStringStartsWith(actualException.getMessage(), expected);
@@ -58,7 +110,7 @@ public class DocStringTest {
 
         // when
         // then
-        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(Cli1.class).executeWithThrows(args));
+        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(DocStringTest.class).executeWithThrows(args));
         String expected = "Help for command2                                                               \n" +
                 "\n" +
                 "Synopsis:\n" +
@@ -80,7 +132,7 @@ public class DocStringTest {
 
         // when
         // then
-        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(Cli1.class).executeWithThrows(args));
+        CliException actualException = assertThrows(CliException.class, () -> CliHats.get(DocStringTest.class).executeWithThrows(args));
         List<String> expectedDocSequences = List.of(
                 "description read from javadoc including this '@' symbol and",
                 "this linebreak. Because this is very long...",

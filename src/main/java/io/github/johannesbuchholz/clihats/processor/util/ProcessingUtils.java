@@ -12,8 +12,6 @@ import java.util.stream.Stream;
 
 public class ProcessingUtils {
 
-    public static final String JAVA_LANG = "java.lang";
-
     /**
      * {@code classToCompareTo} must not be an array type.
      */
@@ -39,33 +37,25 @@ public class ProcessingUtils {
         );
     }
 
-    public static Set<String> getPackageStrings(Element element) {
-        if (element == null)
-            return Set.of();
-        return getPackageStrings(List.of(element));
+    public static Set<String> getPackageStrings(TypeElement... typeElements) {
+        if (typeElements == null)
+            throw new IllegalArgumentException("Argument must not be null");
+        return Arrays.stream(typeElements)
+                .map(TypeElement::getQualifiedName)
+                .map(Name::toString)
+                .filter(ProcessingUtils::importRequired)
+                .collect(Collectors.toSet());
     }
 
-    public static Set<String> getPackageStrings(List<? extends Element> elements) {
-        Set<String> packageStrings = new HashSet<>();
-        for (Element e : elements) {
-            if (!e.getKind().isClass() && !e.getKind().isInterface())
-                throw new IllegalArgumentException("Programming error: Trying to get a package of an element that is not an interface or a class: " + e + " (" + e.getKind() + ")");
-            String canonicalName = ((TypeElement) e).getQualifiedName().toString();
-            if (ProcessingUtils.importRequired(canonicalName))
-                packageStrings.add(canonicalName);
-        }
-        return packageStrings;
-    }
-
-    public static Set<String> getPackageStrings(Class<?>... moreTypes) {
-        return Stream.of(moreTypes)
+    public static Set<String> getPackageStrings(Class<?>... types) {
+        return Stream.of(types)
                 .map(Class::getCanonicalName)
                 .filter(ProcessingUtils::importRequired)
                 .collect(Collectors.toSet());
     }
 
     private static boolean importRequired(String canonicalClassName) {
-        return !canonicalClassName.startsWith(JAVA_LANG);
+        return !canonicalClassName.startsWith("java.lang");
     }
 
     public static List<? extends AnnotationMirror> getAnnotationInstances(Element annotatedElement, Element requestedElement, ProcessingEnvironment processingEnvironment) {
@@ -117,7 +107,8 @@ public class ProcessingUtils {
             throw new IllegalStateException("Found more than one no-arg constructor for type " + typeElement);
     }
 
-    public static <T extends Enum<T>> T getEnumFromTypeElement(EnumSet<T> enumTypes, VariableElement enumElement, ProcessingEnvironment processingEnvironment) {
+    public static <T extends Enum<T>> T getEnumFromTypeElement(Class<T> enumType, VariableElement enumElement, ProcessingEnvironment processingEnvironment) {
+        EnumSet<T> enumTypes = EnumSet.allOf(enumType);
         if (enumElement.getKind() != ElementKind.ENUM_CONSTANT)
             throw new IllegalArgumentException("Given type element does not belong to an enum constant");
         return enumTypes.stream()

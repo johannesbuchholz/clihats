@@ -22,12 +22,6 @@ public class CommanderCodeGenerator {
         this.commanderDto = commanderDto;
     }
 
-    /**
-     * Commander.forName("myCommander)
-     *     .withDescription("describing myCommander")
-     *     .withPrintStream(...)
-     *     .withCommands(...)))
-     */
     public ExtendedSnippetCodeData generateCommanderCode() {
         StringBuilder commanderSb = new StringBuilder("Commander.forName(").append(TextUtils.quote(generateCommanderName())).append(")");
         Set<String> imports = ProcessingUtils.getPackageStrings(Commander.class);
