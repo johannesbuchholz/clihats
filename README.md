@@ -6,11 +6,30 @@
 CliHats - The java library to easily expose code to the command line. Building a command-line interface becomes as simple as putting on a hat.
 <!--  end::readme-intro[] -->
 
+<!--  tag::readme-schema[] -->
+<pre>
+                           public static void main(String[] args)
+                                            |
+                                            |
+                                            V
+                                       |---------|    
+                      ---------------- | CliHats | ----------------    
+                      |                |---------|                |                                
+                      |                     |                     V                     
+                      |                     | public static void <b>upload</b>(String name, String pw, Path... files)                              
+                      V                     |  
+public static void <b>status()</b>                 |
+                                            V
+                     public static void <b>loadConfig</b>(Path configPath)                  
+                                
+</pre>
+<!--  end::readme-schema[] -->
+
 CliHats offers
 <!-- tag::readme-offers[] -->
 - Declarative and functional API
 - Automatic selection of commands based on user inputs
-- Option parsing
+- Option parsing and value mapping
 - Automatically generated help pages and error messages
 <!-- end::readme-offers[] -->
 
@@ -29,52 +48,65 @@ public class CliHatsQuickstart {
 
     /**
      * For some name, prints "Hello, {name}!" multiple times.
-     * @param name The name to greet.
+     * @param name The name to greet. Defaults to 'John'.
+     * @param familyName The family name of the person to greet. If set, provides name 'Conner'.
      * @param count The number of greetings.
      */
     @Command
-    public static void sayHello(@Argument String name, @Argument(type = Argument.Type.OPERAND, necessity = Argument.Necessity.REQUIRED) Integer count) {
+    public static void sayHello(
+            @Argument(defaultValue = "John") String name,
+            @Argument(flagValue = "Conner") String familyName,
+            @Argument(type = OPERAND, necessity = REQUIRED) Integer count
+    ) {
         for (int i = 0; i < count; i++)
-            System.out.println("Hello, " + name + "!");
+            System.out.println("Hello, " + name + Optional.ofNullable(familyName).map(s -> " " + s).orElse("") + "!");
     }
 
 }
 ```
 
-Compile and run your command by running the above entrypoint with `say-hello --name John 4`
+Compile and run your command by running the above entrypoint with `say-hello --name John 4` and receive
+```text
+Hello, John!
+Hello, John!
+Hello, John!
+Hello, John!
 ```
-Hello, John!
-Hello, John!
-Hello, John!
-Hello, John!
+
+or instead run `say-hello 2 -fn John` to receive
+```text
+Hello, John Conner!
+Hello, John Conner!
 ```
 
 Alternatively, get the command help page by running `say-hello --help`
-```
+```text
 Help for say-hello                                                              
 
 Synopsis:
-say-hello [-n <value>] COUNT
+say-hello [-f] [-n <value>] COUNT
 
-Prints "Hello {name}" multiple count.                                           
+For some name, prints "Hello, {name}!" multiple times.                          
 
 Arguments:                                                                      
--n    --name            The name to greet.      
-COUNT        (required) The number of greetings.
+-f    --family-name (flag)     The family name of the person to greet. If set, provides   
+                               name 'Conner'.                                             
+-n    --name                   The name to greet. Defaults to 'John'.                     
+COUNT               (required) The number of greetings. 
 ```
 
 ## Why CliHats?
 
-In contrary to other parameter parsers like [JCommander](https://github.com/cbeust/jcommander), CliHats directly links java methods to the command-line.
+In contrary to other parameter parsers like [JCommander](https://github.com/cbeust/jcommander) or [picocli](https://github.com/remkop/picocli), CliHats directly links java methods to the command-line.
 
-This is advantageous when orchestrating multiple functionalities of your code neatly behind one command line interface while the api is deduced from your java methods.
+This is advantageous when orchestrating multiple functionalities of your code neatly behind one command line interface while the api is deduced from Annotations on your java methods.
 Let CliHats care for argument parsing, choosing the right command and generating help pages while you design your access points: API first becomes a breeze.
 
 To make a long story short:
 - CliHats provides a functional view on building a command-line interface.
 - CliHats is a cli-builder. You declare the api and CliHats builds corresponding links from input arguments to methods.
 - CliHats is slim, uses plain java and is basically reflection-free.
-- CliHats lets you adopt a command-line interface in no time, potentially not even requiring you to touch your current code's logic.
+- CliHats lets you adopt a command-line interface in no time, potentially without writing any additional java class.
 
 ### When to use CliHats?
 If you want to offer your users a toolset of methods behind one single java API, CliHats will come in handy. 
