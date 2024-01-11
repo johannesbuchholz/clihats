@@ -1,10 +1,30 @@
 # Welcome to CliHats
 
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.johannesbuchholz/clihats)
+![GitHub repo size](https://img.shields.io/github/repo-size/johannesbuchholz/clihats)
 
 <!-- tag::readme-intro[] -->
 CliHats - The java library to easily expose code to the command line. Building a command-line interface becomes as simple as putting on a hat.
 <!--  end::readme-intro[] -->
+
+<!--  tag::readme-schema[] -->
+<pre>
+                    public static void main(String[] args)
+                                       |
+                                       |
+                                       V
+                                  |---------|     
+             -------------------- | <b>CliHats</b> | --------------------    
+             |                    |---------|                    |                                
+             |                         |                         V                     
+             |                         |    public static void <b>upload</b>(String name, String pw, Path... files)                              
+             V                         |  
+public static void <b>status</b>();           |
+                                       V
+                     public static void <b>loadConfig</b>(Path configPath)                  
+                                
+</pre>
+<!--  end::readme-schema[] -->
 
 CliHats offers
 <!-- tag::readme-offers[] -->
@@ -33,7 +53,10 @@ public class CliHatsQuickstart {
      * @param count The number of greetings.
      */
     @Command
-    public static void sayHello(@Argument String name, @Argument(type = Argument.Type.OPERAND, necessity = Argument.Necessity.REQUIRED) Integer count) {
+    public static void sayHello(
+            @Argument String name, 
+            @Argument(type = OPERAND, necessity = REQUIRED) Integer count
+    ) {
         for (int i = 0; i < count; i++)
             System.out.println("Hello, " + name + "!");
     }
