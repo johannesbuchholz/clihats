@@ -111,13 +111,13 @@ CliHats is available on [Maven Central](https://mvnrepository.com/artifact/io.gi
 <dependency>
     <groupId>io.github.johannesbuchholz</groupId>
     <artifactId>clihats</artifactId>
-    <version>1.0.1-2-296fee82-SNAPSHOT</version>
+    <version>1.1.0-4-0600f045-SNAPSHOT</version>
 </dependency>
 ```
 
 ### Gradle
 ```groovy
-implementation group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.0.1-2-296fee82-SNAPSHOT'
+implementation group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.1.0-4-0600f045-SNAPSHOT'
 ```
 
 ## Documentation

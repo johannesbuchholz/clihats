@@ -4,7 +4,7 @@
 :icons: font
 :prewrap!:
 // version managed by create-release-commit.sh
-:version: 1.0.0
+:version: 1.1.0-4-0600f045-SNAPSHOT
 
 = Welcome to CliHats
 johannesbuchholz@outlook.com
