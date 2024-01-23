@@ -159,8 +159,10 @@ Valued and flag option parsers watch out for their "names" and extract values ac
 Option names must conform to the following rules:
 
 - Names must start with `-`.
-- Names must not contain any space characters.
-- Names must be unique among all option names of a command.
+- Length must be at least 2.
+- Must not be equal to '--'. This is a reserved argument.
+- Must not contain any space characters.
+- Must be unique among all option names of a command.
 
 POSIX compliant option names consist of only one alphanumeric character, for example, `-a` or `-9`. During parsing, POSIX compliant options may be grouped behind one `-`.
 
@@ -194,6 +196,7 @@ Currently, CliHats automatically configures mappers for these parameter types:
 - `java.nio.file.Path`
 - `java.time.LocalDate`
 - `java.time.LocalDateTime`
+- Enum types
 - One-dimensional arrays containing the above types in conjunction with array operand parsers.
 
 Explicitly declaring `mapper` overrides automatic mapping.
