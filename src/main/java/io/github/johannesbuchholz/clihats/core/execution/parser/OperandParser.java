@@ -8,6 +8,7 @@ import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsi
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -108,6 +109,11 @@ public class OperandParser<T> extends AbstractOperandParser<T> {
             synopsisSnippet = "[" + synopsisSnippet + "]";
         }
         return new ParserHelpContent(List.of(displayNameToShow), List.of(), additionalInfo, description, synopsisSnippet);
+    }
+
+    @Override
+    public String toString() {
+        return Optional.ofNullable(displayName).orElse(super.toString());
     }
 
 }

@@ -56,7 +56,8 @@ public abstract class AbstractOptionParser<T> implements ArgumentParser<T> {
                     || value.charAt(0) != InputArgument.OPTION_PREFIX
                     || value.equals(InputArgument.OPERAND_DELIMITER)
                     || value.chars().skip(1).anyMatch(Character::isSpaceChar))
-                throw new IllegalArgumentException("Value is not a valid option name: " + value);
+                throw new IllegalArgumentException(String.format("Invalid option name: %s. %s",
+                        value, "A valid name satisfies the following: Have length greater than one. Start with '-'. Be not equal to '--'. Do not contain any whitespaces."));
             return new OptionParserName(value);
         }
 

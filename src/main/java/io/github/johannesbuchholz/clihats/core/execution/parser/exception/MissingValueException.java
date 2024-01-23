@@ -9,7 +9,7 @@ import io.github.johannesbuchholz.clihats.core.execution.parser.AbstractOptionPa
 public class MissingValueException extends ArgumentParsingException {
 
     public MissingValueException(AbstractOptionParser<?> failingParser) {
-        super("No value provided or multiple valued options within a single argument " + failingParser);
+        super("No value provided or multiple valued options within a single argument: " + failingParser);
     }
 
 }

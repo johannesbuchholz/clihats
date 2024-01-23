@@ -79,11 +79,6 @@ public abstract class AbstractOperandParser<T> implements ArgumentParser<T> {
             return Integer.compare(value, ((OperandParserId) o).value);
         }
 
-        @Override
-        public String toString() {
-            throw new IllegalStateException();
-        }
-
     }
 
 }

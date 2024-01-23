@@ -9,7 +9,7 @@ import io.github.johannesbuchholz.clihats.core.execution.exception.ArgumentParsi
 public class MissingArgumentException extends ArgumentParsingException {
 
     public MissingArgumentException(ArgumentParser<?> failingParser) {
-        super("Missing required argument "+ failingParser);
+        super("Missing required argument " + failingParser);
     }
 
 }
