@@ -800,7 +800,7 @@ Nice to meet you!</pre>
                         .withDescription(&quot;Prints a greeting to the specified name.&quot;)
                         .withParsers(
                                 ArgumentParsers.valuedOption(&quot;-n&quot;, &quot;--name&quot;).withRequired(true).withDescription(&quot;The name to greet.&quot;),
-                                ArgumentParsers.flagOption(&quot;-p&quot;, &quot;--polite&quot;).withFlagValue(&quot;true&quot;).withDefault(&quot;false&quot;).withMapper(new BooleanMapper()).withDescription(&quot;If true, additionally prints \&quot;Nice to meet you!\&quot;.&quot;)))</code></pre>
+                                ArgumentParsers.flagOption(&quot;-p&quot;, &quot;--polite&quot;).withFlagValue(&quot;true&quot;).withDefault(&quot;false&quot;).withMapper(Boolean::parseBoolean).withDescription(&quot;If true, additionally prints \&quot;Nice to meet you!\&quot;.&quot;)))</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -913,7 +913,7 @@ Option names must conform to the following rules:</p>
 <p>Length must be at least 2.</p>
 </li>
 <li>
-<p>Must not be equal to '--'. This is a reserved argument.</p>
+<p>Must not be equal to <code>--</code>. This is a reserved argument.</p>
 </li>
 <li>
 <p>Must not contain any space characters.</p>
@@ -977,16 +977,19 @@ CliHats is able to recognize a number of commonly used types and will automatica
 <div class="ulist">
 <ul>
 <li>
-<p><code>Boolean</code></p>
+<p><code>java.lang.Boolean</code></p>
 </li>
 <li>
-<p><code>Integer</code></p>
+<p><code>java.lang.Integer</code></p>
 </li>
 <li>
-<p><code>Double</code></p>
+<p><code>java.lang.Double</code></p>
 </li>
 <li>
-<p><code>Float</code></p>
+<p><code>java.lang.Float</code></p>
+</li>
+<li>
+<p><code>java.lang.Enum</code></p>
 </li>
 <li>
 <p><code>java.math.BigDecimal</code></p>
@@ -999,9 +1002,6 @@ CliHats is able to recognize a number of commonly used types and will automatica
 </li>
 <li>
 <p><code>java.time.LocalDateTime</code></p>
-</li>
-<li>
-<p>Enum types</p>
 </li>
 <li>
 <p>One-dimensional arrays containing the above types in conjunction with array operand parsers.</p>
@@ -1017,7 +1017,7 @@ CliHats is able to recognize a number of commonly used types and will automatica
 <div class="sect4">
 <h5 id="_array_operand_parsers">Array operand parsers</h5>
 <div class="paragraph">
-<p>When using an array operand parser, mappers must map to the type contained in the array not to the array type itself. For examples, consider</p>
+<p>When using an array operand parser, mappers must map to the type contained in the array not to the array type itself. For example, consider</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1246,7 +1246,7 @@ First, define a public mapper class extending <code>AbstractValueMapper</code>.<
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-01-23 21:48:26 +0100
+Last updated 2024-02-03 23:53:46 +0100
 </div>
 </div>
 </body>

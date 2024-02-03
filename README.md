@@ -112,6 +112,11 @@ To make a long story short:
 If you want to offer your users a toolset of methods behind one single java API, CliHats will come in handy. 
 This is especially true, if the methods posses relatively simple signatures with few parameters and are easily deducible from String values.
 
+## Java
+CliHats is currently developed at Java 11. 
+
+The included annotation processor currently supports source version 11.
+
 ## Get CliHats
 CliHats is available on [Maven Central](https://mvnrepository.com/artifact/io.github.johannesbuchholz/clihats).
 
@@ -127,6 +132,11 @@ CliHats is available on [Maven Central](https://mvnrepository.com/artifact/io.gi
 ### Gradle
 ```groovy
 implementation group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.1.0'
+```
+
+If you want to use CliHats' annotation processor, you may add the following to your dependency section
+```groovy
+annotationProcessor group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.1.0'
 ```
 
 ## Documentation

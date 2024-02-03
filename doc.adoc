@@ -114,7 +114,7 @@ Commander.forName("hello-world-cli-hats")
                         .withDescription("Prints a greeting to the specified name.")
                         .withParsers(
                                 ArgumentParsers.valuedOption("-n", "--name").withRequired(true).withDescription("The name to greet."),
-                                ArgumentParsers.flagOption("-p", "--polite").withFlagValue("true").withDefault("false").withMapper(new BooleanMapper()).withDescription("If true, additionally prints \"Nice to meet you!\".")))
+                                ArgumentParsers.flagOption("-p", "--polite").withFlagValue("true").withDefault("false").withMapper(Boolean::parseBoolean).withDescription("If true, additionally prints \"Nice to meet you!\".")))
 ----
 
 === @CommandLineInterface
@@ -160,7 +160,7 @@ Option names must conform to the following rules:
 
 - Names must start with `-`.
 - Length must be at least 2.
-- Must not be equal to '--'. This is a reserved argument.
+- Must not be equal to `--`. This is a reserved argument.
 - Must not contain any space characters.
 - Must be unique among all option names of a command.
 
@@ -188,15 +188,15 @@ CliHats is able to recognize a number of commonly used types and will automatica
 
 Currently, CliHats automatically configures mappers for these parameter types:
 
-- `Boolean`
-- `Integer`
-- `Double`
-- `Float`
+- `java.lang.Boolean`
+- `java.lang.Integer`
+- `java.lang.Double`
+- `java.lang.Float`
+- `java.lang.Enum`
 - `java.math.BigDecimal`
 - `java.nio.file.Path`
 - `java.time.LocalDate`
 - `java.time.LocalDateTime`
-- Enum types
 - One-dimensional arrays containing the above types in conjunction with array operand parsers.
 
 Explicitly declaring `mapper` overrides automatic mapping.
@@ -204,7 +204,7 @@ Explicitly declaring `mapper` overrides automatic mapping.
 A missing non-required option skips value mapping and the respective method parameter is directly set to `null`.
 
 ===== Array operand parsers
-When using an array operand parser, mappers must map to the type contained in the array not to the array type itself. For examples, consider
+When using an array operand parser, mappers must map to the type contained in the array not to the array type itself. For example, consider
 
 [source]
 ----
