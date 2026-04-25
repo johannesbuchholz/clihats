@@ -52,7 +52,7 @@ public class Commander {
     public Commander withCommands(Command... commands) throws CommanderCreationException {
         checkForCommandConflicts(commands);
         Map<String, Command> commandMap = Arrays.stream(commands)
-                .collect(Collectors.toUnmodifiableMap(Command::getName, Function.identity()));
+            .collect(Collectors.toUnmodifiableMap(Command::getName, Function.identity()));
         return new Commander(cliName, commandMap, description);
     }
 
@@ -83,14 +83,16 @@ public class Commander {
         }
         if (isHelpCall(inputArgs)) {
             String actualHelpString;
-            if (commandSearchResult.isEmpty())
+            if (commandSearchResult.isEmpty()) {
                 actualHelpString = getDoc();
-            else
+            } else {
                 actualHelpString = commandSearchResult.get().getDoc();
+            }
             throw new CliHelpCallException(actualHelpString);
         }
-        if (commandSearchResult.isEmpty())
+        if (commandSearchResult.isEmpty()) {
             throw new UnknownCommandException(this, inputArgs[0]);
+        }
 
         try {
             commandSearchResult.get().execute(Arrays.copyOfRange(inputArgs, 1, inputArgs.length));
@@ -112,13 +114,13 @@ public class Commander {
         }
         if (!conflictMessages.isEmpty()) {
             throw new CommanderCreationException(this, String.format("Detected conflicts among commands:\n%s",
-                    conflictMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n")))
+                conflictMessages.stream().map(s -> "    " + s).collect(Collectors.joining("\n")))
             );
         }
     }
 
     private Optional<Command> getCommand(String commandName) {
-       return Optional.ofNullable(commandsByName.get(commandName));
+        return Optional.ofNullable(commandsByName.get(commandName));
     }
 
     private String generateHelpString() {
@@ -134,13 +136,12 @@ public class Commander {
         if (!commandsByName.isEmpty()) {
             matrixHeader.row(TextCell.getNew("Commands:"));
             commandsByName.values().stream()
-                    .sorted(Comparator.comparing(Command::getName))
-                    .forEach(command ->
-                            matrixCommands.row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, command.getName(), command.getDescription())
-                    );
+                .sorted(Comparator.comparing(Command::getName))
+                .forEach(command ->
+                    matrixCommands.row(new int[]{COMMAND_NAME_WIDTH, COMMAND_DESCRIPTION_WIDTH}, command.getName(), command.getDescription())
+                );
         }
-        return matrixHeader + "\n" +
-                matrixCommands.removeEmptyCols().resizeColumnWidths();
+        return matrixHeader + "\n" + matrixCommands.removeEmptyCols().resizeColumnWidths();
     }
 
     /**
@@ -160,7 +161,7 @@ public class Commander {
     @Override
     public String toString() {
         return String.format("%s={name=%s, commands=%s}",
-                this.getClass().getSimpleName(), cliName, commandsByName.keySet().stream().sorted().collect(Collectors.toList()));
+            this.getClass().getSimpleName(), cliName, commandsByName.keySet().stream().sorted().collect(Collectors.toList()));
     }
 
 }
