@@ -29,14 +29,14 @@ public class ArrayOperandParser<T> extends AbstractOperandParser<T[]> {
         if (index < 0) {
             throw new IllegalArgumentException("index needs to be non-negative but was " + index);
         }
-        return new ArrayOperandParser<>(index, String.class, () -> null, false, stringValue -> stringValue, "", null);
+        return new ArrayOperandParser<>(index, String.class, () -> new String[0], false, stringValue -> stringValue, "", null);
     }
 
     private ArrayOperandParser(int index, Class<T> type, Supplier<String[]> defaultSupplier, boolean required, ValueMapper<T> valueMapper, String description, String displayName) {
         super(index);
         this.type = type;
         this.valueMapper = valueMapper;
-        this.description =description;
+        this.description = description;
         this.required = required;
         this.defaultSupplier = defaultSupplier;
         this.displayName = displayName;
@@ -50,7 +50,7 @@ public class ArrayOperandParser<T> extends AbstractOperandParser<T[]> {
     }
 
     public ArrayOperandParser<T> withDescription(String description) {
-        return new ArrayOperandParser<>(index, type, defaultSupplier, required, valueMapper,  description, displayName);
+        return new ArrayOperandParser<>(index, type, defaultSupplier, required, valueMapper, description, displayName);
     }
 
     public ArrayOperandParser<T> withRequired(boolean required) {
@@ -76,8 +76,9 @@ public class ArrayOperandParser<T> extends AbstractOperandParser<T[]> {
 
     @Override
     public ArgumentParsingResult<T[]> parse(InputArgument[] inputArgs, int index) throws ArgumentParsingException {
-        if (inputArgs.length < index)
+        if (inputArgs.length < index) {
             throw new IllegalArgumentException("Index " + index + " is out of bounds for argument array of length " + inputArgs.length);
+        }
         if (this.index == index) {
             String[] values = new String[inputArgs.length - index];
             for (int i = index; i < inputArgs.length; i++) {
@@ -92,8 +93,9 @@ public class ArrayOperandParser<T> extends AbstractOperandParser<T[]> {
 
     @Override
     public ArgumentParsingResult<T[]> defaultValue() throws ArgumentParsingException {
-        if (required)
+        if (required) {
             return ArgumentParsingResult.empty();
+        }
 
         String[] defaultStringValue;
         try {

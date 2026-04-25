@@ -215,6 +215,8 @@ Here, `MyMapper.class` should map to `MyType` instead of `MyType[]`.
 ==== Default values
 A missing optional argument lets CliHats pass `null` to the respective method parameter. However, it is possible to declare a custom default value by setting the parameter `defaultValue`. A default value behaves as if the user had provided that value and therefore value mapping applies to default values too.
 
+Array operand parsers are an exception to that rule. A missing optional array is set to an array of length zero unless specified differently using parameter `defaultValue`.
+
 Default values are only relevant for parsers with optional necessity.
 
 ===== Flag option parsers
@@ -222,6 +224,7 @@ For flag options, the parameter `flagValue` behaves as a "primary default value"
 
 ===== Array operand parsers
 Using an array operand parser, setting the `defaultValue` results in an array only containing the specified default value.
+Unless specifically declaring a `defaultValue`, a missing optional array parameter is set to an array of length zero.
 
 === Configuring help pages
 Help pages exist for command-line interfaces, commands and arguments. There are multiple ways to define the contents.

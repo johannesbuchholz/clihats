@@ -78,13 +78,13 @@ public class ArrayOperandArgumentTest {
     }
 
     @Test
-    public void operand_expectNullArray() {
+    public void operand_expectEmptyArray() {
         // given
         String[] args = {"array-operand", "25"};
         // when
         CliHats.get(ArrayOperandArgumentTest.class).execute(args);
         // then
-        ReusableTestResult.Result expected = ReusableTestResult.getExpected("array-operand", 25, null);
+        ReusableTestResult.Result expected = ReusableTestResult.getExpected("array-operand", 25, new String[0]);
         assertEquals(expected, result.getAndClear());
     }
 
@@ -117,7 +117,7 @@ public class ArrayOperandArgumentTest {
         // when
         CliHats.get(ArrayOperandArgumentTest.class).execute(args);
         // then
-        ReusableTestResult.Result expected = ReusableTestResult.getExpected("array-operand-multi", "some", new String[] {"strings", "blubb"}, null, null);
+        ReusableTestResult.Result expected = ReusableTestResult.getExpected("array-operand-multi", "some", new String[] {"strings", "blubb"}, null, new String[0]);
         assertEquals(expected, result.getAndClear());
     }
 

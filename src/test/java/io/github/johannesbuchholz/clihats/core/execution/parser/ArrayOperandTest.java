@@ -78,13 +78,13 @@ public class ArrayOperandTest {
         c.execute(args);
 
         // then
-        Object[] expectedArgs = {new String[] {stringArg1, stringArg2, stringArg3}, null};
+        Object[] expectedArgs = {new String[] {stringArg1, stringArg2, stringArg3}, new String[0]};
         TestResult expected = TestResult.newExpected(expectedArgs);
         assertEquals(expected, testResult);
     }
 
     @Test
-    public void shouldExecute_returnDefaultValueNull_whenMissing() throws CommandExecutionException {
+    public void shouldExecute_returnDefaultValueEmptyArray_whenMissing() throws CommandExecutionException {
         // given
         TestResult testResult = TestResult.newEmpty();
         Command c = Command.forName("run")
@@ -96,7 +96,7 @@ public class ArrayOperandTest {
         c.execute(args);
 
         // then
-        TestResult expected = TestResult.newExpected((Object) null);
+        TestResult expected = TestResult.newExpected((Object) new String[0]);
         assertEquals(expected, testResult);
     }
 
