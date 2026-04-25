@@ -532,7 +532,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h1>Welcome to CliHats</h1>
 <div class="details">
 <span id="author" class="author">johannesbuchholz@outlook.com</span><br>
-<span id="revdate">Version 1.1.0</span>
+<span id="revdate">Version 1.1.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -626,7 +626,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <pre class="CodeRay highlight nowrap"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>io.github.johannesbuchholz<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>clihats<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.1.0<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.1.1<span class="tag">&lt;/version&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
@@ -635,7 +635,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h3 id="_gradle">Gradle</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="groovy">implementation <span class="string"><span class="delimiter">'</span><span class="content">io.github.johannesbuchholz:clihats:1.1.0</span><span class="delimiter">'</span></span></code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="groovy">implementation <span class="string"><span class="delimiter">'</span><span class="content">io.github.johannesbuchholz:clihats:1.1.1</span><span class="delimiter">'</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -643,7 +643,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="groovy">annotationProcessor <span class="string"><span class="delimiter">'</span><span class="content">io.github.johannesbuchholz:clihats:1.1.0</span><span class="delimiter">'</span></span></code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="groovy">annotationProcessor <span class="string"><span class="delimiter">'</span><span class="content">io.github.johannesbuchholz:clihats:1.1.1</span><span class="delimiter">'</span></span></code></pre>
 </div>
 </div>
 </div>
@@ -1035,6 +1035,9 @@ CliHats is able to recognize a number of commonly used types and will automatica
 <p>A missing optional argument lets CliHats pass <code>null</code> to the respective method parameter. However, it is possible to declare a custom default value by setting the parameter <code>defaultValue</code>. A default value behaves as if the user had provided that value and therefore value mapping applies to default values too.</p>
 </div>
 <div class="paragraph">
+<p>Array operand parsers are an exception to that rule. A missing optional array is set to an array of length zero unless specified differently using parameter <code>defaultValue</code>.</p>
+</div>
+<div class="paragraph">
 <p>Default values are only relevant for parsers with optional necessity.</p>
 </div>
 <div class="sect4">
@@ -1046,7 +1049,8 @@ CliHats is able to recognize a number of commonly used types and will automatica
 <div class="sect4">
 <h5 id="_array_operand_parsers_2">Array operand parsers</h5>
 <div class="paragraph">
-<p>Using an array operand parser, setting the <code>defaultValue</code> results in an array only containing the specified default value.</p>
+<p>Using an array operand parser, setting the <code>defaultValue</code> results in an array only containing the specified default value.<br>
+Unless specifically declaring a <code>defaultValue</code>, a missing optional array parameter is set to an array of length zero.</p>
 </div>
 </div>
 </div>
@@ -1246,7 +1250,7 @@ First, define a public mapper class extending <code>AbstractValueMapper</code>.<
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-03 23:53:46 +0100
+Last updated 2026-04-25 16:44:53 +0200
 </div>
 </div>
 </body>

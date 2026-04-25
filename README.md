@@ -125,18 +125,18 @@ CliHats is available on [Maven Central](https://mvnrepository.com/artifact/io.gi
 <dependency>
     <groupId>io.github.johannesbuchholz</groupId>
     <artifactId>clihats</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
 ### Gradle
 ```groovy
-implementation group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.1.0'
+implementation group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.1.1'
 ```
 
 If you want to use CliHats' annotation processor, you may add the following to your dependency section
 ```groovy
-annotationProcessor group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.1.0'
+annotationProcessor group: 'io.github.johannesbuchholz', name: 'clihats', version: '1.1.1'
 ```
 
 ## Documentation
