@@ -14,8 +14,6 @@ import io.github.johannesbuchholz.clihats.processor.util.visitors.ArrayOfSimpleA
 import io.github.johannesbuchholz.clihats.processor.util.visitors.EnumAnnotationValueVisitor;
 import io.github.johannesbuchholz.clihats.processor.util.visitors.SimpleValueAnnotationValueVisitor;
 import io.github.johannesbuchholz.clihats.processor.util.visitors.TypeAnnotationValueVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -26,9 +24,11 @@ import javax.lang.model.type.TypeMirror;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+import static io.github.johannesbuchholz.clihats.processor.CommandLineInterfaceProcessor.LOG;
+
 public class CommandCodeGenerator {
 
-    private static final Logger log = LoggerFactory.getLogger(CommandCodeGenerator.class);
     private static final String INSTRUCTION_PARAMETER_NAME = "args";
 
     private final ProcessingEnvironment processingEnvironment;
@@ -82,7 +82,7 @@ public class CommandCodeGenerator {
                 .map(annotationMirror -> extractArgumentDto(annotationMirror, paramJavaDoc, processingEnvironment));
         argumentDto
                 .map(CommandCodeGenerator::determineDubiousConfiguration)
-                .ifPresent(dubiousMessages -> dubiousMessages.forEach(msg -> log.warn("Dubious argument configuration at {}: {}", methodParameter, msg)));
+                .ifPresent(dubiousMessages -> dubiousMessages.forEach(msg -> LOG.warn("Dubious argument configuration at {}: {}", methodParameter, msg)));
         return argumentDto;
     }
 

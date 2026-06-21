@@ -84,4 +84,29 @@ public class TextUtils {
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
+    /** Replaces '{}' inside message with the specified args */
+    public static String format(String message, Object... args) {
+        if (message == null || args == null || args.length == 0) {
+            return message;
+        }
+
+        // assuming replacements to be larger than the char lengths of {}-substrings
+        StringBuilder result = new StringBuilder(message.length() + 32);
+        int argIndex = 0;
+        for (int pos = 0; pos < message.length(); pos++) {
+            char c = message.charAt(pos);
+            if (c == '{' && pos + 1 < message.length() && message.charAt(pos + 1) == '}') {
+                if (argIndex < args.length) {
+                    result.append(args[argIndex++]);
+                } else {
+                    result.append("{}"); // no arg left, keep literal
+                }
+                pos++; // skip '}'
+            } else {
+                result.append(c);
+            }
+        }
+
+        return result.toString();
+    }
 }

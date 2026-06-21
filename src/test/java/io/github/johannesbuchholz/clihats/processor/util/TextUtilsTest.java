@@ -85,4 +85,45 @@ public class TextUtilsTest {
         assertEquals(expected, actual);
     }
 
+    // testcase name, input string, args, expected outcome
+    private static final Object[][] formattingCases = new Object[][] {
+            {"simple replacement", "Hello {}", new Object[]{"World"}, "Hello World"},
+            {"multiple placeholders", "{} + {} = {}", new Object[]{1, 2, 3}, "1 + 2 = 3"},
+            {"extra args ignored", "Hello {}", new Object[]{"World", "ignored"}, "Hello World"},
+            {"missing args", "Hello {} {}", new Object[]{"World"}, "Hello World {}"},
+            {"no placeholders", "Hello World", new Object[]{"unused"}, "Hello World"},
+            {"null args", "Hello {}", null, "Hello {}"},
+            {"empty args", "Hello {}", new Object[]{}, "Hello {}"},
+            {"adjacent placeholders", "{}{}{}", new Object[]{1, 2, 3}, "123"},
+            {"partial fill", "{}{}{}", new Object[]{1}, "1{}{}"},
+            {"non-placeholder braces", "{text}", new Object[]{"X"}, "{text}"},
+            {"empty string", "", new Object[]{"x"}, ""},
+            {"single open brace", "{", null, "{"},
+            {"single close brace", "}", null, "}"},
+            {"unclosed brace at end", "Hello {", null, "Hello {"},
+            {"leading open brace", "{text", null, "{text"},
+            {"closing brace only pattern", "text}", null, "text}"},
+            {"standalone braces no placeholder", "{a}", new Object[]{"X"}, "{a}"},
+            {"adjacent broken braces", "{}{", new Object[]{1}, "1{"},
+            {"double open braces", "{{", null, "{{"},
+            {"double close braces", "}}", null, "}}"}
+    };
+
+    @Test
+    public void format_shouldHandleEdgeCases() {
+        for (Object[] formattingCase : formattingCases) {
+            // given
+            String name = (String) formattingCase[0];
+            String input = (String) formattingCase[1];
+            Object[] args = (Object[]) formattingCase[2];
+            String expected = (String) formattingCase[3];
+
+            // when
+            String actual = TextUtils.format(input, args);
+
+            // then
+            assertEquals("Failed: " + name, expected, actual);
+        }
+    }
+
 }

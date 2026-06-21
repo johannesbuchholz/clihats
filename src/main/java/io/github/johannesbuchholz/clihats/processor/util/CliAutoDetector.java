@@ -2,8 +2,6 @@ package io.github.johannesbuchholz.clihats.processor.util;
 
 import io.github.johannesbuchholz.clihats.processor.exceptions.ConfigurationException;
 import io.github.johannesbuchholz.clihats.processor.model.CommandDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
@@ -12,9 +10,9 @@ import javax.lang.model.element.TypeElement;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CliAutoDetector {
+import static io.github.johannesbuchholz.clihats.processor.CommandLineInterfaceProcessor.LOG;
 
-    private static final Logger log = LoggerFactory.getLogger(CliAutoDetector.class);
+public class CliAutoDetector {
 
     private final Collection<TypeElement> annotatedInterfaces;
 
@@ -38,7 +36,7 @@ public class CliAutoDetector {
             return Map.of();
         Map<PackageElement, List<TypeElement>> cliByPackage = annotatedInterfaces.stream()
                 .collect(Collectors.groupingBy(te -> processingEnv.getElementUtils().getPackageOf(te)));
-        log.debug("Cli elements by package: {}", cliByPackage);
+        LOG.debug("Cli elements by package: {}", cliByPackage);
 
         Map<TypeElement, List<CommandDto>> commandDtoByCli = new HashMap<>(annotatedInterfaces.size());
         for (CommandDto commandDto : commandDtosForAutoDetection) {
@@ -70,7 +68,7 @@ public class CliAutoDetector {
                 commandDtoByCli.get(matchingCli).add(commandDto);
             else
                 commandDtoByCli.put(matchingCli, new LinkedList<>(List.of(commandDto)));
-            log.debug("Command automatically assigned to cli: {} -> {}", commandDto.getName(), matchingCli);
+            LOG.debug("Command automatically assigned to cli: {} -> {}", commandDto.getName(), matchingCli);
         }
         return commandDtoByCli;
     }
