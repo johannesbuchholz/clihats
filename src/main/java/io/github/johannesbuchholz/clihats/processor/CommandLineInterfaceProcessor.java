@@ -72,9 +72,10 @@ public class CommandLineInterfaceProcessor extends AbstractProcessor {
             initStaticFields();
             writeAllCliSourceFiles(cliType, roundEnv);
         } catch (Exception e) {
-            System.err.println(CommandLineInterfaceProcessor.class.getCanonicalName() + " Unexpected error while processing: " + e.getMessage());
-            e.printStackTrace(System.err);
-            throw e;
+            throw new IllegalStateException(
+                    String.format("Unexpected error while processing (%s): %s", CommandLineInterfaceProcessor.class.getCanonicalName(), e.getMessage()),
+                    e
+            );
         }
         return true;
     }
